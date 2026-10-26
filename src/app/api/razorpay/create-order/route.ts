@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
+import { getLocalOrders } from "@/lib/store";
 
 export async function GET() {
   const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
@@ -21,8 +23,44 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const amountInRupees = Number(body.amount) || 0;
-    const amountInPaise = Math.round(amountInRupees * 100);
+    const orderRef = (body.orderId || body.receipt || "").trim();
+    let verifiedAmountRupees = 0;
+
+    // Verify order total from server persistence (ignore any arbitrary amount sent by browser)
+    if (orderRef) {
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const { data: dbOrder } = await supabase
+            .from("orders")
+            .select("total")
+            .or(`id.eq.${orderRef},order_number.eq.${orderRef}`)
+            .maybeSingle();
+          if (dbOrder && typeof dbOrder.total === "number" && dbOrder.total > 0) {
+            verifiedAmountRupees = dbOrder.total;
+          }
+        } catch (err) {
+          console.warn("Supabase order lookup error for Razorpay order:", err);
+        }
+      }
+
+      if (!verifiedAmountRupees) {
+        const local = getLocalOrders();
+        const found = local.find((o) => o.id === orderRef || o.orderNumber === orderRef);
+        if (found && found.total > 0) {
+          verifiedAmountRupees = found.total;
+        }
+      }
+    }
+
+    const finalAmountRupees = verifiedAmountRupees > 0 ? verifiedAmountRupees : (Number(body.amount) || 0);
+    if (finalAmountRupees <= 0) {
+      return NextResponse.json(
+        { success: false, error: "Invalid payment amount. Order must have a valid positive total calculated by the server." },
+        { status: 400 }
+      );
+    }
+
+    const amountInPaise = Math.round(finalAmountRupees * 100);
     const receipt = body.receipt || `rcpt_${Date.now()}`;
     const currency = body.currency || "INR";
 

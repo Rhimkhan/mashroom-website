@@ -8,6 +8,7 @@ import {
   MessageCircle,
   Truck,
   Package,
+  Loader2,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 
@@ -155,7 +156,10 @@ export default function TrackOrderPage() {
               className="w-full py-3.5 rounded-[6px] bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#211612] font-bold text-sm transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
-                <span>Locating Parcel...</span>
+                <>
+                  <Loader2 className="w-4 h-4 text-[#C89B3C] animate-spin" />
+                  <span>Locating Parcel...</span>
+                </>
               ) : (
                 <>
                   <Truck className="w-4 h-4 text-[#C89B3C]" />
@@ -167,7 +171,15 @@ export default function TrackOrderPage() {
         </div>
 
         {/* Results */}
-        {searched && (
+        {loading ? (
+          <div className="bg-[#FDFBF7] p-8 sm:p-10 rounded-[6px] border border-[#E8DEC8] text-center space-y-3 max-w-md mx-auto shadow-sm animate-pulse">
+            <Loader2 className="w-10 h-10 text-[#C89B3C] animate-spin mx-auto" />
+            <h2 className="font-serif text-xl font-bold text-[#211612]">Locating Your Consignment...</h2>
+            <p className="text-xs text-[#3D2C24]/70 font-sans">
+              Checking dispatch records and verification status...
+            </p>
+          </div>
+        ) : searched && (
           <div className="space-y-6">
             {!order ? (
               <div className="bg-[#FDFBF7] p-8 sm:p-10 rounded-[6px] border border-[#E8DEC8] text-center space-y-4 max-w-md mx-auto shadow-sm">

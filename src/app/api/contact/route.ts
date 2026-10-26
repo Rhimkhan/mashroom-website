@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp, escapeAndTrim } from "@/lib/rate-limit";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -71,6 +72,24 @@ export async function POST(request: NextRequest) {
     }
     const email = rawEmail ? escapeAndTrim(rawEmail) : "";
     const subject = escapeAndTrim(body.subject || "Inquiry").slice(0, 100);
+
+    // Persist to Supabase if configured (strictly server-side with service role)
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from("contact_messages").insert([
+          {
+            name,
+            phone: cleanPhone,
+            email: email || null,
+            subject,
+            message,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+      } catch (err) {
+        console.warn("Supabase contact_messages insert error:", err);
+      }
+    }
 
     console.log(`[CONTACT RECEIVED] From: ${name} (${cleanPhone}) | Email: ${email || "N/A"} | Subject: ${subject}`);
 
