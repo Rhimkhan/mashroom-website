@@ -43,12 +43,21 @@ async function getProductById(productId: string): Promise<Product | null> {
           badges: Array.isArray(data.badges) ? data.badges : [],
         };
       }
+      if (error) {
+        console.error("[CRITICAL] Supabase product lookup error:", error);
+      }
     } catch (err) {
-      console.warn("Supabase product lookup error:", err);
+      console.error("[CRITICAL] Supabase product lookup exception:", err);
     }
   }
 
-  // Fallback to local store / initial seed catalog if Supabase is offline or not configured
+  // In production, strictly NEVER fall back to in-memory or mock data
+  if (process.env.NODE_ENV === "production") {
+    console.error(`[CRITICAL] In-memory store fallback blocked for product "${productId}". In production, Supabase is mandatory.`);
+    return null;
+  }
+
+  // Fallback to local store / initial seed catalog in development only
   const localProducts = getLocalProducts();
   const allProducts = localProducts.length > 0 ? localProducts : INITIAL_PRODUCTS;
   return allProducts.find((p) => p.id === productId || p.slug === productId) || null;
@@ -112,7 +121,7 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      if (!matchedOrder) {
+      if (!matchedOrder && process.env.NODE_ENV !== "production") {
         const local = getLocalOrders();
         const found = local.find((o) => {
           const matchNumber = o.orderNumber?.toLowerCase() === orderNumber.toLowerCase();
@@ -176,6 +185,18 @@ export async function GET(request: NextRequest) {
       if (!error && data) {
         return NextResponse.json({ success: true, orders: data });
       }
+      if (error) {
+        console.error("[CRITICAL] Supabase orders list error:", error);
+      }
+    }
+
+    // In production, strictly NEVER fall back to in-memory store
+    if (process.env.NODE_ENV === "production") {
+      console.error("[CRITICAL] Supabase is unreachable for order listing in production.");
+      return NextResponse.json(
+        { success: false, error: "Database error: unable to load orders from Supabase" },
+        { status: 500 }
+      );
     }
 
     const local = getLocalOrders();
@@ -471,10 +492,22 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    // 6. Save to Supabase
+    // 6. Save to Supabase (Strictly mandatory in production)
+    if (process.env.NODE_ENV === "production" && (!isSupabaseConfigured || !supabase)) {
+      console.error("[CRITICAL] Order rejected: Supabase database is not configured in production environment!");
+      return NextResponse.json(
+        {
+          success: false,
+          error: "We could not place your order, please try again or order on WhatsApp",
+        },
+        { status: 500 }
+      );
+    }
+
+    let supabaseInserted = false;
     if (isSupabaseConfigured && supabase) {
       try {
-        await supabase.from("orders").insert([
+        const { error: insertError } = await supabase.from("orders").insert([
           {
             id: newOrder.id,
             order_number: newOrder.orderNumber,
@@ -500,13 +533,50 @@ export async function POST(request: NextRequest) {
             created_at: newOrder.createdAt,
           },
         ]);
+
+        if (insertError) {
+          console.error("[CRITICAL] Supabase order insert failed in production:", insertError);
+          if (process.env.NODE_ENV === "production") {
+            return NextResponse.json(
+              {
+                success: false,
+                error: "We could not place your order, please try again or order on WhatsApp",
+              },
+              { status: 500 }
+            );
+          }
+        } else {
+          supabaseInserted = true;
+        }
       } catch (err) {
-        console.warn("Supabase order insert warning:", err);
+        console.error("[CRITICAL] Supabase order insert exception in production:", err);
+        if (process.env.NODE_ENV === "production") {
+          return NextResponse.json(
+            {
+              success: false,
+              error: "We could not place your order, please try again or order on WhatsApp",
+            },
+            { status: 500 }
+          );
+        }
       }
     }
 
-    // 7. Save to local persistence
-    addLocalOrder(newOrder);
+    if (process.env.NODE_ENV === "production" && !supabaseInserted) {
+      console.error("[CRITICAL] Order was not recorded into Supabase. Aborting order response.");
+      return NextResponse.json(
+        {
+          success: false,
+          error: "We could not place your order, please try again or order on WhatsApp",
+        },
+        { status: 500 }
+      );
+    }
+
+    // 7. Save to local persistence (development fallback only)
+    if (process.env.NODE_ENV !== "production") {
+      addLocalOrder(newOrder);
+    }
 
     // 8. Dispatch notification email
     const emailResult = await sendOrderNotificationEmail(newOrder);
@@ -521,7 +591,10 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Orders POST error:", error);
-    return NextResponse.json({ success: false, error: "Failed to create order" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "We could not place your order, please try again or order on WhatsApp" },
+      { status: 500 }
+    );
   }
 }
 
@@ -546,6 +619,14 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Missing required orderId" }, { status: 400 });
     }
 
+    if (process.env.NODE_ENV === "production" && (!isSupabaseConfigured || !supabase)) {
+      console.error("[CRITICAL] Order update rejected: Supabase not configured in production");
+      return NextResponse.json(
+        { success: false, error: "Database offline. Cannot update order in production." },
+        { status: 500 }
+      );
+    }
+
     if (isSupabaseConfigured && supabase) {
       const updatePayload: any = {};
       if (orderStatus) updatePayload.order_status = orderStatus;
@@ -553,19 +634,32 @@ export async function PATCH(request: NextRequest) {
       if (courierName !== undefined) updatePayload.courier_name = courierName;
       if (paymentStatus) updatePayload.payment_status = paymentStatus;
 
-      await supabase
+      const { error: updateError } = await supabase
         .from("orders")
         .update(updatePayload)
         .eq("id", orderId);
+
+      if (updateError) {
+        console.error("[CRITICAL] Supabase order update failed in production:", updateError);
+        if (process.env.NODE_ENV === "production") {
+          return NextResponse.json(
+            { success: false, error: "Failed to update order in database" },
+            { status: 500 }
+          );
+        }
+      }
     }
 
-    const updated = updateLocalOrderStatus(
-      orderId,
-      orderStatus as OrderStatus,
-      trackingNumber,
-      courierName,
-      paymentStatus as any
-    );
+    let updated = null;
+    if (process.env.NODE_ENV !== "production") {
+      updated = updateLocalOrderStatus(
+        orderId,
+        orderStatus as OrderStatus,
+        trackingNumber,
+        courierName,
+        paymentStatus as any
+      );
+    }
 
     return NextResponse.json({ success: true, order: updated });
   } catch (error) {

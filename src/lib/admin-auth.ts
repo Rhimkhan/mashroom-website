@@ -15,8 +15,17 @@ const lockoutStore = new Map<string, LockoutRecord>();
 export const SESSION_EXPIRY_MS = 8 * 60 * 60 * 1000; // 8 hours
 export const SESSION_MAX_AGE_SECONDS = 8 * 60 * 60; // 8 hours (28,800 seconds)
 
-function getAdminSecret(): string {
-  return process.env.ADMIN_PASSWORD || "admin123_default_secret_key_jhansi";
+function getAdminSessionSecret(): string {
+  const sessionSecret = process.env.ADMIN_SESSION_SECRET;
+  if (sessionSecret && sessionSecret.trim() !== "") {
+    return sessionSecret.trim();
+  }
+  if (process.env.NODE_ENV === "production") {
+    console.warn(
+      "[SECURITY WARNING] ADMIN_SESSION_SECRET is not configured in production environment variables! Falling back to ADMIN_PASSWORD."
+    );
+  }
+  return process.env.ADMIN_PASSWORD || "akhil_foods_default_session_secret_key_jhansi";
 }
 
 /**
@@ -89,7 +98,7 @@ export function resetAdminFailedAttempts(ip: string): void {
  * Creates an HMAC-signed session token for the admin cookie (valid for 8 hours).
  */
 export function createAdminSessionToken(): string {
-  const secret = getAdminSecret();
+  const secret = getAdminSessionSecret();
   const payload = {
     role: "admin",
     iat: Date.now(),
@@ -111,7 +120,7 @@ export function verifyAdminSession(request: NextRequest): boolean {
   if (parts.length !== 2) return false;
 
   const [payloadB64, signature] = parts;
-  const secret = getAdminSecret();
+  const secret = getAdminSessionSecret();
 
   const expectedSignature = crypto.createHmac("sha256", secret).update(payloadB64).digest("base64url");
   const signatureBuf = Buffer.from(signature);

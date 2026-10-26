@@ -61,8 +61,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Search local store fallback
-    if (!matchedOrder) {
+    // Search local store fallback in development only
+    if (!matchedOrder && process.env.NODE_ENV !== "production") {
       const local = getLocalOrders();
       const found = local.find((o) => {
         const matchNumber = o.orderNumber?.toLowerCase() === orderNumber.toLowerCase();

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getLocalProducts, saveLocalProducts } from "@/lib/store";
 import { INITIAL_PRODUCTS } from "@/lib/data";
 import { Product } from "@/lib/types";
-import { supabase } from "@/lib/supabase-server";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
 import { verifyAdminSession } from "@/lib/admin-auth";
 
 // Normalize database row to application Product interface
@@ -45,14 +45,33 @@ export async function GET() {
         const normalized = data.map(normalizeProductRow);
         return NextResponse.json({ success: true, products: normalized, source: "supabase" });
       }
+
+      if (error) {
+        console.error("[CRITICAL] Supabase products GET error:", error);
+      }
     }
 
-    // 2. Fallback to local persistent store / seed data
+    // In production, strictly NEVER fall back to in-memory store
+    if (process.env.NODE_ENV === "production") {
+      console.error("[CRITICAL] Products GET failed: Supabase is unreachable in production.");
+      return NextResponse.json(
+        { success: false, error: "Unable to load product catalog from database", products: [] },
+        { status: 500 }
+      );
+    }
+
+    // 2. Fallback to local persistent store / seed data (development only)
     const local = getLocalProducts();
     const products = local.length > 0 ? local : INITIAL_PRODUCTS;
     return NextResponse.json({ success: true, products, source: "local" });
   } catch (error) {
     console.error("Products GET error:", error);
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json(
+        { success: false, error: "Database error: unable to load products", products: [] },
+        { status: 500 }
+      );
+    }
     return NextResponse.json({ success: true, products: INITIAL_PRODUCTS, source: "fallback" });
   }
 }
@@ -101,9 +120,27 @@ export async function POST(request: NextRequest) {
       if (!error && data) {
         return NextResponse.json({ success: true, product: normalizeProductRow(data), source: "supabase" });
       }
+
+      if (error) {
+        console.error("[CRITICAL] Supabase product upsert error:", error);
+        if (process.env.NODE_ENV === "production") {
+          return NextResponse.json(
+            { success: false, error: "Failed to save product to Supabase database" },
+            { status: 500 }
+          );
+        }
+      }
     }
 
-    // 2. Local store fallback
+    if (process.env.NODE_ENV === "production") {
+      console.error("[CRITICAL] Cannot save product in production: Supabase is offline");
+      return NextResponse.json(
+        { success: false, error: "Database offline. Product cannot be saved in production." },
+        { status: 500 }
+      );
+    }
+
+    // 2. Local store fallback (development only)
     const current = getLocalProducts();
     if (body.id) {
       const index = current.findIndex((p) => p.id === body.id);
@@ -162,13 +199,32 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Product ID required" }, { status: 400 });
     }
 
-    if (supabase) {
-      await supabase.from("products").delete().eq("id", id);
+    if (process.env.NODE_ENV === "production" && (!isSupabaseConfigured || !supabase)) {
+      console.error("[CRITICAL] Product deletion blocked: Supabase is offline in production");
+      return NextResponse.json(
+        { success: false, error: "Database offline. Product cannot be deleted in production." },
+        { status: 500 }
+      );
     }
 
-    const current = getLocalProducts();
-    const updated = current.filter((p) => p.id !== id);
-    saveLocalProducts(updated);
+    if (supabase) {
+      const { error: deleteError } = await supabase.from("products").delete().eq("id", id);
+      if (deleteError) {
+        console.error("[CRITICAL] Supabase product delete error:", deleteError);
+        if (process.env.NODE_ENV === "production") {
+          return NextResponse.json(
+            { success: false, error: "Failed to delete product from database" },
+            { status: 500 }
+          );
+        }
+      }
+    }
+
+    if (process.env.NODE_ENV !== "production") {
+      const current = getLocalProducts();
+      const updated = current.filter((p) => p.id !== id);
+      saveLocalProducts(updated);
+    }
 
     return NextResponse.json({ success: true, message: "Product deleted" });
   } catch (error) {

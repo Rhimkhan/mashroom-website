@@ -50,30 +50,56 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Mark the Order as "Paid" in Supabase & Local Store
+    if (process.env.NODE_ENV === "production" && (!isSupabaseConfigured || !supabase)) {
+      console.error("[CRITICAL] Payment verification failed: Supabase is offline in production");
+      return NextResponse.json(
+        { success: false, error: "Database offline. Unable to record payment in production." },
+        { status: 500 }
+      );
+    }
+
     if (isSupabaseConfigured && supabase) {
       try {
-        await supabase
+        const { error: updateError } = await supabase
           .from("orders")
           .update({
             payment_status: "Paid",
             notes: `Razorpay Payment Verified: ${razorpay_payment_id} (Order: ${razorpay_order_id})`,
           })
           .or(`id.eq.${orderId},order_number.eq.${orderId}`);
+
+        if (updateError) {
+          console.error("[CRITICAL] Supabase payment update failed in production:", updateError);
+          if (process.env.NODE_ENV === "production") {
+            return NextResponse.json(
+              { success: false, error: "Database error: unable to update payment status" },
+              { status: 500 }
+            );
+          }
+        }
       } catch (err) {
-        console.warn("Supabase payment update error:", err);
+        console.error("[CRITICAL] Supabase payment update error:", err);
+        if (process.env.NODE_ENV === "production") {
+          return NextResponse.json(
+            { success: false, error: "Database error: unable to update payment status" },
+            { status: 500 }
+          );
+        }
       }
     }
 
-    // Update Local Store
-    const local = getLocalOrders();
-    const index = local.findIndex((o) => o.id === orderId || o.orderNumber === orderId);
-    if (index !== -1) {
-      local[index] = {
-        ...local[index],
-        paymentStatus: "Paid",
-        notes: `Razorpay Payment Verified: ${razorpay_payment_id} (Order: ${razorpay_order_id})`,
-      };
-      saveLocalOrders(local);
+    // Update Local Store (development only)
+    if (process.env.NODE_ENV !== "production") {
+      const local = getLocalOrders();
+      const index = local.findIndex((o) => o.id === orderId || o.orderNumber === orderId);
+      if (index !== -1) {
+        local[index] = {
+          ...local[index],
+          paymentStatus: "Paid",
+          notes: `Razorpay Payment Verified: ${razorpay_payment_id} (Order: ${razorpay_order_id})`,
+        };
+        saveLocalOrders(local);
+      }
     }
 
     console.log(`[PAYMENT VERIFIED SUCCESS] Order: ${orderId} | Payment ID: ${razorpay_payment_id}`);
