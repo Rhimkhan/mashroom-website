@@ -26,6 +26,7 @@ import { Product, ProductSize, ProductReview } from "@/lib/types";
 import { BRAND } from "@/lib/brand";
 import { WHATSAPP_NUMBER, PHONE_DISPLAY } from "@/lib/config";
 import PincodeChecker from "@/components/PincodeChecker";
+import { fetchWithTimeout } from "@/lib/fetch-timeout";
 
 function ProductDetailContent() {
   const params = useParams();
@@ -60,7 +61,7 @@ function ProductDetailContent() {
 
   // Sync with API in case product has been edited or stock changed
   useEffect(() => {
-    fetch("/api/products")
+    fetchWithTimeout("/api/products", undefined, 3500)
       .then((res) => res.json())
       .then((data) => {
         if (data?.products && Array.isArray(data.products)) {
@@ -77,7 +78,7 @@ function ProductDetailContent() {
   // Load approved reviews
   useEffect(() => {
     if (!product?.id) return;
-    fetch(`/api/reviews?productId=${encodeURIComponent(product.id)}`)
+    fetchWithTimeout(`/api/reviews?productId=${encodeURIComponent(product.id)}`, undefined, 3500)
       .then((res) => res.json())
       .then((data) => {
         if (data?.success && Array.isArray(data.reviews)) {
@@ -195,6 +196,7 @@ function ProductDetailContent() {
                 alt={`${product.name} - 400 g jar`}
                 fill
                 priority
+                sizes="(max-width: 1024px) 100vw, 600px"
                 className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
               />
               {product.badges?.[0] && (
@@ -231,6 +233,8 @@ function ProductDetailContent() {
                     src={imgUrl}
                     alt={`Pickle Thumbnail ${idx + 1}`}
                     fill
+                    loading="lazy"
+                    sizes="80px"
                     className="object-contain p-2"
                   />
                 </button>
@@ -512,6 +516,8 @@ function ProductDetailContent() {
                         src={rev.photoUrl}
                         alt="Customer Photo"
                         fill
+                        loading="lazy"
+                        sizes="80px"
                         className="object-cover"
                       />
                     </div>

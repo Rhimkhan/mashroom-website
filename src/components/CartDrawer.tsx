@@ -122,6 +122,8 @@ export default function CartDrawer() {
                       src={item.image}
                       alt={`${item.name} - Pickle Jar`}
                       fill
+                      loading="lazy"
+                      sizes="80px"
                       className="object-cover"
                     />
                   </div>

@@ -53,6 +53,7 @@ import {
 import { INITIAL_PRODUCTS } from "@/lib/data";
 import { BRAND } from "@/lib/brand";
 import { isSupabaseConfigured } from "@/lib/supabase";
+import { fetchWithTimeout } from "@/lib/fetch-timeout";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -107,7 +108,7 @@ export default function AdminPage() {
 
   // Check existing session on server
   useEffect(() => {
-    fetch("/api/admin/me")
+    fetchWithTimeout("/api/admin/me", { cache: "no-store" }, 3500)
       .then((res) => res.json())
       .then((data) => {
         if (data?.authenticated) {
@@ -125,7 +126,7 @@ export default function AdminPage() {
     setLoading(true);
     try {
       // 1. Fetch Orders
-      const resOrders = await fetch("/api/orders");
+      const resOrders = await fetchWithTimeout("/api/orders", { cache: "no-store" }, 4000);
       const ordersData = await resOrders.json();
       if (ordersData?.orders && Array.isArray(ordersData.orders) && ordersData.orders.length > 0) {
         setOrders(ordersData.orders);
@@ -134,7 +135,7 @@ export default function AdminPage() {
       }
 
       // 2. Fetch Products
-      const resProducts = await fetch("/api/products");
+      const resProducts = await fetchWithTimeout("/api/products", { cache: "no-store" }, 4000);
       const productsData = await resProducts.json();
       if (
         productsData?.products &&
@@ -149,7 +150,7 @@ export default function AdminPage() {
 
       // 3. Fetch Reviews
       try {
-        const resReviews = await fetch("/api/admin/reviews");
+        const resReviews = await fetchWithTimeout("/api/admin/reviews", { cache: "no-store" }, 4000);
         const revData = await resReviews.json();
         if (revData?.reviews && Array.isArray(revData.reviews)) {
           setReviews(revData.reviews);
@@ -162,7 +163,7 @@ export default function AdminPage() {
 
       // 4. Fetch Wholesale Inquiries
       try {
-        const resWholesale = await fetch("/api/wholesale");
+        const resWholesale = await fetchWithTimeout("/api/wholesale", { cache: "no-store" }, 4000);
         const wData = await resWholesale.json();
         if (wData?.inquiries && Array.isArray(wData.inquiries)) {
           setWholesaleInquiries(wData.inquiries);
@@ -647,10 +648,20 @@ If you have any questions, reply here.
     return Object.values(map).sort((a, b) => b.totalSpent - a.totalSpent);
   }, [orders]);
 
+  const [currentTime, setCurrentTime] = useState<number | null>(null);
+
+  useEffect(() => {
+    setCurrentTime(Date.now());
+  }, []);
+
   // Sales Statistics Calculation for Today, 7 Days, 30 Days
   const salesStats = useMemo(() => {
-    const now = Date.now();
-    const startOfToday = new Date();
+    const emptyStats = { count: 0, revenue: 0, bestSellers: [] };
+    if (!currentTime) {
+      return { today: emptyStats, "7days": emptyStats, "30days": emptyStats };
+    }
+
+    const startOfToday = new Date(currentTime);
     startOfToday.setHours(0, 0, 0, 0);
 
     const calcForOrders = (list: Order[]) => {
@@ -680,12 +691,12 @@ If you have any questions, reply here.
 
     const orders7Days = orders.filter((o) => {
       const t = new Date(o.createdAt).getTime();
-      return !isNaN(t) && t >= now - 7 * 86400000;
+      return !isNaN(t) && t >= currentTime - 7 * 86400000;
     });
 
     const orders30Days = orders.filter((o) => {
       const t = new Date(o.createdAt).getTime();
-      return !isNaN(t) && t >= now - 30 * 86400000;
+      return !isNaN(t) && t >= currentTime - 30 * 86400000;
     });
 
     return {
@@ -693,7 +704,7 @@ If you have any questions, reply here.
       "7days": calcForOrders(orders7Days),
       "30days": calcForOrders(orders30Days),
     };
-  }, [orders]);
+  }, [orders, currentTime]);
 
   // Metrics
   const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);

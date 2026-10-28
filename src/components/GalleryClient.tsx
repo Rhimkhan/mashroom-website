@@ -150,6 +150,8 @@ export default function GalleryClient() {
                     src={item.image}
                     alt={item.alt}
                     fill
+                    loading="lazy"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                   />
                   <span className="absolute top-3 left-3 bg-[#1C130E]/90 backdrop-blur-sm text-[#FAF6EE] text-xs font-bold px-3 py-1 rounded-full shadow-md border border-[#C89B3C]/40">
@@ -229,6 +231,7 @@ export default function GalleryClient() {
                   src={activeItem.image}
                   alt={activeItem.alt}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 800px"
                   className="object-contain p-4"
                 />
               </div>

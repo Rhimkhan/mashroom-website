@@ -168,7 +168,14 @@ function OrderSuccessContent() {
                 <div key={idx} className="flex items-center justify-between text-sm py-2 border-b border-[#E8DEC8]/50">
                   <div className="flex items-center gap-3">
                     <div className="relative w-12 h-12 rounded-[4px] overflow-hidden bg-[#FAF6EE] shrink-0 border border-[#E8DEC8]">
-                      <Image src={item.image} alt={item.name} fill className="object-contain p-0.5" />
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        loading="lazy"
+                        sizes="48px"
+                        className="object-contain p-0.5"
+                      />
                     </div>
                     <div>
                       <h3 className="font-bold text-[#211612] text-sm">{item.name}</h3>

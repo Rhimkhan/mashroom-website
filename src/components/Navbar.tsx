@@ -235,7 +235,7 @@ function NavbarContent() {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-lg lg:hidden text-[#211612] hover:bg-[#EDE3C8] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#211612]"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg lg:hidden text-[#211612] hover:bg-[#EDE3C8] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#211612]"
                 aria-label="Toggle menu"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

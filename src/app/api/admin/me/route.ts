@@ -6,10 +6,16 @@ export async function GET(request: NextRequest) {
   if (!isAuthenticated) {
     return NextResponse.json(
       { authenticated: false, error: "Unauthorized. Admin session required." },
-      { status: 401 }
+      {
+        status: 401,
+        headers: { "Cache-Control": "no-store, no-cache, must-revalidate" },
+      }
     );
   }
-  return NextResponse.json({
-    authenticated: true,
-  });
+  return NextResponse.json(
+    { authenticated: true },
+    {
+      headers: { "Cache-Control": "no-store, no-cache, must-revalidate" },
+    }
+  );
 }

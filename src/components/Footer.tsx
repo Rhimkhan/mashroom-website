@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { BRAND } from "@/lib/brand";
@@ -72,6 +70,8 @@ export default function Footer() {
                   src={BRAND.logo}
                   alt={`${BRAND.name} Pickle Emblem`}
                   fill
+                  loading="lazy"
+                  sizes="48px"
                   className="object-cover"
                 />
               </div>

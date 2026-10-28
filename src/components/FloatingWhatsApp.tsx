@@ -17,7 +17,7 @@ export default function FloatingWhatsApp() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Order on WhatsApp"
-        className="group flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#211612]/95 hover:bg-[#34221A] border border-[#C89B3C]/40 text-[#FAF6EE] backdrop-blur-md shadow-2xl hover:border-[#C89B3C] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
+        className="group flex items-center justify-center min-w-[44px] min-h-[44px] px-4 py-2.5 rounded-full bg-[#211612]/95 hover:bg-[#34221A] border border-[#C89B3C]/40 text-[#FAF6EE] backdrop-blur-md shadow-2xl hover:border-[#C89B3C] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
       >
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C89B3C] opacity-60"></span>

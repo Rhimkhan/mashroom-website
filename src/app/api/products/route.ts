@@ -44,7 +44,14 @@ export async function GET() {
 
       if (!error && data && data.length > 0) {
         const normalized = data.map(normalizeProductRow);
-        return NextResponse.json({ success: true, products: normalized, source: "supabase" });
+        return NextResponse.json(
+          { success: true, products: normalized, source: "supabase" },
+          {
+            headers: {
+              "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+            },
+          }
+        );
       }
 
       if (error) {
@@ -64,7 +71,14 @@ export async function GET() {
     // 2. Fallback to local persistent store / seed data (development only)
     const local = getLocalProducts();
     const products = local.length > 0 ? local : INITIAL_PRODUCTS;
-    return NextResponse.json({ success: true, products, source: "local" });
+    return NextResponse.json(
+      { success: true, products, source: "local" },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        },
+      }
+    );
   } catch (error) {
     console.error("Products GET error:", error);
     if (process.env.NODE_ENV === "production") {
@@ -73,7 +87,14 @@ export async function GET() {
         { status: 500 }
       );
     }
-    return NextResponse.json({ success: true, products: INITIAL_PRODUCTS, source: "fallback" });
+    return NextResponse.json(
+      { success: true, products: INITIAL_PRODUCTS, source: "fallback" },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        },
+      }
+    );
   }
 }
 

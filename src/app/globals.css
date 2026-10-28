@@ -116,7 +116,7 @@ header :focus-visible {
   }
   /* Style 4: Minimalist Icon-only Button */
   .btn-icon {
-    @apply flex items-center justify-center p-2 rounded-xl text-[#211612] hover:bg-[#EDE3C8] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#211612];
+    @apply flex items-center justify-center p-2 min-w-[44px] min-h-[44px] rounded-xl text-[#211612] hover:bg-[#EDE3C8] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#211612];
   }
 }
 

@@ -65,6 +65,7 @@ export default function TrackOrderPage() {
     try {
       const res = await fetch("/api/orders/track", {
         method: "POST",
+        cache: "no-store",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderNumber: cleanOrderNumber,

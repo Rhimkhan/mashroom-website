@@ -19,6 +19,7 @@ import { BRAND } from "@/lib/brand";
 import { Product, ProductSize } from "@/lib/types";
 import HeroProductCard from "@/components/HeroProductCard";
 import { WHATSAPP_NUMBER, WHATSAPP_DEFAULT_MESSAGE, FSSAI_NUMBER, GST_NUMBER, UDYAM_NUMBER } from "@/lib/config";
+import { fetchWithTimeout } from "@/lib/fetch-timeout";
 
 export default function HomePage() {
   const { addToCart, buyNow } = useCart();
@@ -29,7 +30,7 @@ export default function HomePage() {
   const [faqOpenIndex, setFaqOpenIndex] = useState<number | null>(0);
 
   useEffect(() => {
-    fetch("/api/products")
+    fetchWithTimeout("/api/products", undefined, 3500)
       .then((res) => res.json())
       .then((data) => {
         if (data?.products && Array.isArray(data.products) && data.products.length > 0) {
@@ -284,6 +285,8 @@ export default function HomePage() {
                       src={product.image}
                       alt={product.name}
                       fill
+                      loading="lazy"
+                      sizes="(max-width: 768px) 100vw, 448px"
                       className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                     />
                     {product.badges[0] && (
@@ -400,6 +403,8 @@ export default function HomePage() {
                   src="/images/products/mushroom-mela-side.jpg"
                   alt="Mushroom Mela Jar by Akhil Foods Jhansi"
                   fill
+                  loading="lazy"
+                  sizes="(max-width: 1024px) 100vw, 450px"
                   className="object-contain p-4"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#120B08]/80 via-transparent to-transparent pointer-events-none" />

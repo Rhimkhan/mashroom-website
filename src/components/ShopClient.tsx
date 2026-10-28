@@ -16,6 +16,8 @@ import { useCart } from "@/lib/cart-context";
 import { Product, ProductSize } from "@/lib/types";
 import PincodeChecker from "@/components/PincodeChecker";
 
+import { fetchWithTimeout } from "@/lib/fetch-timeout";
+
 export default function ShopClient() {
   const { addToCart, buyNow } = useCart();
   const [productsList, setProductsList] = useState<Product[]>(INITIAL_PRODUCTS);
@@ -29,9 +31,9 @@ export default function ShopClient() {
     "prod-4": "250g",
   });
 
-  // Fetch updated products from API endpoint
+  // Fetch updated products from API endpoint with timeout and graceful fallback
   useEffect(() => {
-    fetch("/api/products")
+    fetchWithTimeout("/api/products", undefined, 3500)
       .then((res) => res.json())
       .then((data) => {
         if (data?.products && Array.isArray(data.products) && data.products.length > 0) {

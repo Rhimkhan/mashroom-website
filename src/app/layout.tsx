@@ -4,23 +4,22 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import CartDrawer from "@/components/CartDrawer";
-import AuthModal from "@/components/AuthModal";
 import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
 import Analytics from "@/components/Analytics";
+import ClientOverlays from "@/components/ClientOverlays";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
 const poppins = Poppins({
   subsets: ["latin"],
   variable: "--font-poppins",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -101,8 +100,7 @@ export default function RootLayout({
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />
-            <CartDrawer />
-            <AuthModal />
+            <ClientOverlays />
             <FloatingWhatsApp />
             <Analytics />
           </CartProvider>
