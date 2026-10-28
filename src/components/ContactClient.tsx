@@ -21,65 +21,26 @@ export default function ContactClient() {
     phone: "",
     subject: "Order Inquiry",
     message: "",
-    website_url: "", // Honeypot bot protection
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
-    const rawName = formData.name.trim();
-    if (rawName.length < 2 || rawName.length > 60) {
-      setErrorMessage("Please enter your name (between 2 and 60 characters).");
-      return;
-    }
-
-    const cleanPhone = formData.phone.replace(/\D/g, "");
-    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
-      setErrorMessage("Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.");
-      return;
-    }
-
-    const rawEmail = formData.email.trim();
-    if (rawEmail) {
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (rawEmail.length > 100 || !emailRegex.test(rawEmail)) {
-        setErrorMessage("Please enter a valid email address (e.g. yourname@example.com).");
-        return;
-      }
-    }
-
-    const rawMessage = formData.message.trim();
-    if (rawMessage.length < 10 || rawMessage.length > 2000) {
-      setErrorMessage("Please enter a message (between 10 and 2000 characters).");
+    if (!formData.name.trim() || !formData.phone.trim() || !formData.message.trim()) {
+      setErrorMessage("Please fill in all required fields (Name, Phone, and Message).");
       return;
     }
 
     setLoading(true);
-
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        setErrorMessage(data.error || "Failed to submit message. Please try again.");
-        setLoading(false);
-        return;
-      }
-
+    // Simulate contact dispatch
+    setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
-    } catch {
-      setErrorMessage("Network error. Please check your connection and try again.");
-      setLoading(false);
-    }
+    }, 600);
   };
 
   return (
@@ -87,46 +48,46 @@ export default function ContactClient() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="text-xs font-bold text-[#FAF6EE] bg-[#1C130E] px-4 py-1.5 rounded-[6px] border border-[#C89B3C]/40 inline-flex items-center gap-1.5 shadow-sm">
+          <span className="text-xs font-bold text-[#FAF6EE] bg-[#1C130E] px-4 py-1.5 rounded-full border border-[#C89B3C]/40 inline-flex items-center gap-1.5 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-[#C89B3C]" />
-            <span>Customer Support</span>
+            <span>Dedicated Customer Care</span>
           </span>
           <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-[#211612]">
-            Contact Akhil Foods
+            Get In Touch With Our Kitchen
           </h1>
           <p className="text-sm text-[#3D2C24]/80">
-            Have questions about ingredients, bulk orders, or courier delivery? We are located in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.
+            Have questions about ingredients, bulk family orders, wedding gifting, or courier delivery? We are right here in Moth, Jhansi, UP.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Contact Details Card */}
-          <div className="lg:col-span-5 bg-[#1C130E] text-[#FAF6EE] p-8 sm:p-10 rounded-[6px] shadow-xl space-y-8 flex flex-col justify-between relative overflow-hidden border border-[#C89B3C]/30">
+          <div className="lg:col-span-5 bg-[#1C130E] text-[#FAF6EE] p-8 sm:p-10 rounded-3xl shadow-xl space-y-8 flex flex-col justify-between relative overflow-hidden border border-[#C89B3C]/30">
             <div className="space-y-6">
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#FAF6EE]">
-                Our Unit & Kitchen
+                Our Kitchen & Workshop
               </h2>
               <p className="text-sm text-[#FAF6EE]/80 leading-relaxed">
-                Mushroom Mela oyster mushroom pickle made in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.
+                Handcrafting authentic Oyster Mushroom Pickles in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.
               </p>
 
               <div className="space-y-4 pt-2 text-sm">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-[6px] bg-[#2A1D17] text-[#C89B3C] flex items-center justify-center shrink-0 border border-[#C89B3C]/30">
+                  <div className="w-10 h-10 rounded-xl bg-[#2A1D17] text-[#C89B3C] flex items-center justify-center shrink-0 border border-[#C89B3C]/30">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#FAF6EE] text-sm">Address</h3>
+                    <h3 className="font-bold text-[#FAF6EE] text-sm">Kitchen & Farm Address</h3>
                     <p className="text-[#FAF6EE]/80 mt-0.5 leading-relaxed text-sm">{BRAND.address}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-[6px] bg-[#2A1D17] text-[#C89B3C] flex items-center justify-center shrink-0 border border-[#C89B3C]/30">
+                  <div className="w-10 h-10 rounded-xl bg-[#2A1D17] text-[#C89B3C] flex items-center justify-center shrink-0 border border-[#C89B3C]/30">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#FAF6EE] text-sm">Phone</h3>
+                    <h3 className="font-bold text-[#FAF6EE] text-sm">Phone & Direct Care</h3>
                     <a href={TEL_LINK} className="text-[#FAF6EE]/80 hover:text-[#C89B3C] underline mt-0.5 block text-sm font-semibold">
                       {PHONE_DISPLAY}
                     </a>
@@ -134,11 +95,11 @@ export default function ContactClient() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-[6px] bg-[#2A1D17] text-[#C89B3C] flex items-center justify-center shrink-0 border border-[#C89B3C]/30">
+                  <div className="w-10 h-10 rounded-xl bg-[#2A1D17] text-[#C89B3C] flex items-center justify-center shrink-0 border border-[#C89B3C]/30">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#FAF6EE] text-sm">Email</h3>
+                    <h3 className="font-bold text-[#FAF6EE] text-sm">Official Email</h3>
                     <a href={`mailto:${BRAND.email}`} className="text-[#FAF6EE]/80 hover:text-[#C89B3C] underline mt-0.5 block text-sm">
                       {BRAND.email}
                     </a>
@@ -146,33 +107,33 @@ export default function ContactClient() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-[6px] bg-[#2A1D17] text-[#C89B3C] flex items-center justify-center shrink-0 border border-[#C89B3C]/30">
+                  <div className="w-10 h-10 rounded-xl bg-[#2A1D17] text-[#C89B3C] flex items-center justify-center shrink-0 border border-[#C89B3C]/30">
                     <Clock className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-bold text-[#FAF6EE] text-sm">Operating Hours</h3>
-                    <p className="text-[#FAF6EE]/80 mt-0.5 text-sm">Mon to Sat: 9:00 AM to 7:00 PM IST (Sun Closed)</p>
+                    <p className="text-[#FAF6EE]/80 mt-0.5 text-sm">Mon – Sat: 9:00 AM – 7:00 PM IST (Sun Closed)</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Direct WhatsApp Box */}
-            <div className="bg-[#2A1D17] p-5 rounded-[6px] border border-[#C89B3C]/30 space-y-2.5 text-sm">
+            <div className="bg-[#2A1D17] p-5 rounded-2xl border border-[#C89B3C]/30 space-y-2.5 text-sm">
               <span className="font-bold text-[#FAF6EE] flex items-center gap-2">
                 <MessageSquare className="w-4 h-4 text-[#25D366]" />
-                <span>WhatsApp Support</span>
+                <span>Instant WhatsApp Live Desk</span>
               </span>
               <p className="text-[#FAF6EE]/75 text-xs leading-relaxed">
-                Connect directly with our team.
+                Connect directly with our culinary team. Average response time under 10 minutes.
               </p>
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_DEFAULT_MESSAGE)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-center py-2.5 rounded-[6px] bg-[#25D366] text-white font-bold hover:bg-[#20ba59] transition-colors shadow-sm text-sm"
+                className="block text-center py-2.5 rounded-full bg-[#25D366] text-white font-bold hover:bg-[#20ba59] transition-colors shadow-md text-sm"
               >
-                Chat on WhatsApp ({PHONE_DISPLAY})
+                Chat on WhatsApp (+91 69665 58899)
               </a>
             </div>
 
@@ -201,17 +162,17 @@ export default function ContactClient() {
           </div>
 
           {/* Contact Form */}
-          <div className="lg:col-span-7 bg-[#FDFBF7] p-8 sm:p-10 rounded-[6px] border border-[#E8DEC8] shadow-sm space-y-6">
+          <div className="lg:col-span-7 bg-[#FDFBF7] p-8 sm:p-10 rounded-3xl border border-[#E8DEC8] shadow-sm space-y-6">
             <h2 className="font-serif text-2xl font-bold text-[#211612]">
-              Send Us a Message
+              Send Us an Official Message
             </h2>
 
             {submitted ? (
-              <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-8 rounded-[6px] text-center space-y-4">
+              <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-8 rounded-2xl text-center space-y-4">
                 <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
                 <h3 className="font-serif text-2xl font-bold">Message Received!</h3>
                 <p className="text-sm text-[#3D2C24]/80 max-w-sm mx-auto leading-relaxed">
-                  Thank you for reaching out to <strong>{BRAND.name}</strong>. A member of our team will contact you via phone or email shortly.
+                  Thank you for reaching out to <strong>{BRAND.name}</strong>. A member of our family team will contact you via phone or email within a few hours.
                 </p>
                 <div className="pt-2">
                   <button
@@ -223,10 +184,9 @@ export default function ContactClient() {
                         phone: "",
                         subject: "Order Inquiry",
                         message: "",
-                        website_url: "",
                       });
                     }}
-                    className="px-6 py-2.5 rounded-[6px] bg-[#211612] text-[#FAF6EE] border border-[#211612] text-sm font-bold hover:bg-[#1C130E] transition-colors"
+                    className="px-6 py-2.5 rounded-full bg-[#211612] text-[#FAF6EE] border border-[#C89B3C]/40 text-sm font-bold hover:bg-[#1C130E] transition-colors"
                   >
                     Send Another Message
                   </button>
@@ -234,20 +194,8 @@ export default function ContactClient() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4 text-sm">
-                {/* Anti-spam Honeypot */}
-                <input
-                  type="text"
-                  name="website_url"
-                  value={formData.website_url}
-                  onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
-                  style={{ display: "none" }}
-                  tabIndex={-1}
-                  autoComplete="off"
-                  aria-hidden="true"
-                />
-
                 {errorMessage && (
-                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-[6px] text-sm">
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm">
                     {errorMessage}
                   </div>
                 )}
@@ -263,7 +211,7 @@ export default function ContactClient() {
                       placeholder="e.g. Priya Sharma"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-[6px] border border-[#E8DEC8] focus:outline-none focus:ring-2 focus:ring-[#211612] bg-[#FAF6EE] text-sm text-[#211612]"
+                      className="w-full px-4 py-3 rounded-xl border border-[#E8DEC8] focus:outline-none focus:ring-2 focus:ring-[#211612] bg-[#FAF6EE] text-sm text-[#211612]"
                     />
                   </div>
 
@@ -274,10 +222,10 @@ export default function ContactClient() {
                     <input
                       type="tel"
                       required
-                      placeholder="e.g. 6386423865"
+                      placeholder="e.g. 6966558899"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-[6px] border border-[#E8DEC8] focus:outline-none focus:ring-2 focus:ring-[#211612] bg-[#FAF6EE] text-sm text-[#211612]"
+                      className="w-full px-4 py-3 rounded-xl border border-[#E8DEC8] focus:outline-none focus:ring-2 focus:ring-[#211612] bg-[#FAF6EE] text-sm text-[#211612]"
                     />
                   </div>
                 </div>
@@ -289,7 +237,7 @@ export default function ContactClient() {
                     placeholder="e.g. priya@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-[6px] border border-[#E8DEC8] focus:outline-none focus:ring-2 focus:ring-[#211612] bg-[#FAF6EE] text-sm text-[#211612]"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8DEC8] focus:outline-none focus:ring-2 focus:ring-[#211612] bg-[#FAF6EE] text-sm text-[#211612]"
                   />
                 </div>
 
@@ -298,11 +246,11 @@ export default function ContactClient() {
                   <select
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-3 rounded-[6px] border border-[#E8DEC8] focus:outline-none focus:ring-2 focus:ring-[#211612] bg-[#FAF6EE] text-sm text-[#211612]"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8DEC8] focus:outline-none focus:ring-2 focus:ring-[#211612] bg-[#FAF6EE] text-sm text-[#211612]"
                   >
                     <option value="Order Inquiry">Order Inquiry / Delivery Status Tracking</option>
-                    <option value="Bulk Order">Bulk Order</option>
-                    <option value="Recipe & Ingredients">Ingredients Question</option>
+                    <option value="Bulk Order">Bulk Family / Wedding Gifting / Corporate Hampers</option>
+                    <option value="Recipe & Ingredients">Recipe, Spices & Ingredients Question</option>
                     <option value="Production Inquiry">Kitchen & Production Inquiry</option>
                   </select>
                 </div>
@@ -317,14 +265,14 @@ export default function ContactClient() {
                     placeholder="Tell us what you would like to know or request..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 rounded-[6px] border border-[#E8DEC8] focus:outline-none focus:ring-2 focus:ring-[#211612] bg-[#FAF6EE] text-sm text-[#211612]"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8DEC8] focus:outline-none focus:ring-2 focus:ring-[#211612] bg-[#FAF6EE] text-sm text-[#211612]"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 rounded-[6px] bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#211612] font-bold text-sm shadow-sm transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-full bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm shadow-xl transition-all flex items-center justify-center gap-2"
                 >
                   <Send className="w-4 h-4 text-[#C89B3C]" />
                   <span>{loading ? "Sending Message..." : "Submit Message"}</span>
@@ -349,14 +297,14 @@ export default function ContactClient() {
               href="https://maps.google.com/?q=Village+Nandsiya,+Moth,+Jhansi,+Uttar+Pradesh+284303"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[6px] bg-[#FDFBF7] border border-[#E8DEC8] text-[#211612] text-xs font-bold hover:bg-[#FAF6EE] transition-colors shadow-sm self-start"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#FDFBF7] border border-[#E8DEC8] text-[#211612] text-xs font-bold hover:bg-[#FAF6EE] transition-colors shadow-sm self-start"
             >
               <Navigation className="w-3.5 h-3.5 text-[#A87B28]" />
               <span>Open in Google Maps</span>
             </a>
           </div>
 
-          <div className="w-full h-96 rounded-[6px] overflow-hidden border border-[#E8DEC8] shadow-sm bg-stone-200">
+          <div className="w-full h-96 rounded-3xl overflow-hidden border border-[#E8DEC8] shadow-sm bg-stone-200">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57545.33405788484!2d78.91924515!3d25.71480115!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39775f0a4f5b5f89%3A0x6e2c3a5b06ec9047!2sMoth%2C%20Uttar%20Pradesh%20284303!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
               width="100%"

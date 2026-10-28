@@ -88,15 +88,18 @@ export default function AuthModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in-50">
       <div
-        className="relative w-full max-w-md bg-[#FAF6EE] border border-[#C89B3C]/40 rounded-[6px] shadow-sm p-6 sm:p-8 overflow-hidden animate-in zoom-in-95"
+        className="relative w-full max-w-md bg-[#FAF6EE] border border-[#C89B3C]/40 rounded-3xl shadow-2xl p-6 sm:p-8 overflow-hidden animate-in zoom-in-95"
         role="dialog"
         aria-modal="true"
       >
+        {/* Ambient subtle warm gold glow in corner */}
+        <div className="absolute top-0 right-0 w-44 h-44 bg-[#C89B3C]/10 rounded-full blur-2xl pointer-events-none" />
+
         {/* Close Button */}
         <button
           type="button"
           onClick={closeAuthModal}
-          className="absolute top-5 right-5 p-2 rounded-[6px] text-[#211612]/60 hover:text-[#211612] hover:bg-[#EDE3C8] transition-colors focus:outline-none focus:ring-1 focus:ring-[#211612]"
+          className="absolute top-5 right-5 p-2 rounded-full text-[#211612]/60 hover:text-[#211612] hover:bg-[#EDE3C8] transition-colors focus:outline-none focus:ring-1 focus:ring-[#211612]"
           aria-label="Close modal"
         >
           <X className="w-5 h-5" />
@@ -105,27 +108,27 @@ export default function AuthModal() {
         {/* Brand & Title */}
         <div className="text-center mb-6">
           <span className="font-serif text-[10px] sm:text-[11px] tracking-[0.3em] uppercase text-[#A87B28] font-bold block mb-1">
-            AKHIL FOODS • CUSTOMER ACCOUNT
+            AKHIL FOODS • ATELIER ACCOUNT
           </span>
           <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#211612]">
-            {mode === "signin" ? "Welcome Back" : "Create Account"}
+            {mode === "signin" ? "Welcome Back" : "Join The Atelier"}
           </h2>
           <p className="text-xs text-[#3D2C24]/80 mt-1 font-light">
             {mode === "signin"
-              ? "Access your orders and track your deliveries."
+              ? "Access your artisanal orders and track your deliveries."
               : "Create an account for one-click ordering and live order tracking."}
           </p>
         </div>
 
         {/* Tabs: Sign In / Create Account */}
-        <div className="flex bg-[#EFE8DD] p-1 rounded-[6px] mb-6 border border-[#DDD3C4]">
+        <div className="flex bg-[#EFE8DD] p-1 rounded-xl mb-6 border border-[#DDD3C4]">
           <button
             type="button"
             onClick={() => {
               setMode("signin");
               setErrorMsg(null);
             }}
-            className={`flex-1 py-2 text-xs font-serif tracking-wider uppercase rounded-[4px] transition-colors ${
+            className={`flex-1 py-2 text-xs font-serif tracking-wider uppercase rounded-lg transition-all ${
               mode === "signin"
                 ? "bg-[#211612] text-[#FAF6EE] font-bold shadow-sm"
                 : "text-[#211612]/80 hover:text-[#211612]"
@@ -139,7 +142,7 @@ export default function AuthModal() {
               setMode("signup");
               setErrorMsg(null);
             }}
-            className={`flex-1 py-2 text-xs font-serif tracking-wider uppercase rounded-[4px] transition-colors ${
+            className={`flex-1 py-2 text-xs font-serif tracking-wider uppercase rounded-lg transition-all ${
               mode === "signup"
                 ? "bg-[#211612] text-[#FAF6EE] font-bold shadow-sm"
                 : "text-[#211612]/80 hover:text-[#211612]"
@@ -154,7 +157,7 @@ export default function AuthModal() {
           type="button"
           onClick={handleGoogleAuth}
           disabled={loading}
-          className="w-full py-2.5 px-4 rounded-[6px] bg-[#FDFBF7] hover:bg-[#FAF6EE] border border-[#DDD3C4] hover:border-[#C89B3C] text-xs font-serif text-[#211612] flex items-center justify-center gap-2.5 transition-colors shadow-sm mb-4 group disabled:opacity-50"
+          className="w-full py-2.5 px-4 rounded-xl bg-[#FDFBF7] hover:bg-[#FAF6EE] border border-[#DDD3C4] hover:border-[#C89B3C] text-xs font-serif text-[#211612] flex items-center justify-center gap-2.5 transition-all shadow-sm mb-4 group disabled:opacity-50"
         >
           <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
             <path
@@ -186,14 +189,14 @@ export default function AuthModal() {
 
         {/* Feedback Alerts */}
         {errorMsg && (
-          <div className="p-3 bg-red-50/90 border border-red-200 rounded-[6px] text-red-700 text-xs flex items-start gap-2 mb-4 animate-in fade-in-50">
+          <div className="p-3 bg-red-50/90 border border-red-200 rounded-xl text-red-700 text-xs flex items-start gap-2 mb-4 animate-in fade-in-50">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
             <p className="leading-tight">{errorMsg}</p>
           </div>
         )}
 
         {successMsg && (
-          <div className="p-3 bg-emerald-50/90 border border-emerald-200 rounded-[6px] text-emerald-800 text-xs flex items-start gap-2 mb-4 animate-in fade-in-50">
+          <div className="p-3 bg-emerald-50/90 border border-emerald-200 rounded-xl text-emerald-800 text-xs flex items-start gap-2 mb-4 animate-in fade-in-50">
             <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
             <p className="leading-tight">{successMsg}</p>
           </div>
@@ -214,7 +217,7 @@ export default function AuthModal() {
                   placeholder="e.g. Ramesh Kumar"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-[#FDFBF7] text-[#211612] rounded-[6px] border border-[#DDD3C4] focus:outline-none focus:ring-1 focus:ring-[#211612]"
+                  className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-[#FDFBF7] text-[#211612] rounded-xl border border-[#DDD3C4] focus:outline-none focus:ring-1 focus:ring-[#211612]"
                 />
               </div>
             </div>
@@ -232,7 +235,7 @@ export default function AuthModal() {
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-[#FDFBF7] text-[#211612] rounded-[6px] border border-[#DDD3C4] focus:outline-none focus:ring-1 focus:ring-[#211612]"
+                className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-[#FDFBF7] text-[#211612] rounded-xl border border-[#DDD3C4] focus:outline-none focus:ring-1 focus:ring-[#211612]"
               />
             </div>
           </div>
@@ -249,7 +252,7 @@ export default function AuthModal() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-[#FDFBF7] text-[#211612] rounded-[6px] border border-[#DDD3C4] focus:outline-none focus:ring-1 focus:ring-[#211612]"
+                className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-[#FDFBF7] text-[#211612] rounded-xl border border-[#DDD3C4] focus:outline-none focus:ring-1 focus:ring-[#211612]"
               />
             </div>
           </div>
@@ -257,13 +260,13 @@ export default function AuthModal() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 rounded-[6px] bg-[#211612] hover:bg-[#34221A] text-[#FAF6EE] font-serif font-bold text-xs tracking-[0.2em] uppercase shadow-sm transition-colors flex items-center justify-center gap-2 border border-[#211612] disabled:opacity-50"
+            className="w-full mt-2 py-3 rounded-xl bg-[#211612] hover:bg-[#34221A] text-[#FAF6EE] font-serif font-bold text-xs tracking-[0.2em] uppercase shadow-lg transition-all flex items-center justify-center gap-2 border border-[#C89B3C]/40 hover:border-[#C89B3C] disabled:opacity-50"
           >
             {loading ? (
               <span className="inline-block w-4 h-4 border-2 border-[#FAF6EE] border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
-                <span>{mode === "signin" ? "Sign In" : "Create Account"}</span>
+                <span>{mode === "signin" ? "Sign In to Atelier" : "Create My Account"}</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#C89B3C]" />
               </>
             )}
@@ -288,7 +291,7 @@ export default function AuthModal() {
             </p>
           ) : (
             <p>
-              Already have an account?{" "}
+              Already an Atelier member?{" "}
               <button
                 type="button"
                 onClick={() => {

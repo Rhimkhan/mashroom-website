@@ -23,18 +23,26 @@ const poppins = Poppins({
   display: "swap",
 });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(appUrl),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://akhilfoods.com"),
   title: {
-    default: "AKHIL FOODS | Mushroom Mela oyster mushroom pickle",
+    default: "AKHIL FOODS | Artisanal Handcrafted Mushroom Pickles",
     template: "%s | AKHIL FOODS",
   },
   description:
-    "Mushroom Mela oyster mushroom pickle made by Akhil Foods in Village Nandsiya, Moth, Jhansi, Uttar Pradesh. 400 g jar, Rs 399. FSSAI registered.",
-  keywords: ["AKHIL FOODS", "Mushroom Mela", "Mushroom Pickle", "Jhansi"],
-  authors: [{ name: "AKHIL FOODS", url: appUrl }],
+    "Experience authentic artisanal oyster mushroom pickles handcrafted in Village Nandsiya, Moth, Jhansi, Uttar Pradesh by AKHIL FOODS with fresh mushrooms, pure mustard oil, and traditional spices. Great Food, Better Life.",
+  keywords: [
+    "mushroom pickle",
+    "akhil foods",
+    "mushroom mela",
+    "oyster mushroom pickle",
+    "jhansi pickles",
+    "uttar pradesh pickle",
+    "pure mustard oil pickle",
+    "handcrafted pickle online",
+    "fssai registered pickle",
+  ],
+  authors: [{ name: "AKHIL FOODS", url: "https://akhilfoods.com" }],
   creator: "AKHIL FOODS",
   publisher: "AKHIL FOODS",
   formatDetection: {
@@ -42,9 +50,9 @@ export const metadata: Metadata = {
     email: false,
   },
   openGraph: {
-    title: "AKHIL FOODS | Mushroom Mela oyster mushroom pickle",
-    description: "Mushroom Mela oyster mushroom pickle made by Akhil Foods in Nandsiya, Moth, Jhansi. 400 g jar, Rs 399. FSSAI registered.",
-    url: appUrl,
+    title: "AKHIL FOODS | Artisanal Handcrafted Mushroom Pickles",
+    description: "Great Food, Better Life. Authentic handcrafted oyster mushroom pickles from Village Nandsiya, Moth, Jhansi, Uttar Pradesh.",
+    url: "https://akhilfoods.com",
     siteName: "AKHIL FOODS",
     images: [
       {
@@ -59,8 +67,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AKHIL FOODS | Mushroom Mela oyster mushroom pickle",
-    description: "Mushroom Mela oyster mushroom pickle made by Akhil Foods in Nandsiya, Moth, Jhansi. 400 g jar, Rs 399.",
+    title: "AKHIL FOODS | Artisanal Mushroom Pickles",
+    description: "Authentic handcrafted oyster mushroom pickles from Jhansi, Uttar Pradesh.",
     images: ["/images/products/mushroom-mela-front.jpg"],
   },
   robots: {
@@ -84,7 +92,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${poppins.variable} scroll-smooth`}>
       <head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/images/akhil-foods-logo.png" />
       </head>
       <body className="min-h-screen flex flex-col bg-[#FAF6EE] text-[#211612] antialiased selection:bg-[#211612] selection:text-[#FAF6EE]">
         <AuthProvider>

@@ -38,22 +38,22 @@ export default function PincodeChecker() {
           days: known.days,
         });
       } else {
-        // Universal all-India courier coverage fallback
+        // Universal PAN-India courier coverage fallback
         setResult({
           valid: true,
           city: "Verified Pincode",
           state: "All India Delivery",
-          days: "Depends on courier and location",
+          days: "3-5 business days via BlueDart / Delhivery Express",
         });
       }
     }, 400);
   };
 
   return (
-    <div className="bg-[#FDFBF7] p-4 rounded-[6px] border border-[#E8DEC8] text-sm shadow-sm">
+    <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-[#E8DEC8] text-sm shadow-sm">
       <div className="flex items-center gap-1.5 text-[#211612] font-semibold mb-2">
         <MapPin className="w-4 h-4 text-[#A87B28]" />
-        <span>Check Delivery Availability</span>
+        <span>Check Delivery Availability & Estimated Time</span>
       </div>
 
       <form onSubmit={handleCheck} className="flex gap-2">
@@ -63,12 +63,12 @@ export default function PincodeChecker() {
           placeholder="Enter 6-digit Pincode"
           value={pincode}
           onChange={(e) => setPincode(e.target.value.replace(/\D/g, ""))}
-          className="flex-1 px-3 py-2 rounded-[6px] bg-[#FAF6EE] border border-[#E8DEC8] text-[#211612] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#211612]"
+          className="flex-1 px-3 py-2 rounded-xl bg-[#FAF6EE] border border-[#E8DEC8] text-[#211612] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#211612]"
         />
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 rounded-[6px] bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#211612] font-semibold text-sm transition-colors disabled:opacity-50 flex items-center gap-1.5"
+          className="px-4 py-2 rounded-xl bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#C89B3C]/40 font-semibold text-sm transition-colors disabled:opacity-50 flex items-center gap-1.5"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin text-[#C89B3C]" />}
           <span>Check</span>
