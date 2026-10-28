@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
 import { getLocalOrders } from "@/lib/store";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function GET() {
   const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
@@ -22,8 +23,33 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const orderRef = (body.orderId || body.receipt || "").trim();
+    const ip = getClientIp(request);
+    const rateLimit = checkRateLimit(`razorpay_create_order:${ip}`, 20, 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Too many payment order requests. Please wait 1 minute." },
+        { status: 429 }
+      );
+    }
+
+    let body: any;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "Invalid JSON request body" },
+        { status: 400 }
+      );
+    }
+
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { success: false, error: "Invalid request payload" },
+        { status: 400 }
+      );
+    }
+
+    const orderRef = typeof body.orderId === "string" ? body.orderId.trim().slice(0, 100) : (typeof body.receipt === "string" ? body.receipt.trim().slice(0, 100) : "");
     let verifiedAmountRupees = 0;
 
     // Verify order total from server persistence (ignore any arbitrary amount sent by browser)

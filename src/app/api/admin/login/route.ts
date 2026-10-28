@@ -42,8 +42,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { password } = body;
+    let body: any;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "Invalid JSON request body." },
+        { status: 400 }
+      );
+    }
+
+    const { password } = body || {};
+    if (!password || typeof password !== "string" || password.trim() === "") {
+      return NextResponse.json(
+        { success: false, error: "Password is required." },
+        { status: 400 }
+      );
+    }
 
     // Verify ADMIN_PASSWORD only on the server
     if (!verifyAdminPassword(password)) {

@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_COOKIE_NAME, verifyAdminSession } from "@/lib/admin-auth";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rateLimit = checkRateLimit(`admin_logout:${ip}`, 20, 60 * 1000);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { success: false, error: "Too many logout requests. Please wait 1 minute before trying again." },
+      { status: 429 }
+    );
+  }
+
   if (!verifyAdminSession(request)) {
     return NextResponse.json(
       { success: false, error: "Unauthorized. Admin session required." },

@@ -4,6 +4,7 @@ import { INITIAL_PRODUCTS } from "@/lib/data";
 import { Product } from "@/lib/types";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
 import { verifyAdminSession } from "@/lib/admin-auth";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 // Normalize database row to application Product interface
 function normalizeProductRow(row: any): Product {
@@ -78,6 +79,15 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIp(request);
+    const rateLimit = checkRateLimit(`products_post:${ip}`, 30, 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Too many product update requests. Please wait 1 minute." },
+        { status: 429 }
+      );
+    }
+
     if (!verifyAdminSession(request)) {
       return NextResponse.json(
         { success: false, error: "Unauthorized. Admin session required." },
@@ -85,7 +95,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    let body: any;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "Invalid JSON request body" },
+        { status: 400 }
+      );
+    }
+
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ success: false, error: "Invalid product payload" }, { status: 400 });
+    }
+
+    if (!body.name || typeof body.name !== "string" || body.name.trim().length < 2) {
+      return NextResponse.json(
+        { success: false, error: "Product name must be at least 2 characters long." },
+        { status: 400 }
+      );
+    }
 
     // 1. If Supabase is connected, insert/update in Supabase
     if (supabase) {
@@ -186,6 +215,15 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const ip = getClientIp(request);
+    const rateLimit = checkRateLimit(`products_delete:${ip}`, 30, 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Too many delete requests. Please wait 1 minute." },
+        { status: 429 }
+      );
+    }
+
     if (!verifyAdminSession(request)) {
       return NextResponse.json(
         { success: false, error: "Unauthorized. Admin session required." },

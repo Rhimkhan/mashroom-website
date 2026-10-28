@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { Order, OrderStatus, Product } from "@/lib/types";
-import { getLocalOrders, addLocalOrder, updateLocalOrderStatus, getLocalProducts } from "@/lib/store";
+import { getLocalOrders, addLocalOrder, updateLocalOrderStatus, getLocalProducts, saveLocalOrders } from "@/lib/store";
 import { INITIAL_PRODUCTS } from "@/lib/data";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
 import { sendOrderNotificationEmail } from "@/lib/email";
@@ -605,6 +605,15 @@ export async function POST(request: NextRequest) {
  */
 export async function PATCH(request: NextRequest) {
   try {
+    const ip = getClientIp(request);
+    const rateLimit = checkRateLimit(`orders_patch:${ip}`, 30, 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Too many order update requests. Please wait 1 minute." },
+        { status: 429 }
+      );
+    }
+
     const isAdmin = verifyAdminSession(request);
     if (!isAdmin) {
       return NextResponse.json(
@@ -613,9 +622,19 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const { orderId, orderStatus, trackingNumber, courierName, paymentStatus } = await request.json();
+    let body: any;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "Invalid JSON request body" },
+        { status: 400 }
+      );
+    }
 
-    if (!orderId) {
+    const { orderId, orderStatus, trackingNumber, courierName, paymentStatus } = body || {};
+
+    if (!orderId || typeof orderId !== "string") {
       return NextResponse.json({ success: false, error: "Missing required orderId" }, { status: 400 });
     }
 
@@ -665,5 +684,73 @@ export async function PATCH(request: NextRequest) {
   } catch (error) {
     console.error("Orders PATCH error:", error);
     return NextResponse.json({ success: false, error: "Failed to update order" }, { status: 500 });
+  }
+}
+
+/**
+ * DELETE /api/orders
+ * SECURITY HARDENING:
+ * Deleting orders strictly requires a verified administrator session.
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    const ip = getClientIp(request);
+    const rateLimit = checkRateLimit(`orders_delete:${ip}`, 30, 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Too many delete requests. Please wait 1 minute." },
+        { status: 429 }
+      );
+    }
+
+    const isAdmin = verifyAdminSession(request);
+    if (!isAdmin) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized. Admin session required to delete orders." },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = (searchParams.get("id") || searchParams.get("orderId") || "").trim();
+    if (!id) {
+      return NextResponse.json({ success: false, error: "Order ID is required for deletion." }, { status: 400 });
+    }
+
+    if (process.env.NODE_ENV === "production" && (!isSupabaseConfigured || !supabase)) {
+      console.error("[CRITICAL] Order deletion blocked: Supabase is offline in production");
+      return NextResponse.json(
+        { success: false, error: "Database offline. Cannot delete order in production." },
+        { status: 500 }
+      );
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      const { error: deleteError } = await supabase
+        .from("orders")
+        .delete()
+        .or(`id.eq.${id},order_number.eq.${id}`);
+
+      if (deleteError) {
+        console.error("[CRITICAL] Supabase order delete failed in production:", deleteError);
+        if (process.env.NODE_ENV === "production") {
+          return NextResponse.json(
+            { success: false, error: "Failed to delete order from database" },
+            { status: 500 }
+          );
+        }
+      }
+    }
+
+    if (process.env.NODE_ENV !== "production") {
+      const current = getLocalOrders();
+      const updated = current.filter((o) => o.id !== id && o.orderNumber !== id);
+      saveLocalOrders(updated);
+    }
+
+    return NextResponse.json({ success: true, message: "Order deleted successfully" });
+  } catch (error) {
+    console.error("Orders DELETE error:", error);
+    return NextResponse.json({ success: false, error: "Failed to delete order" }, { status: 500 });
   }
 }
