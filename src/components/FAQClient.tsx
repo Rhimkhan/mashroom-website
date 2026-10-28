@@ -133,7 +133,7 @@ export default function FAQClient() {
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <a
-              href={`https://wa.me/${BRAND.whatsappNumber}?text=Hi%20Akhil%20Foods,%20I%20have%20a%20question%20about%20your%20artisanal%20mushroom%20pickles.`}
+              href={`https://wa.me/${BRAND.whatsappNumber}?text=Hi%20Akhil%20Foods,%20I%20have%20a%20question%20about%20your%20oyster%20mushroom%20pickles.`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-7 py-3 rounded-full bg-[#25D366] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md hover:bg-[#20ba59] transition-all"

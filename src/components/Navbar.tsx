@@ -42,23 +42,23 @@ function NavbarContent() {
 
   const leftNav = [
     { href: "/our-story", label: "OUR STORY" },
-    { href: "/shop", label: "THE SHOP" },
+    { href: "/shop", label: "SHOP" },
   ];
 
   const rightNav = [
-    { href: "/certificates", label: "THE PROVENANCE" },
-    { href: "/gallery", label: "OUR JOURNEY" },
+    { href: "/certificates", label: "CERTIFICATES" },
+    { href: "/gallery", label: "GALLERY" },
   ];
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Account";
 
   return (
     <>
-      {/* Top understated luxury atelier strip */}
+      {/* Top clean information strip */}
       <div className="bg-[#1A110D] text-[#EADBB6] text-xs py-1.5 px-4 text-center font-serif tracking-[0.28em] uppercase flex items-center justify-center gap-3 border-b border-[#C89B3C]/20">
-        <span>Jhansi Atelier</span>
+        <span>Jhansi, Uttar Pradesh</span>
         <span className="text-[#C89B3C]/40">•</span>
-        <span>Artisanal Oyster Mushroom Pickle</span>
+        <span>Oyster Mushroom Pickle</span>
       </div>
 
       {/* Main Luxury Navigation Bar with Centered Gold & Espresso Logo */}
@@ -71,9 +71,9 @@ function NavbarContent() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Desktop Left: Rounded Dark-Espresso Button for THE ATELIER + OUR STORY + THE SHOP */}
+            {/* Desktop Left: Navigation */}
             <nav className="hidden lg:flex items-center space-x-7 text-xs font-serif tracking-[0.22em] text-[#211612]">
-              {/* THE ATELIER in a thin, rounded dark-espresso button */}
+              {/* HOME in a thin, rounded dark-espresso button */}
               <Link
                 href="/"
                 className={`btn-pill ${
@@ -82,7 +82,7 @@ function NavbarContent() {
                     : "bg-[#211612] text-[#FAF6EE] hover:bg-[#34221A] border border-[#211612]"
                 }`}
               >
-                THE ATELIER
+                HOME
               </Link>
 
               {leftNav.map((link) => {
@@ -110,12 +110,12 @@ function NavbarContent() {
                   AKHIL FOODS
                 </span>
                 <span className="font-serif text-xs tracking-[0.2em] text-[#A87B28] font-medium mt-0.5">
-                  Jhansi • Artisanal
+                  Jhansi, Uttar Pradesh
                 </span>
               </Link>
             </div>
 
-            {/* Desktop Right: THE PROVENANCE + OUR JOURNEY */}
+            {/* Desktop Right: Navigation */}
             <nav className="hidden lg:flex items-center space-x-7 text-xs font-serif tracking-[0.22em] text-[#211612]">
               {rightNav.map((link) => {
                 const isActive = pathname === link.href;
@@ -196,7 +196,7 @@ function NavbarContent() {
                       <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#FAF6EE] border border-[#DDD3C4] shadow-2xl py-2 z-50 animate-in fade-in-50">
                         <div className="px-4 py-2 border-b border-[#E8DEC8]">
                           <p className="text-xs uppercase font-serif tracking-widest text-[#A87B28] font-bold">
-                            Atelier Member
+                            Customer Account
                           </p>
                           <p className="text-xs font-medium text-[#211612] truncate mt-0.5">
                             {user.email}
@@ -259,7 +259,7 @@ function NavbarContent() {
                   <Search className="w-4 h-4 text-[#211612]/50 absolute left-3 top-2.5" />
                   <input
                     type="text"
-                    placeholder="Search artisanal jars, ingredients, spices..."
+                    placeholder="Search pickle, ingredients, spices..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#FAF6EE] text-[#211612] rounded-lg border border-[#D5C6A0] focus:outline-none focus:ring-1 focus:ring-[#211612]"
@@ -338,7 +338,7 @@ function NavbarContent() {
 
             <div className="space-y-1 font-serif tracking-[0.2em] text-xs">
               <span className="text-xs tracking-[0.3em] uppercase font-sans text-[#211612]/50 px-3 block mb-1">
-                The Atelier & Collection
+                Navigation
               </span>
               <Link
                 href="/"
@@ -349,7 +349,7 @@ function NavbarContent() {
                     : "text-[#211612] hover:bg-[#EDE3C8]"
                 }`}
               >
-                THE ATELIER
+                HOME
               </Link>
               {[...leftNav, ...rightNav].map((link) => (
                 <Link
@@ -414,11 +414,11 @@ function NavbarContent() {
                     : "text-[#211612]/80 hover:bg-[#EDE3C8]"
                 }`}
               >
-                Atelier Concierge
+                Contact
               </Link>
             </div>
 
-            {/* WhatsApp Atelier Direct Concierge */}
+            {/* WhatsApp Order */}
             <div className="pt-2">
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_DEFAULT_MESSAGE)}`}
@@ -427,7 +427,7 @@ function NavbarContent() {
                 className="w-full py-3 rounded-xl bg-[#211612] text-[#FAF6EE] text-xs font-serif tracking-[0.2em] uppercase font-bold flex items-center justify-center gap-2 border border-[#211612] shadow"
               >
                 <PhoneCall className="w-3.5 h-3.5 text-[#C89B3C]" />
-                <span>WhatsApp Concierge</span>
+                <span>Order on WhatsApp</span>
               </a>
             </div>
           </div>

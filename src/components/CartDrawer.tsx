@@ -56,7 +56,7 @@ export default function CartDrawer() {
             <div className="flex items-center gap-2.5">
               <ShoppingBag className="w-5 h-5 text-[#D4AF37]" />
               <h2 className="font-serif text-lg font-bold tracking-wide text-[#FAF6EE]">
-                Artisanal Pickle Basket
+                Pickle Basket
               </h2>
               <span className="text-xs bg-[#2A1D17] text-[#D4AF37] px-2.5 py-0.5 rounded-full font-serif border border-[#C89B3C]/20">
                 {items.reduce((s, i) => s + i.quantity, 0)} jars
@@ -120,7 +120,7 @@ export default function CartDrawer() {
                   <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[#FAF6EE] shrink-0 border border-[#E8DEC8]">
                     <Image
                       src={item.image}
-                      alt={`${item.name} - Handcrafted Pickle Jar`}
+                      alt={`${item.name} - Pickle Jar`}
                       fill
                       className="object-cover"
                     />
@@ -269,7 +269,7 @@ export default function CartDrawer() {
                 className="w-full py-2.5 rounded-xl bg-[#2A1D17] hover:bg-[#38271F] text-[#FAF6EE] font-serif font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-[#C89B3C]/30 shadow-sm transition-all"
               >
                 <MessageCircle className="w-4 h-4 text-[#C89B3C]" />
-                <span>Order via WhatsApp Concierge</span>
+                <span>Order on WhatsApp</span>
               </a>
             </div>
           )}

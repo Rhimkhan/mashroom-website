@@ -108,14 +108,14 @@ export default function AuthModal() {
         {/* Brand & Title */}
         <div className="text-center mb-6">
           <span className="font-serif text-[10px] sm:text-[11px] tracking-[0.3em] uppercase text-[#A87B28] font-bold block mb-1">
-            AKHIL FOODS • ATELIER ACCOUNT
+            AKHIL FOODS • CUSTOMER ACCOUNT
           </span>
           <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#211612]">
-            {mode === "signin" ? "Welcome Back" : "Join The Atelier"}
+            {mode === "signin" ? "Welcome Back" : "Create Account"}
           </h2>
           <p className="text-xs text-[#3D2C24]/80 mt-1 font-light">
             {mode === "signin"
-              ? "Access your artisanal orders and track your deliveries."
+              ? "Access your orders and track your deliveries."
               : "Create an account for one-click ordering and live order tracking."}
           </p>
         </div>
@@ -266,7 +266,7 @@ export default function AuthModal() {
               <span className="inline-block w-4 h-4 border-2 border-[#FAF6EE] border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
-                <span>{mode === "signin" ? "Sign In to Atelier" : "Create My Account"}</span>
+                <span>{mode === "signin" ? "Sign In" : "Create My Account"}</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#C89B3C]" />
               </>
             )}
@@ -291,7 +291,7 @@ export default function AuthModal() {
             </p>
           ) : (
             <p>
-              Already an Atelier member?{" "}
+              Already have an account?{" "}
               <button
                 type="button"
                 onClick={() => {

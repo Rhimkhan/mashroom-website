@@ -9,14 +9,14 @@ export default function FloatingWhatsApp() {
 
   return (
     <aside
-      aria-label="Atelier Concierge"
+      aria-label="Order on WhatsApp"
       className="fixed bottom-6 right-6 z-40"
     >
       <a
         href={`https://wa.me/${WHATSAPP_NUMBER}?text=${defaultMessage}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Atelier WhatsApp Concierge"
+        aria-label="Order on WhatsApp"
         className="group flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#211612]/95 hover:bg-[#34221A] border border-[#C89B3C]/40 text-[#FAF6EE] backdrop-blur-md shadow-2xl hover:border-[#C89B3C] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
       >
         <span className="relative flex h-2 w-2">
@@ -25,7 +25,7 @@ export default function FloatingWhatsApp() {
         </span>
         <MessageSquare className="w-3.5 h-3.5 text-[#EADBB6] group-hover:scale-110 transition-transform" />
         <span className="font-serif text-[11px] tracking-[0.2em] uppercase text-[#EADBB6] font-medium hidden sm:inline">
-          Concierge
+          WhatsApp
         </span>
       </a>
     </aside>

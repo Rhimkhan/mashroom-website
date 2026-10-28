@@ -14,16 +14,16 @@ export default function HeroProductCard() {
         {/* Ambient warm gold aura behind the jar */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#C89B3C]/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Card Header: ATELIER HARVEST • BATCH NO. 01 and 400G GLASS JAR in tiny, elegant gold lettering */}
+        {/* Card Header: OYSTER MUSHROOM PICKLE and 400 G JAR in tiny, elegant gold lettering */}
         <div className="relative z-10 flex items-center justify-between pb-3.5 border-b border-[#C89B3C]/20">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#C89B3C]" />
             <span className="font-serif text-xs tracking-[0.25em] uppercase text-[#D4AF37] font-semibold">
-              ATELIER HARVEST • BATCH NO. 01
+              OYSTER MUSHROOM PICKLE
             </span>
           </div>
           <span className="font-serif text-xs tracking-[0.25em] uppercase text-[#D4AF37] font-semibold">
-            400G GLASS JAR
+            400 G JAR
           </span>
         </div>
 
@@ -32,7 +32,7 @@ export default function HeroProductCard() {
           <div className="relative w-full aspect-[4/3]">
             <Image
               src="/images/mushroom-mela-jar-luxury.jpg"
-              alt="Mushroom Mela Artisanal Oyster Mushroom Pickle Jar with matte paper label, gold lettering, dark twine seal, dried chilies, mustard seeds and oyster mushrooms"
+              alt="Mushroom Mela Oyster Mushroom Pickle 400g Jar"
               fill
               sizes="(max-width: 640px) 100vw, 550px"
               priority
@@ -41,7 +41,7 @@ export default function HeroProductCard() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#120B08]/85 via-transparent to-transparent pointer-events-none" />
             <div className="absolute bottom-3 inset-x-4 flex items-center justify-between text-[#FAF6EE]">
               <span className="font-serif italic text-xs text-[#D4AF37] tracking-wide">
-                Mushroom Mela • Artisanal Oyster Mushroom Pickle • Jhansi
+                Mushroom Mela • Oyster Mushroom Pickle • Jhansi
               </span>
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function HeroProductCard() {
               ₹399
             </span>
             <span className="text-xs text-[#EADBB6]/80 font-serif italic">
-              Artisanal Collector&apos;s Jar • 400g
+              400 g jar
             </span>
           </div>
 

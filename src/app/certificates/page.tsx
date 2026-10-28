@@ -19,10 +19,10 @@ import { BRAND } from "@/lib/brand";
 import { FSSAI_NUMBER, FSSAI_VALIDITY, GST_NUMBER, UDYAM_NUMBER } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: `Provenance & Authenticity | ${BRAND.name} - FSSAI, GST, Udyam`,
+  title: `Certificates & Authenticity | ${BRAND.name} - FSSAI, GST, Udyam`,
   description: `Official government certifications for ${BRAND.name}, Village Nandsiya, Moth, Jhansi, Uttar Pradesh. FSSAI Lic. No. ${FSSAI_NUMBER}, GSTIN ${GST_NUMBER}, Udyam ${UDYAM_NUMBER}.`,
   openGraph: {
-    title: `Provenance & Government Accreditations | ${BRAND.name}`,
+    title: `Certificates & Government Accreditations | ${BRAND.name}`,
     description: `Verified FSSAI, GST, and Udyam certifications for Mushroom Mela oyster mushroom pickle, Moth, Jhansi.`,
     url: `${BRAND.url}/certificates`,
     type: "website",
@@ -52,10 +52,10 @@ export default function CertificatesPage() {
           <div className="space-y-4">
             <span className="text-xs font-bold text-[#D4AF37] flex items-center gap-1.5">
               <Leaf className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span>Cultivation & Preparation</span>
+              <span>Ingredients & Preparation</span>
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-white font-normal">
-              Cultivated in Jhansi. Cured in Pure Mustard Oil.
+              Made in Jhansi with Mustard Oil and Spices.
             </h2>
             <p className="text-sm sm:text-base text-[#FAF6EE]/90 leading-relaxed max-w-3xl font-light">
               In Bundelkhand, oyster mushrooms are harvested, inspected, washed, and trimmed to maintain texture and cleanliness.

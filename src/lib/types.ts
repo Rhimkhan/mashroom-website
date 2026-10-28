@@ -88,3 +88,27 @@ export interface Review {
   productName: string;
   verified: boolean;
 }
+
+export interface ProductReview {
+  id: string;
+  productId: string;
+  orderNumber: string;
+  customerName: string;
+  phone: string;
+  rating: number;
+  comment: string;
+  photoUrl?: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+}
+
+export interface WholesaleInquiry {
+  id: string;
+  businessName: string;
+  contactPerson: string;
+  phone: string;
+  city: string;
+  quantityNeeded: string;
+  message: string;
+  createdAt: string;
+}

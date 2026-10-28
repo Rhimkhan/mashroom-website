@@ -5,7 +5,7 @@ import { ArrowRight, MapPin, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { FSSAI_NUMBER, FSSAI_VALIDITY, GST_NUMBER, UDYAM_NUMBER, PHONE_DISPLAY, WHATSAPP_NUMBER, WHATSAPP_DEFAULT_MESSAGE } from "@/lib/config";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app";
 
 export const metadata: Metadata = {
   title: "Our Story | AKHIL FOODS - Moth, Jhansi, Uttar Pradesh",

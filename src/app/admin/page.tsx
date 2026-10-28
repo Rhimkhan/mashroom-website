@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -27,13 +27,28 @@ import {
   Key,
   ExternalLink,
   Eye,
+  Download,
+  BarChart3,
+  Users,
+  Star,
+  Building2,
 } from "lucide-react";
-import { Order, OrderStatus, Product, ProductSize, PaymentStatus } from "@/lib/types";
+import {
+  Order,
+  OrderStatus,
+  Product,
+  ProductSize,
+  PaymentStatus,
+  ProductReview,
+  WholesaleInquiry,
+} from "@/lib/types";
 import {
   getLocalOrders,
   getLocalProducts,
   saveLocalProducts,
   updateLocalOrderStatus,
+  getLocalReviews,
+  getLocalWholesaleInquiries,
 } from "@/lib/store";
 import { INITIAL_PRODUCTS } from "@/lib/data";
 import { BRAND } from "@/lib/brand";
@@ -50,12 +65,19 @@ export default function AdminPage() {
   const [authLoading, setAuthLoading] = useState(false);
 
   // Tab & Data State
-  const [activeTab, setActiveTab] = useState<"orders" | "products">("orders");
+  const [activeTab, setActiveTab] = useState<
+    "orders" | "products" | "sales" | "customers" | "reviews" | "wholesale"
+  >("orders");
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [reviews, setReviews] = useState<ProductReview[]>([]);
+  const [wholesaleInquiries, setWholesaleInquiries] = useState<WholesaleInquiry[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchOrder, setSearchOrder] = useState("");
   const [searchProduct, setSearchProduct] = useState("");
+  const [searchCustomer, setSearchCustomer] = useState("");
+  const [salesPeriod, setSalesPeriod] = useState<"today" | "7days" | "30days">("today");
+  const [reviewFilter, setReviewFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   // View Order Details Modal
@@ -123,6 +145,32 @@ export default function AdminPage() {
       } else {
         const local = getLocalProducts();
         setProducts(local.length ? local : INITIAL_PRODUCTS);
+      }
+
+      // 3. Fetch Reviews
+      try {
+        const resReviews = await fetch("/api/admin/reviews");
+        const revData = await resReviews.json();
+        if (revData?.reviews && Array.isArray(revData.reviews)) {
+          setReviews(revData.reviews);
+        } else {
+          setReviews(getLocalReviews());
+        }
+      } catch {
+        setReviews(getLocalReviews());
+      }
+
+      // 4. Fetch Wholesale Inquiries
+      try {
+        const resWholesale = await fetch("/api/wholesale");
+        const wData = await resWholesale.json();
+        if (wData?.inquiries && Array.isArray(wData.inquiries)) {
+          setWholesaleInquiries(wData.inquiries);
+        } else {
+          setWholesaleInquiries(getLocalWholesaleInquiries());
+        }
+      } catch {
+        setWholesaleInquiries(getLocalWholesaleInquiries());
       }
     } catch (e) {
       console.error("Load data error:", e);
@@ -341,10 +389,10 @@ If you have any questions, reply here.
         editingProduct?.slug ||
         prodName.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       subtitle:
-        prodSubtitle.trim() || "Handcrafted Artisanal Oyster Mushroom Pickle",
+        prodSubtitle.trim() || "Oyster Mushroom Pickle",
       description:
         prodDescription.trim() ||
-        "Authentic handcrafted oyster mushroom pickle by AKHIL FOODS, prepared in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.",
+        "Authentic oyster mushroom pickle by AKHIL FOODS, prepared in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.",
       flavour: prodFlavour,
       rating: editingProduct?.rating || 0,
       reviewsCount: editingProduct?.reviewsCount || 0,
@@ -428,6 +476,224 @@ If you have any questions, reply here.
     setProdImage(p.image);
     setShowProductModal(true);
   };
+
+  // Quick Edit Stock
+  const handleUpdateStock = async (productId: string, newStock: number) => {
+    const qty = Math.max(0, Number(newStock) || 0);
+    try {
+      const res = await fetch("/api/products", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: productId, stockCount: qty }),
+      });
+      const data = await res.json();
+      if (data?.success) {
+        setProducts((prev) =>
+          prev.map((p) => (p.id === productId ? { ...p, stockCount: qty } : p))
+        );
+        const local = getLocalProducts().map((p) =>
+          p.id === productId ? { ...p, stockCount: qty } : p
+        );
+        saveLocalProducts(local);
+        setFeedbackMsg(`Stock updated to ${qty} jars`);
+        setTimeout(() => setFeedbackMsg(null), 3000);
+      }
+    } catch (err) {
+      console.error("Failed to update stock", err);
+    }
+  };
+
+  // Review Status Change (Approve / Reject)
+  const handleReviewStatus = async (reviewId: string, status: "approved" | "rejected") => {
+    try {
+      const res = await fetch("/api/admin/reviews", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: reviewId, status }),
+      });
+      const data = await res.json();
+      if (data?.success) {
+        setReviews((prev) =>
+          prev.map((r) => (r.id === reviewId ? { ...r, status } : r))
+        );
+        setFeedbackMsg(`Review marked as ${status}`);
+        setTimeout(() => setFeedbackMsg(null), 3000);
+      }
+    } catch (err) {
+      console.error("Failed to update review", err);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!confirm("Delete this review permanently?")) return;
+    try {
+      const res = await fetch(`/api/admin/reviews?id=${reviewId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data?.success) {
+        setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+        setFeedbackMsg("Review deleted");
+        setTimeout(() => setFeedbackMsg(null), 3000);
+      }
+    } catch (err) {
+      console.error("Failed to delete review", err);
+    }
+  };
+
+  // CSV Export for Orders
+  const exportOrdersCSV = () => {
+    const headers = [
+      "Order Number",
+      "Date",
+      "Customer Name",
+      "Phone",
+      "Email",
+      "City",
+      "Pincode",
+      "Address",
+      "Total Amount",
+      "Payment Method",
+      "Payment Status",
+      "Order Status",
+      "Tracking Number",
+      "Courier Name"
+    ];
+
+    const rows = orders.map((o) => [
+      `"${o.orderNumber || ""}"`,
+      `"${o.createdAt ? new Date(o.createdAt).toISOString() : ""}"`,
+      `"${(o.customerName || "").replace(/"/g, '""')}"`,
+      `"${o.phone || ""}"`,
+      `"${o.email || ""}"`,
+      `"${(o.city || "").replace(/"/g, '""')}"`,
+      `"${o.pincode || ""}"`,
+      `"${(o.address || "").replace(/"/g, '""')}"`,
+      o.total || 0,
+      `"${o.paymentMethod || ""}"`,
+      `"${o.paymentStatus || ""}"`,
+      `"${o.orderStatus || ""}"`,
+      `"${o.trackingNumber || ""}"`,
+      `"${o.courierName || ""}"`,
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `orders_${new Date().toISOString().split("T")[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // CSV Export for Customers
+  const exportCustomersCSV = () => {
+    const headers = [
+      "Customer Name",
+      "Phone",
+      "Number of Orders",
+      "Total Spent (INR)",
+      "Last Order Date"
+    ];
+
+    const rows = customerList.map((c) => [
+      `"${(c.name || "").replace(/"/g, '""')}"`,
+      `"${c.phone || ""}"`,
+      c.orderCount,
+      c.totalSpent,
+      `"${c.lastOrderDate ? new Date(c.lastOrderDate).toISOString() : ""}"`
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `customers_${new Date().toISOString().split("T")[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Customer List Aggregation
+  const customerList = useMemo(() => {
+    const map: Record<
+      string,
+      { name: string; phone: string; orderCount: number; totalSpent: number; lastOrderDate: string }
+    > = {};
+
+    for (const o of orders) {
+      const cleanPhone = (o.phone || "").replace(/\D/g, "");
+      const key = cleanPhone || (o.customerName || "Customer").toLowerCase();
+      if (!map[key]) {
+        map[key] = {
+          name: o.customerName || "Customer",
+          phone: o.phone || "-",
+          orderCount: 0,
+          totalSpent: 0,
+          lastOrderDate: o.createdAt,
+        };
+      }
+      map[key].orderCount += 1;
+      map[key].totalSpent += (o.total || 0);
+      if (new Date(o.createdAt).getTime() >= new Date(map[key].lastOrderDate).getTime()) {
+        map[key].lastOrderDate = o.createdAt;
+        if (o.customerName) map[key].name = o.customerName;
+      }
+    }
+
+    return Object.values(map).sort((a, b) => b.totalSpent - a.totalSpent);
+  }, [orders]);
+
+  // Sales Statistics Calculation for Today, 7 Days, 30 Days
+  const salesStats = useMemo(() => {
+    const now = Date.now();
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const calcForOrders = (list: Order[]) => {
+      const count = list.length;
+      const revenue = list.reduce((sum, o) => sum + (o.total || 0), 0);
+      const itemMap: Record<string, { name: string; quantity: number; revenue: number }> = {};
+      for (const order of list) {
+        if (Array.isArray(order.items)) {
+          for (const item of order.items) {
+            const label = item.name + (item.size ? ` (${item.size})` : "");
+            if (!itemMap[label]) {
+              itemMap[label] = { name: label, quantity: 0, revenue: 0 };
+            }
+            itemMap[label].quantity += (item.quantity || 1);
+            itemMap[label].revenue += (item.price || 0) * (item.quantity || 1);
+          }
+        }
+      }
+      const bestSellers = Object.values(itemMap).sort((a, b) => b.quantity - a.quantity);
+      return { count, revenue, bestSellers };
+    };
+
+    const ordersToday = orders.filter((o) => {
+      const t = new Date(o.createdAt).getTime();
+      return !isNaN(t) && t >= startOfToday.getTime();
+    });
+
+    const orders7Days = orders.filter((o) => {
+      const t = new Date(o.createdAt).getTime();
+      return !isNaN(t) && t >= now - 7 * 86400000;
+    });
+
+    const orders30Days = orders.filter((o) => {
+      const t = new Date(o.createdAt).getTime();
+      return !isNaN(t) && t >= now - 30 * 86400000;
+    });
+
+    return {
+      today: calcForOrders(ordersToday),
+      "7days": calcForOrders(orders7Days),
+      "30days": calcForOrders(orders30Days),
+    };
+  }, [orders]);
 
   // Metrics
   const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
@@ -619,7 +885,7 @@ If you have any questions, reply here.
             <div className="font-serif text-2xl sm:text-3xl font-extrabold text-amber-700">
               {pendingOrders}
             </div>
-            <p className="text-[11px] text-[#3D2C24]/60">New & Packed batches</p>
+            <p className="text-[11px] text-[#3D2C24]/60">New & Packed orders</p>
           </div>
 
           <div className="bg-[#FDFBF7] p-6 rounded-3xl border border-[#E8DEC8] shadow-sm space-y-1">
@@ -635,14 +901,14 @@ If you have any questions, reply here.
         </div>
 
         {/* Tab Selector */}
-        <div className="flex gap-4 border-b border-[#E8DEC8]">
+        <div className="flex flex-wrap gap-2 sm:gap-6 border-b border-[#E8DEC8]">
           <button
             onClick={() => setActiveTab("orders")}
             className={`pb-3 text-sm font-bold transition-all relative ${
               activeTab === "orders" ? "text-[#211612]" : "text-stone-400 hover:text-stone-600"
             }`}
           >
-            <span>Orders Management ({orders.length})</span>
+            <span>Orders ({orders.length})</span>
             {activeTab === "orders" && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#211612]" />
             )}
@@ -654,8 +920,56 @@ If you have any questions, reply here.
               activeTab === "products" ? "text-[#211612]" : "text-stone-400 hover:text-stone-600"
             }`}
           >
-            <span>Products & Inventory ({products.length})</span>
+            <span>Products & Stock ({products.length})</span>
             {activeTab === "products" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#211612]" />
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab("sales")}
+            className={`pb-3 text-sm font-bold transition-all relative ${
+              activeTab === "sales" ? "text-[#211612]" : "text-stone-400 hover:text-stone-600"
+            }`}
+          >
+            <span>Sales Report</span>
+            {activeTab === "sales" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#211612]" />
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab("customers")}
+            className={`pb-3 text-sm font-bold transition-all relative ${
+              activeTab === "customers" ? "text-[#211612]" : "text-stone-400 hover:text-stone-600"
+            }`}
+          >
+            <span>Customers ({customerList.length})</span>
+            {activeTab === "customers" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#211612]" />
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab("reviews")}
+            className={`pb-3 text-sm font-bold transition-all relative ${
+              activeTab === "reviews" ? "text-[#211612]" : "text-stone-400 hover:text-stone-600"
+            }`}
+          >
+            <span>Reviews ({reviews.length})</span>
+            {activeTab === "reviews" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#211612]" />
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab("wholesale")}
+            className={`pb-3 text-sm font-bold transition-all relative ${
+              activeTab === "wholesale" ? "text-[#211612]" : "text-stone-400 hover:text-stone-600"
+            }`}
+          >
+            <span>Wholesale ({wholesaleInquiries.length})</span>
+            {activeTab === "wholesale" && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#211612]" />
             )}
           </button>
@@ -931,6 +1245,20 @@ If you have any questions, reply here.
                           </div>
                         ))}
                       </div>
+                      {/* Quick stock inventory editor */}
+                      <div className="flex items-center justify-between bg-[#FAF6EE] p-2.5 rounded-[6px] border border-[#E8DEC8] text-xs">
+                        <span className="font-bold text-[#211612]">Stock Inventory:</span>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="number"
+                            min="0"
+                            defaultValue={p.stockCount}
+                            onBlur={(e) => handleUpdateStock(p.id, Number(e.target.value))}
+                            className="w-16 px-2 py-1 text-xs border border-[#E8DEC8] rounded bg-white font-mono font-bold text-[#211612] text-center"
+                          />
+                          <span className="text-[10px] text-stone-500 font-medium">jars</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -952,6 +1280,510 @@ If you have any questions, reply here.
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: SALES REPORT (TODAY, 7 DAYS, 30 DAYS) */}
+        {activeTab === "sales" && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h3 className="font-serif text-xl font-bold text-[#211612]">
+                  Sales & Revenue Report
+                </h3>
+                <p className="text-xs text-[#3D2C24]/60">
+                  Performance metrics and best-selling item tracking across operational periods.
+                </p>
+              </div>
+
+              {/* Period Switcher */}
+              <div className="flex bg-[#FDFBF7] p-1 rounded-[6px] border border-[#E8DEC8]">
+                <button
+                  type="button"
+                  onClick={() => setSalesPeriod("today")}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-[4px] transition-all ${
+                    salesPeriod === "today"
+                      ? "bg-[#211612] text-[#FAF6EE]"
+                      : "text-stone-500 hover:text-[#211612]"
+                  }`}
+                >
+                  Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSalesPeriod("7days")}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-[4px] transition-all ${
+                    salesPeriod === "7days"
+                      ? "bg-[#211612] text-[#FAF6EE]"
+                      : "text-stone-500 hover:text-[#211612]"
+                  }`}
+                >
+                  Last 7 Days
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSalesPeriod("30days")}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-[4px] transition-all ${
+                    salesPeriod === "30days"
+                      ? "bg-[#211612] text-[#FAF6EE]"
+                      : "text-stone-500 hover:text-[#211612]"
+                  }`}
+                >
+                  Last 30 Days
+                </button>
+              </div>
+            </div>
+
+            {/* 3 Summary Cards for Today, 7 Days, 30 Days */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div
+                onClick={() => setSalesPeriod("today")}
+                className={`p-5 rounded-[6px] border cursor-pointer transition-all ${
+                  salesPeriod === "today"
+                    ? "bg-[#FDFBF7] border-[#211612] shadow-sm"
+                    : "bg-[#FDFBF7] border-[#E8DEC8] hover:border-stone-400"
+                }`}
+              >
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#A87B28] block">
+                  Today
+                </span>
+                <div className="font-serif text-2xl font-extrabold text-[#211612] mt-1">
+                  Rs {salesStats.today.revenue}
+                </div>
+                <div className="text-xs text-stone-500 mt-0.5">
+                  {salesStats.today.count} {salesStats.today.count === 1 ? "order" : "orders"} placed
+                </div>
+              </div>
+
+              <div
+                onClick={() => setSalesPeriod("7days")}
+                className={`p-5 rounded-[6px] border cursor-pointer transition-all ${
+                  salesPeriod === "7days"
+                    ? "bg-[#FDFBF7] border-[#211612] shadow-sm"
+                    : "bg-[#FDFBF7] border-[#E8DEC8] hover:border-stone-400"
+                }`}
+              >
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#A87B28] block">
+                  Last 7 Days
+                </span>
+                <div className="font-serif text-2xl font-extrabold text-[#211612] mt-1">
+                  Rs {salesStats["7days"].revenue}
+                </div>
+                <div className="text-xs text-stone-500 mt-0.5">
+                  {salesStats["7days"].count} orders placed
+                </div>
+              </div>
+
+              <div
+                onClick={() => setSalesPeriod("30days")}
+                className={`p-5 rounded-[6px] border cursor-pointer transition-all ${
+                  salesPeriod === "30days"
+                    ? "bg-[#FDFBF7] border-[#211612] shadow-sm"
+                    : "bg-[#FDFBF7] border-[#E8DEC8] hover:border-stone-400"
+                }`}
+              >
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#A87B28] block">
+                  Last 30 Days
+                </span>
+                <div className="font-serif text-2xl font-extrabold text-[#211612] mt-1">
+                  Rs {salesStats["30days"].revenue}
+                </div>
+                <div className="text-xs text-stone-500 mt-0.5">
+                  {salesStats["30days"].count} orders placed
+                </div>
+              </div>
+            </div>
+
+            {/* Best Selling Items Plain Table */}
+            <div className="bg-[#FDFBF7] rounded-[6px] border border-[#E8DEC8] shadow-sm overflow-hidden space-y-3 p-5">
+              <div className="flex items-center justify-between pb-2 border-b border-[#E8DEC8]">
+                <h4 className="font-serif text-base font-bold text-[#211612]">
+                  Best Selling Items ({salesPeriod === "today" ? "Today" : salesPeriod === "7days" ? "Last 7 Days" : "Last 30 Days"})
+                </h4>
+                <span className="text-xs text-stone-500">
+                  {salesStats[salesPeriod].bestSellers.length} products with sales
+                </span>
+              </div>
+
+              {salesStats[salesPeriod].bestSellers.length === 0 ? (
+                <div className="p-8 text-center text-xs text-stone-400">
+                  No orders or sales recorded for this period.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-[#FAF6EE] text-[#211612] font-bold border-b border-[#E8DEC8] uppercase tracking-wider text-[11px]">
+                      <tr>
+                        <th className="p-3">Rank</th>
+                        <th className="p-3">Product Name & Size</th>
+                        <th className="p-3 text-center">Quantity Sold</th>
+                        <th className="p-3 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#E8DEC8]/60">
+                      {salesStats[salesPeriod].bestSellers.map((item, idx) => (
+                        <tr key={item.name} className="hover:bg-[#FAF6EE]/50">
+                          <td className="p-3 font-mono font-bold text-[#A87B28]">#{idx + 1}</td>
+                          <td className="p-3 font-medium text-[#211612]">{item.name}</td>
+                          <td className="p-3 text-center font-bold text-[#211612]">
+                            {item.quantity} jars
+                          </td>
+                          <td className="p-3 text-right font-serif font-bold text-[#211612]">
+                            Rs {item.revenue}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: CUSTOMERS LIST & CSV EXPORT */}
+        {activeTab === "customers" && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h3 className="font-serif text-xl font-bold text-[#211612]">
+                  Customer Directory
+                </h3>
+                <p className="text-xs text-[#3D2C24]/60">
+                  Aggregated buyer profiles with order history and spend statistics.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={exportCustomersCSV}
+                  className="px-3.5 py-2 rounded-[6px] bg-[#FAF6EE] hover:bg-[#E8DEC8] text-[#211612] border border-[#E8DEC8] text-xs font-bold flex items-center gap-1.5 transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#A87B28]" />
+                  <span>Export Customers (CSV)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={exportOrdersCSV}
+                  className="px-3.5 py-2 rounded-[6px] bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#211612] text-xs font-bold flex items-center gap-1.5 transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#C89B3C]" />
+                  <span>Export Orders (CSV)</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="relative w-full sm:w-80">
+              <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                placeholder="Search by customer name or phone..."
+                value={searchCustomer}
+                onChange={(e) => setSearchCustomer(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 rounded-[6px] bg-[#FDFBF7] border border-[#E8DEC8] text-xs focus:outline-none"
+              />
+            </div>
+
+            <div className="bg-[#FDFBF7] rounded-[6px] border border-[#E8DEC8] shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[#FAF6EE] text-[#211612] font-bold border-b border-[#E8DEC8] uppercase tracking-wider text-[11px]">
+                    <tr>
+                      <th className="p-4">Customer Name</th>
+                      <th className="p-4">Phone Number</th>
+                      <th className="p-4 text-center">Orders Count</th>
+                      <th className="p-4">Total Spent</th>
+                      <th className="p-4">Last Order Date</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E8DEC8]/60">
+                    {customerList
+                      .filter(
+                        (c) =>
+                          c.name.toLowerCase().includes(searchCustomer.toLowerCase()) ||
+                          c.phone.includes(searchCustomer)
+                      )
+                      .map((cust, i) => (
+                        <tr key={i} className="hover:bg-[#FAF6EE]/50">
+                          <td className="p-4 font-bold text-[#211612]">{cust.name}</td>
+                          <td className="p-4 font-mono text-stone-600">{cust.phone}</td>
+                          <td className="p-4 text-center font-bold text-[#211612]">
+                            <span className="bg-[#FAF6EE] px-2.5 py-0.5 rounded-[4px] border border-[#E8DEC8]">
+                              {cust.orderCount}
+                            </span>
+                          </td>
+                          <td className="p-4 font-serif font-bold text-[#211612]">
+                            Rs {cust.totalSpent}
+                          </td>
+                          <td className="p-4 text-stone-500 font-mono text-[11px]">
+                            {cust.lastOrderDate
+                              ? new Date(cust.lastOrderDate).toLocaleDateString("en-IN", {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                })
+                              : "-"}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: REAL REVIEWS APPROVAL */}
+        {activeTab === "reviews" && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h3 className="font-serif text-xl font-bold text-[#211612]">
+                  Verified Customer Reviews
+                </h3>
+                <p className="text-xs text-[#3D2C24]/60">
+                  Reviews submitted with verified Order # and phone number. Approve to show on product page.
+                </p>
+              </div>
+
+              <div className="flex bg-[#FDFBF7] p-1 rounded-[6px] border border-[#E8DEC8]">
+                <button
+                  type="button"
+                  onClick={() => setReviewFilter("all")}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-[4px] transition-all ${
+                    reviewFilter === "all"
+                      ? "bg-[#211612] text-[#FAF6EE]"
+                      : "text-stone-500 hover:text-[#211612]"
+                  }`}
+                >
+                  All ({reviews.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReviewFilter("pending")}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-[4px] transition-all ${
+                    reviewFilter === "pending"
+                      ? "bg-amber-600 text-white"
+                      : "text-amber-700 hover:text-amber-900"
+                  }`}
+                >
+                  Pending ({reviews.filter((r) => r.status === "pending").length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReviewFilter("approved")}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-[4px] transition-all ${
+                    reviewFilter === "approved"
+                      ? "bg-emerald-600 text-white"
+                      : "text-emerald-700 hover:text-emerald-900"
+                  }`}
+                >
+                  Approved ({reviews.filter((r) => r.status === "approved").length})
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-[#FDFBF7] rounded-[6px] border border-[#E8DEC8] shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[#FAF6EE] text-[#211612] font-bold border-b border-[#E8DEC8] uppercase tracking-wider text-[11px]">
+                    <tr>
+                      <th className="p-4">Customer & Order</th>
+                      <th className="p-4">Rating</th>
+                      <th className="p-4">Review Content</th>
+                      <th className="p-4">Status</th>
+                      <th className="p-4 text-right">Moderation Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E8DEC8]/60">
+                    {reviews
+                      .filter((r) => reviewFilter === "all" || r.status === reviewFilter)
+                      .map((rev) => (
+                        <tr key={rev.id} className="hover:bg-[#FAF6EE]/50">
+                          <td className="p-4 space-y-1">
+                            <div className="font-bold text-[#211612]">{rev.customerName}</div>
+                            <div className="text-[11px] font-mono text-stone-500">
+                              Order #{rev.orderNumber}
+                            </div>
+                            <div className="text-[10px] text-stone-400 font-mono">
+                              {rev.phone}
+                            </div>
+                          </td>
+
+                          <td className="p-4">
+                            <div className="flex items-center gap-1 text-[#A87B28] font-bold">
+                              <span>{"★".repeat(rev.rating)}</span>
+                              <span className="text-stone-400 font-normal">({rev.rating}/5)</span>
+                            </div>
+                            <div className="text-[10px] text-stone-400 mt-0.5">
+                              {new Date(rev.createdAt).toLocaleDateString("en-IN")}
+                            </div>
+                          </td>
+
+                          <td className="p-4 max-w-sm">
+                            <p className="text-[#3D2C24] leading-relaxed line-clamp-3">
+                              {rev.comment}
+                            </p>
+                            {rev.photoUrl && (
+                              <a
+                                href={rev.photoUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] text-[#A87B28] hover:underline mt-1"
+                              >
+                                <span>View attached photo</span>
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            )}
+                          </td>
+
+                          <td className="p-4">
+                            <span
+                              className={`px-2.5 py-1 rounded-[4px] text-[10px] font-bold uppercase tracking-wider border ${
+                                rev.status === "approved"
+                                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                  : rev.status === "rejected"
+                                  ? "bg-red-50 text-red-800 border-red-200"
+                                  : "bg-amber-50 text-amber-800 border-amber-200"
+                              }`}
+                            >
+                              {rev.status}
+                            </span>
+                          </td>
+
+                          <td className="p-4 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              {rev.status !== "approved" && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleReviewStatus(rev.id, "approved")}
+                                  className="px-3 py-1.5 rounded-[4px] bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors"
+                                >
+                                  Approve
+                                </button>
+                              )}
+                              {rev.status !== "rejected" && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleReviewStatus(rev.id, "rejected")}
+                                  className="px-3 py-1.5 rounded-[4px] bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold text-xs transition-colors"
+                                >
+                                  Reject
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteReview(rev.id)}
+                                className="p-1.5 rounded-[4px] text-red-600 hover:bg-red-50 transition-colors"
+                                title="Delete Review"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    {reviews.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="p-8 text-center text-xs text-stone-400">
+                          No customer reviews submitted yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: WHOLESALE INQUIRIES */}
+        {activeTab === "wholesale" && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h3 className="font-serif text-xl font-bold text-[#211612]">
+                  Wholesale & Bulk Supply Inquiries
+                </h3>
+                <p className="text-xs text-[#3D2C24]/60">
+                  Direct commercial inquiries submitted via the Contact / Wholesale portal.
+                </p>
+              </div>
+              <span className="text-xs text-stone-500">
+                {wholesaleInquiries.length} total inquiries
+              </span>
+            </div>
+
+            <div className="bg-[#FDFBF7] rounded-[6px] border border-[#E8DEC8] shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[#FAF6EE] text-[#211612] font-bold border-b border-[#E8DEC8] uppercase tracking-wider text-[11px]">
+                    <tr>
+                      <th className="p-4">Business & City</th>
+                      <th className="p-4">Contact Person</th>
+                      <th className="p-4">Phone Number</th>
+                      <th className="p-4">Quantity Needed</th>
+                      <th className="p-4">Message / Requirements</th>
+                      <th className="p-4">Received Date</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E8DEC8]/60">
+                    {wholesaleInquiries.map((inq) => (
+                      <tr key={inq.id} className="hover:bg-[#FAF6EE]/50">
+                        <td className="p-4">
+                          <div className="font-bold text-[#211612]">{inq.businessName}</div>
+                          <div className="text-[11px] text-stone-500">{inq.city}</div>
+                        </td>
+
+                        <td className="p-4 font-medium text-[#211612]">
+                          {inq.contactPerson}
+                        </td>
+
+                        <td className="p-4">
+                          <a
+                            href={`https://wa.me/91${inq.phone.replace(/\D/g, "")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-mono text-[#A87B28] font-bold hover:underline flex items-center gap-1"
+                          >
+                            <span>{inq.phone}</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </td>
+
+                        <td className="p-4 font-bold text-[#211612]">
+                          <span className="bg-[#FAF6EE] px-2.5 py-1 rounded-[4px] border border-[#E8DEC8]">
+                            {inq.quantityNeeded}
+                          </span>
+                        </td>
+
+                        <td className="p-4 max-w-sm">
+                          <p className="text-[#3D2C24] leading-relaxed">
+                            {inq.message || "-"}
+                          </p>
+                        </td>
+
+                        <td className="p-4 text-stone-500 font-mono text-[11px]">
+                          {new Date(inq.createdAt).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </td>
+                      </tr>
+                    ))}
+                    {wholesaleInquiries.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="p-8 text-center text-xs text-stone-400">
+                          No wholesale inquiries received yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}

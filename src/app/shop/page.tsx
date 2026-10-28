@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import ShopClient from "@/components/ShopClient";
 import { INITIAL_PRODUCTS } from "@/lib/data";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app";
 
 export const metadata: Metadata = {
   title: "Shop Mushroom Mela Oyster Mushroom Pickle | AKHIL FOODS",
@@ -51,7 +51,7 @@ export default function ShopPage() {
       item: {
         "@type": "Product",
         name: prod.name,
-        image: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}${prod.image}`,
+        image: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}${prod.image}`,
         description: prod.description,
         sku: prod.id,
         offers: {

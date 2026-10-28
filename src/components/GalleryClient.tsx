@@ -19,8 +19,8 @@ interface GalleryItem {
 const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: "gal-1",
-    title: "Mushroom Mela 400g Glass Jar (Front View)",
-    subtitle: "Artisanal handcrafted Oyster Mushroom Pickle sealed in a sturdy glass jar with golden metal lid.",
+    title: "Mushroom Mela 400 g Jar (Front View)",
+    subtitle: "Oyster mushroom pickle made in Jhansi with mustard oil and spices in a 400 g jar.",
     category: "jars",
     categoryLabel: "Product Jar",
     image: "/images/products/mushroom-mela-front.jpg",
@@ -30,7 +30,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: "gal-2",
     title: "Jar Profile & Product Presentation (Side View)",
-    subtitle: "Generous chunks of tender oyster mushrooms steeped in golden mustard oil with stone-ground Indian spices.",
+    subtitle: "Tender oyster mushrooms steeped in golden mustard oil with Indian spices.",
     category: "jars",
     categoryLabel: "Product Jar",
     image: "/images/products/mushroom-mela-side.jpg",
@@ -59,12 +59,12 @@ const GALLERY_ITEMS: GalleryItem[] = [
   },
   {
     id: "gal-5",
-    title: "Cold-Pressed Mustard Oil & Roasted Spices",
+    title: "Mustard Oil & Roasted Spices",
     subtitle: "Pure mustard oil infused with roasted mustard, fenugreek, cumin, and whole spices.",
     category: "ingredients",
     categoryLabel: "Ingredients & Label",
     image: "/images/spices-mustard-oil.jpg",
-    alt: "Pure mustard oil pouring over whole spices in artisanal bowl",
+    alt: "Pure mustard oil pouring over whole spices",
   },
 ];
 
@@ -110,10 +110,10 @@ export default function GalleryClient() {
             <span>Visual Chronicle</span>
           </span>
           <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-[#211612]">
-            The Artisanal Gallery
+            The Photo Gallery
           </h1>
           <p className="text-sm text-[#3D2C24]/80">
-            A real photographic look into our Mushroom Mela 400g jars, complete label ingredients, and artisanal packing in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.
+            A real photographic look into our Mushroom Mela 400 g jars, complete label ingredients, and packing in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.
           </p>
         </div>
 

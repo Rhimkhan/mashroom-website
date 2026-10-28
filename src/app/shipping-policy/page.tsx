@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `Shipping and Delivery Policy | ${BRAND.name}`,
     description: `Packaging and nationwide delivery details from our kitchen in Moth, Jhansi. Delivery timelines depend on courier and location.`,
-    url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/shipping-policy`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/shipping-policy`,
     type: "website",
   },
 };

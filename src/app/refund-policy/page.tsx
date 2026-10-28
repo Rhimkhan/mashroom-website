@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `Refund and Replacement Policy | ${BRAND.name}`,
     description: `No returns on opened food items. Quick replacement or refund for damaged or wrong items reported within 48 hours with photos.`,
-    url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/refund-policy`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/refund-policy`,
     type: "website",
   },
 };

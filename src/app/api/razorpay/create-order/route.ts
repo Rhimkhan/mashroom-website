@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
         receipt: receipt,
         payment_capture: 1,
         notes: {
-          store: "Akhil Foods Artisanal Pickles",
+          store: "Akhil Foods",
           receipt: receipt,
         },
       }),

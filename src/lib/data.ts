@@ -50,34 +50,29 @@ export const REVIEWS: Review[] = [];
 
 export const FAQS = [
   {
-    question: "Where is AKHIL FOODS located?",
+    question: "What ingredients are used in the pickle?",
     answer:
-      "AKHIL FOODS is based in Village Nandsiya, Karguwan Road, Near Ambedkar Murti, Moth, Jhansi, Uttar Pradesh 284303. All our mushroom pickles are prepared and packed right here.",
-  },
-  {
-    question: "What ingredients are used in Mushroom Mela Oyster Mushroom Pickle?",
-    answer:
-      "As stated on the label: Mushroom, Mustard Oil, Vinegar, Salt, Red Chilli, Coriander, Mustard, Fennel, Fenugreek, Cumin, Turmeric, Ajwain, Ginger, Garlic, and Permitted Additives. Net quantity is 400g.",
+      "Mushroom, mustard oil, vinegar, salt, red chilli, coriander, mustard, fennel, fenugreek, cumin, turmeric, ajwain, ginger, garlic, permitted additives.",
   },
   {
     question: "How should I store the pickle?",
     answer:
-      "Store in a cool, dry place. Keep away from direct sunlight. Always use a clean, dry spoon.",
+      "Keep in a cool dry place, away from sunlight, use a clean dry spoon.",
   },
   {
-    question: "Is AKHIL FOODS FSSAI certified and registered?",
+    question: "Is the product FSSAI registered?",
     answer:
-      "Yes, AKHIL FOODS holds FSSAI Lic. No. 22726293000001 (valid till 31-12-2026), GSTIN 09FTOPD3011E1ZZ, and Udyam Reg. No. UDYAM-UP-39-0059446.",
+      "Licence number 22726293000001, see the Certificates page.",
   },
   {
-    question: "Do you deliver across India and how long does it take?",
+    question: "Do you deliver across India?",
     answer:
-      "Yes, we ship across India. We do not promise fixed delivery days; delivery time depends on the courier partner and your delivery location and pin code.",
+      "We ship across India. Delivery time depends on your location. See the Shipping Policy page.",
   },
   {
-    question: "How can I place an order?",
+    question: "How do I order?",
     answer:
-      "You can order directly on our website checkout (Cash on Delivery, Pay by UPI QR, or Online Payment) or message us directly on WhatsApp at +91 63864 23865 (wa.me/916386423865).",
+      "Add to cart, enter address, pay online or choose cash on delivery, or order on WhatsApp.",
   },
 ];
 

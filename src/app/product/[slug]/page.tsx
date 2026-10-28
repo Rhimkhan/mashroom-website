@@ -21,13 +21,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!product) {
     return {
-      title: "Artisanal Pickle Not Found | AKHIL FOODS",
-      description: "The requested artisanal mushroom pickle could not be located.",
+      title: "Pickle Not Found | AKHIL FOODS",
+      description: "The requested mushroom pickle could not be located.",
     };
   }
 
   const title = `${product.name} | AKHIL FOODS`;
-  const description = `${product.subtitle || product.description.slice(0, 150)}. Handcrafted in Jhansi, Uttar Pradesh by AKHIL FOODS with mustard oil.`;
+  const description = `Oyster mushroom pickle made in Jhansi with mustard oil and spices.`;
 
   return {
     title,
@@ -36,14 +36,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title,
       description,
-      url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/product/${product.slug}`,
+      url: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/product/${product.slug}`,
       siteName: "AKHIL FOODS",
       images: [
         {
           url: product.image,
           width: 800,
           height: 800,
-          alt: `${product.name} - Artisanal Pickle Jar`,
+          alt: `${product.name} - Pickle Jar`,
         },
       ],
       locale: "en_IN",
@@ -74,7 +74,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    image: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}${product.image}`,
+    image: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}${product.image}`,
     description: product.description,
     sku: product.id,
     brand: {

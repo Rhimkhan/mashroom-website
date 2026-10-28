@@ -8,6 +8,7 @@ import CartDrawer from "@/components/CartDrawer";
 import AuthModal from "@/components/AuthModal";
 import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
+import Analytics from "@/components/Analytics";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -24,13 +25,13 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://akhilfoods.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"),
   title: {
-    default: "AKHIL FOODS | Artisanal Handcrafted Mushroom Pickles",
+    default: "AKHIL FOODS | Oyster Mushroom Pickle",
     template: "%s | AKHIL FOODS",
   },
   description:
-    "Experience authentic artisanal oyster mushroom pickles handcrafted in Village Nandsiya, Moth, Jhansi, Uttar Pradesh by AKHIL FOODS with fresh mushrooms, pure mustard oil, and traditional spices. Great Food, Better Life.",
+    "Oyster mushroom pickle made in Jhansi with mustard oil and spices by AKHIL FOODS. Great Food, Better Life.",
   keywords: [
     "mushroom pickle",
     "akhil foods",
@@ -39,10 +40,10 @@ export const metadata: Metadata = {
     "jhansi pickles",
     "uttar pradesh pickle",
     "pure mustard oil pickle",
-    "handcrafted pickle online",
+    "mushroom pickle online",
     "fssai registered pickle",
   ],
-  authors: [{ name: "AKHIL FOODS", url: "https://akhilfoods.com" }],
+  authors: [{ name: "AKHIL FOODS", url: process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app" }],
   creator: "AKHIL FOODS",
   publisher: "AKHIL FOODS",
   formatDetection: {
@@ -50,9 +51,9 @@ export const metadata: Metadata = {
     email: false,
   },
   openGraph: {
-    title: "AKHIL FOODS | Artisanal Handcrafted Mushroom Pickles",
-    description: "Great Food, Better Life. Authentic handcrafted oyster mushroom pickles from Village Nandsiya, Moth, Jhansi, Uttar Pradesh.",
-    url: "https://akhilfoods.com",
+    title: "AKHIL FOODS | Oyster Mushroom Pickle",
+    description: "Oyster mushroom pickle made in Jhansi with mustard oil and spices.",
+    url: process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app",
     siteName: "AKHIL FOODS",
     images: [
       {
@@ -67,8 +68,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AKHIL FOODS | Artisanal Mushroom Pickles",
-    description: "Authentic handcrafted oyster mushroom pickles from Jhansi, Uttar Pradesh.",
+    title: "AKHIL FOODS | Oyster Mushroom Pickle",
+    description: "Oyster mushroom pickle made in Jhansi with mustard oil and spices.",
     images: ["/images/products/mushroom-mela-front.jpg"],
   },
   robots: {
@@ -103,6 +104,7 @@ export default function RootLayout({
             <CartDrawer />
             <AuthModal />
             <FloatingWhatsApp />
+            <Analytics />
           </CartProvider>
         </AuthProvider>
       </body>

@@ -29,7 +29,7 @@ function normalizeProductRow(row: any): Product {
       { size: "500g", price: 549, originalPrice: 650, inStock: true },
       { size: "1kg", price: 999, originalPrice: 1200, inStock: true },
     ],
-    badges: Array.isArray(row.badges) ? row.badges : ["Artisanal Harvest"],
+    badges: Array.isArray(row.badges) ? row.badges : ["Fresh Harvest"],
   };
 }
 
@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
       id: `prod-${Date.now()}`,
       name: body.name,
       slug: body.slug || body.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      subtitle: body.subtitle || "Handcrafted Artisanal Pickle",
+      subtitle: body.subtitle || "Oyster Mushroom Pickle",
       description: body.description || "",
       flavour: body.flavour || "Special Blend",
       rating: 5.0,
@@ -210,6 +210,53 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Products POST error:", error);
     return NextResponse.json({ success: false, error: "Failed to save product" }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const ip = getClientIp(request);
+    const rateLimit = checkRateLimit(`products_patch:${ip}`, 30, 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429 });
+    }
+
+    if (!verifyAdminSession(request)) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { id, stockCount } = body || {};
+
+    if (!id || typeof id !== "string") {
+      return NextResponse.json({ success: false, error: "Product ID required" }, { status: 400 });
+    }
+
+    const newStock = Number(stockCount);
+    if (isNaN(newStock) || newStock < 0) {
+      return NextResponse.json({ success: false, error: "Invalid stock value" }, { status: 400 });
+    }
+
+    if (supabase) {
+      await supabase
+        .from("products")
+        .update({ stock_count: newStock, stock: newStock })
+        .eq("id", id);
+    }
+
+    if (process.env.NODE_ENV !== "production") {
+      const current = getLocalProducts();
+      const idx = current.findIndex((p) => p.id === id);
+      if (idx !== -1) {
+        current[idx].stockCount = newStock;
+        saveLocalProducts(current);
+      }
+    }
+
+    return NextResponse.json({ success: true, id, stockCount: newStock });
+  } catch (error) {
+    console.error("Products PATCH error:", error);
+    return NextResponse.json({ success: false, error: "Failed to update stock" }, { status: 500 });
   }
 }
 

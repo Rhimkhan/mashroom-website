@@ -23,7 +23,7 @@ export default function NotFound() {
             Jar Not Found!
           </h1>
           <p className="text-sm sm:text-base text-[#3D2C24]/80 font-sans max-w-md mx-auto leading-relaxed">
-            It seems this page has gone missing like the last spoonful of our handcrafted oyster mushroom pickle. Let’s get you back to the flavor!
+            It seems this page has gone missing like the last spoonful of our oyster mushroom pickle. Let’s get you back to the flavor!
           </p>
         </div>
 

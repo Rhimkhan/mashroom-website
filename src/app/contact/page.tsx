@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: "Contact Us & Location | AKHIL FOODS",
     description:
       "Reach out to AKHIL FOODS in Village Nandsiya, Moth, Jhansi, Uttar Pradesh. Quick WhatsApp support on 916386423865.",
-    url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/contact`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/contact`,
     siteName: "AKHIL FOODS",
     images: [
       {
@@ -41,10 +41,10 @@ export default function ContactPage() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: BRAND.name,
-    image: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/images/products/mushroom-mela-front.jpg`,
+    image: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/images/products/mushroom-mela-front.jpg`,
     telephone: BRAND.phone,
     email: BRAND.email,
-    url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    url: process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app",
     taxID: BRAND.gstNumber,
     address: {
       "@type": "PostalAddress",

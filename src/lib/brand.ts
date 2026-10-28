@@ -12,7 +12,7 @@ export const BRAND = {
   name: "AKHIL FOODS",
   legalName: "AKHIL FOODS",
   shortName: "AKHIL FOODS",
-  url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  url: process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app",
   tagline: "Great Food, Better Life",
   subTagline: "Oyster Mushroom Pickle in Mustard Oil and Spices",
   logo: "/favicon.svg",

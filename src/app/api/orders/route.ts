@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { Order, OrderStatus, Product } from "@/lib/types";
-import { getLocalOrders, addLocalOrder, updateLocalOrderStatus, getLocalProducts, saveLocalOrders } from "@/lib/store";
+import { getLocalOrders, addLocalOrder, updateLocalOrderStatus, getLocalProducts, saveLocalProducts, saveLocalOrders } from "@/lib/store";
 import { INITIAL_PRODUCTS } from "@/lib/data";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
-import { sendOrderNotificationEmail } from "@/lib/email";
+import { sendOrderNotificationEmail, sendOrderStatusEmail } from "@/lib/email";
 import { BRAND } from "@/lib/brand";
 import { verifyAdminSession } from "@/lib/admin-auth";
 import { checkRateLimit, getClientIp, escapeAndTrim } from "@/lib/rate-limit";
@@ -365,6 +365,16 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      if (typeof product.stockCount === "number" && quantity > product.stockCount) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Requested quantity for "${product.name}" exceeds available stock (${product.stockCount} available).`,
+          },
+          { status: 400 }
+        );
+      }
+
       // Re-read price by exact size
       const requestedSize = (item.size || "250g").trim();
       const matchedSize = product.sizes?.find(
@@ -578,7 +588,40 @@ export async function POST(request: NextRequest) {
       addLocalOrder(newOrder);
     }
 
-    // 8. Dispatch notification email
+    // 8. Reduce product stock on the server
+    for (const it of verifiedItems) {
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const { data: pRow } = await supabase
+            .from("products")
+            .select("stock_count, stock")
+            .eq("id", it.productId)
+            .maybeSingle();
+
+          if (pRow) {
+            const currentStock = Number(pRow.stock_count ?? pRow.stock ?? 50);
+            const nextStock = Math.max(0, currentStock - it.quantity);
+            await supabase
+              .from("products")
+              .update({ stock_count: nextStock, stock: nextStock })
+              .eq("id", it.productId);
+          }
+        } catch (stockErr) {
+          console.warn(`Failed to update stock for ${it.productId}:`, stockErr);
+        }
+      }
+
+      if (process.env.NODE_ENV !== "production") {
+        const localProds = getLocalProducts();
+        const pIdx = localProds.findIndex((p) => p.id === it.productId || p.slug === it.productId);
+        if (pIdx !== -1) {
+          localProds[pIdx].stockCount = Math.max(0, (localProds[pIdx].stockCount ?? 50) - it.quantity);
+          saveLocalProducts(localProds);
+        }
+      }
+    }
+
+    // 9. Dispatch notification email
     const emailResult = await sendOrderNotificationEmail(newOrder);
 
     return NextResponse.json(
@@ -678,6 +721,53 @@ export async function PATCH(request: NextRequest) {
         courierName,
         paymentStatus as any
       );
+    }
+
+    // Dispatch status update email to customer if status is Packed, Shipped or Delivered
+    if (orderStatus === "Packed" || orderStatus === "Shipped" || orderStatus === "Delivered") {
+      try {
+        let orderForEmail: Order | null = null;
+        if (isSupabaseConfigured && supabase) {
+          const { data: dbOrder } = await supabase.from("orders").select("*").eq("id", orderId).maybeSingle();
+          if (dbOrder) {
+            orderForEmail = {
+              id: dbOrder.id,
+              orderNumber: dbOrder.order_number || dbOrder.id,
+              customerName: dbOrder.customer_name,
+              email: dbOrder.email,
+              phone: dbOrder.phone,
+              address: dbOrder.address,
+              landmark: dbOrder.landmark,
+              city: dbOrder.city,
+              state: dbOrder.state,
+              pincode: dbOrder.pincode,
+              items: Array.isArray(dbOrder.items) ? dbOrder.items : [],
+              subtotal: Number(dbOrder.subtotal) || 0,
+              shipping: Number(dbOrder.shipping) || 0,
+              discount: Number(dbOrder.discount) || 0,
+              total: Number(dbOrder.total) || 0,
+              paymentMethod: dbOrder.payment_method,
+              paymentStatus: dbOrder.payment_status,
+              orderStatus: orderStatus,
+              trackingNumber: trackingNumber || dbOrder.tracking_number,
+              courierName: courierName || dbOrder.courier_name,
+              createdAt: dbOrder.created_at,
+            };
+          }
+        }
+        if (!orderForEmail && process.env.NODE_ENV !== "production") {
+          const locals = getLocalOrders();
+          orderForEmail = locals.find((o) => o.id === orderId || o.orderNumber === orderId) || null;
+        }
+
+        if (orderForEmail && orderForEmail.email && !orderForEmail.email.includes("@akhilfoods.customer")) {
+          sendOrderStatusEmail(orderForEmail, orderStatus, trackingNumber, courierName).catch((err) => {
+            console.warn("Failed to send order status email:", err);
+          });
+        }
+      } catch (emailErr) {
+        console.warn("Error preparing order status email:", emailErr);
+      }
     }
 
     return NextResponse.json({ success: true, order: updated });

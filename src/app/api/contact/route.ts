@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Thank you for reaching out! Our Jhansi kitchen concierge has received your message and will respond shortly.",
+      message: "Thank you for reaching out! Our Jhansi kitchen team has received your message and will respond shortly.",
     });
   } catch (error) {
     console.error("Contact API error:", error);

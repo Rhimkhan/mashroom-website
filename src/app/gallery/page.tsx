@@ -2,7 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import GalleryClient from "@/components/GalleryClient";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app";
 
 export const metadata: Metadata = {
   title: "Gallery | AKHIL FOODS Mushroom Pickles",

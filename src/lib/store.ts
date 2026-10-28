@@ -171,3 +171,78 @@ export function findOrderByNumberOrPhone(query: string): Order[] {
       o.email.toLowerCase() === q
   );
 }
+
+// In-memory reviews store
+const LOCAL_STORAGE_REVIEWS_KEY = "akhil_foods_reviews_v1";
+let serverMemoryReviews: import("./types").ProductReview[] = [];
+
+export function getLocalReviews(): import("./types").ProductReview[] {
+  if (typeof window === "undefined") return serverMemoryReviews;
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_REVIEWS_KEY);
+    return raw ? JSON.parse(raw) : serverMemoryReviews;
+  } catch {
+    return serverMemoryReviews;
+  }
+}
+
+export function saveLocalReviews(reviews: import("./types").ProductReview[]): void {
+  if (typeof window === "undefined") {
+    serverMemoryReviews = reviews;
+    return;
+  }
+  try {
+    localStorage.setItem(LOCAL_STORAGE_REVIEWS_KEY, JSON.stringify(reviews));
+  } catch {
+    serverMemoryReviews = reviews;
+  }
+}
+
+export function addLocalReview(rev: import("./types").ProductReview): import("./types").ProductReview {
+  const list = getLocalReviews();
+  const updated = [rev, ...list];
+  saveLocalReviews(updated);
+  return rev;
+}
+
+export function updateLocalReviewStatus(id: string, status: "pending" | "approved" | "rejected"): boolean {
+  const list = getLocalReviews();
+  const idx = list.findIndex((r) => r.id === id);
+  if (idx === -1) return false;
+  list[idx].status = status;
+  saveLocalReviews(list);
+  return true;
+}
+
+// In-memory wholesale inquiries store
+const LOCAL_STORAGE_WHOLESALE_KEY = "akhil_foods_wholesale_v1";
+let serverMemoryWholesale: import("./types").WholesaleInquiry[] = [];
+
+export function getLocalWholesaleInquiries(): import("./types").WholesaleInquiry[] {
+  if (typeof window === "undefined") return serverMemoryWholesale;
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_WHOLESALE_KEY);
+    return raw ? JSON.parse(raw) : serverMemoryWholesale;
+  } catch {
+    return serverMemoryWholesale;
+  }
+}
+
+export function saveLocalWholesaleInquiries(inquiries: import("./types").WholesaleInquiry[]): void {
+  if (typeof window === "undefined") {
+    serverMemoryWholesale = inquiries;
+    return;
+  }
+  try {
+    localStorage.setItem(LOCAL_STORAGE_WHOLESALE_KEY, JSON.stringify(inquiries));
+  } catch {
+    serverMemoryWholesale = inquiries;
+  }
+}
+
+export function addLocalWholesaleInquiry(inq: import("./types").WholesaleInquiry): import("./types").WholesaleInquiry {
+  const list = getLocalWholesaleInquiries();
+  const updated = [inq, ...list];
+  saveLocalWholesaleInquiries(updated);
+  return inq;
+}

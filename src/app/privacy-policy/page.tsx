@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `Privacy Policy | ${BRAND.name}`,
     description: `Privacy Policy for Akhil Foods, Village Nandsiya, Moth, Jhansi. Information on data collection, storage, courier partners, and grievance handling.`,
-    url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/privacy-policy`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/privacy-policy`,
     type: "website",
   },
 };

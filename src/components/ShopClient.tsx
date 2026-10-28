@@ -79,13 +79,13 @@ export default function ShopClient() {
         {/* Page Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <span className="text-xs font-serif font-bold uppercase tracking-[0.25em] text-[#A87B28] bg-[#EFE8DD] px-4 py-1.5 rounded-full border border-[#DDD3C4] shadow-sm">
-            Handcrafted in Jhansi, Uttar Pradesh
+            Made in Jhansi, Uttar Pradesh
           </span>
           <h1 className="font-serif text-3xl sm:text-5xl font-normal text-[#211612]">
             Authentic Mushroom Pickles
           </h1>
           <p className="text-sm sm:text-base text-[#3D2C24] font-sans font-light leading-relaxed">
-            Prepared with tender oyster mushrooms, cold-pressed mustard oil, natural vinegar, and traditional stone-ground Indian spices.
+            Oyster mushroom pickle made in Jhansi with mustard oil and spices.
           </p>
         </div>
 
@@ -145,7 +145,7 @@ export default function ShopClient() {
 
         {/* Products Grid with semantic h2 heading */}
         <div>
-          <h2 className="sr-only">Our Handcrafted Mushroom Pickles</h2>
+          <h2 className="sr-only">Our Mushroom Pickles</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {filteredProducts.map((product) => {
             const currentSize = selectedSizes[product.id] || "250g";
@@ -157,6 +157,8 @@ export default function ShopClient() {
                 inStock: true,
               };
 
+            const isOutOfStock = (product.stockCount ?? 1) <= 0;
+
             return (
               <div
                 key={product.id}
@@ -167,17 +169,21 @@ export default function ShopClient() {
                   <div className="relative aspect-square overflow-hidden bg-[#FAF6EE] border-b border-[#E8DEC8]">
                     <Image
                       src={product.image || "/images/hero-pickle.jpg"}
-                      alt={`${product.name} - Handcrafted clay aged mushroom pickle from Akhil Foods`}
+                      alt={`${product.name} - Mushroom pickle from Akhil Foods`}
                       fill
                       loading="lazy"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                       className="object-contain p-3 group-hover:scale-105 transition-transform duration-500"
                     />
-                    {product.badges?.[0] && (
+                    {isOutOfStock ? (
+                      <span className="absolute top-3.5 left-3.5 bg-red-800 text-white text-caption font-serif tracking-wider px-3 py-1 rounded-full shadow-md">
+                        Out of Stock
+                      </span>
+                    ) : product.badges?.[0] ? (
                       <span className="absolute top-3.5 left-3.5 bg-[#211612] text-[#FAF6EE] text-caption font-serif tracking-wider px-3 py-1 rounded-full shadow-md border border-[#C89B3C]/30">
                         {product.badges[0]}
                       </span>
-                    )}
+                    ) : null}
                     <span className="absolute top-3.5 right-3.5 bg-[#EFE8DD] text-[#211612] text-caption font-serif font-bold px-2.5 py-1 rounded-full shadow-md border border-[#DDD3C4]">
                       {product.flavour}
                     </span>
@@ -194,7 +200,7 @@ export default function ShopClient() {
                     ) : (
                       <div className="flex items-center gap-1.5 text-caption text-stone-500 font-medium">
                         <Star className="w-3.5 h-3.5 text-[#C89B3C]" />
-                        <span className="italic font-serif">Atelier Micro-Batch</span>
+                        <span className="italic font-serif">Fresh Preparation</span>
                       </div>
                     )}
 
@@ -254,19 +260,21 @@ export default function ShopClient() {
                 <div className="p-5 sm:p-6 pt-0 grid grid-cols-2 gap-2.5">
                   <button
                     type="button"
+                    disabled={isOutOfStock}
                     onClick={() => addToCart(product, currentSize, 1)}
-                    className="py-3 px-3 rounded-xl border border-[#211612] text-[#211612] hover:bg-[#211612] hover:text-[#FAF6EE] text-xs font-serif tracking-[0.16em] uppercase font-bold transition-all text-center flex items-center justify-center gap-1.5"
+                    className="py-3 px-3 rounded-xl border border-[#211612] text-[#211612] hover:bg-[#211612] hover:text-[#FAF6EE] text-xs font-serif tracking-[0.16em] uppercase font-bold transition-all text-center flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <ShoppingBag className="w-3.5 h-3.5" />
-                    <span>Add to Bag</span>
+                    <span>{isOutOfStock ? "Out of Stock" : "Add to Bag"}</span>
                   </button>
                   <button
                     type="button"
+                    disabled={isOutOfStock}
                     onClick={() => buyNow(product, currentSize, 1)}
-                    className="py-3 px-3 rounded-xl bg-[#211612] hover:bg-[#34221A] text-[#FAF6EE] text-xs font-serif tracking-[0.16em] uppercase font-bold transition-all text-center shadow-md flex items-center justify-center gap-1.5 border border-[#211612]"
+                    className="py-3 px-3 rounded-xl bg-[#211612] hover:bg-[#34221A] text-[#FAF6EE] text-xs font-serif tracking-[0.16em] uppercase font-bold transition-all text-center shadow-md flex items-center justify-center gap-1.5 border border-[#211612] disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <Zap className="w-3.5 h-3.5 text-[#C89B3C]" />
-                    <span>Acquire</span>
+                    <span>{isOutOfStock ? "Out of Stock" : "Acquire"}</span>
                   </button>
                 </div>
               </div>

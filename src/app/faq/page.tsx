@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: "Frequently Asked Questions | AKHIL FOODS",
     description:
       "All answers about our Mushroom Mela Oyster Mushroom Pickle, genuine ingredients, packaging safety, and delivery.",
-    url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/faq`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/faq`,
     siteName: "AKHIL FOODS",
     images: [
       {

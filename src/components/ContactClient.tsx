@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, Send, MessageSquare, CheckCircle2, Clock, Sparkles, Navigation, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import WholesaleForm from "@/components/WholesaleForm";
 import {
   PHONE_DISPLAY,
   WHATSAPP_NUMBER,
@@ -112,7 +113,7 @@ export default function ContactClient() {
                   </div>
                   <div>
                     <h3 className="font-bold text-[#FAF6EE] text-sm">Operating Hours</h3>
-                    <p className="text-[#FAF6EE]/80 mt-0.5 text-sm">Mon – Sat: 9:00 AM – 7:00 PM IST (Sun Closed)</p>
+                    <p className="text-[#FAF6EE]/80 mt-0.5 text-sm">Mon - Sat: 9:00 AM - 7:00 PM IST (Sun Closed)</p>
                   </div>
                 </div>
               </div>
@@ -282,40 +283,30 @@ export default function ContactClient() {
           </div>
         </div>
 
-        {/* Interactive Google Map Embed */}
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h2 className="font-serif text-2xl font-bold text-[#211612]">
-                Locate Us in Moth, Jhansi (Uttar Pradesh)
-              </h2>
-              <p className="text-sm text-[#3D2C24]/80">
-                {BRAND.address}
-              </p>
-            </div>
-            <a
-              href="https://maps.google.com/?q=Village+Nandsiya,+Moth,+Jhansi,+Uttar+Pradesh+284303"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#FDFBF7] border border-[#E8DEC8] text-[#211612] text-xs font-bold hover:bg-[#FAF6EE] transition-colors shadow-sm self-start"
-            >
-              <Navigation className="w-3.5 h-3.5 text-[#A87B28]" />
-              <span>Open in Google Maps</span>
-            </a>
+        {/* Google Maps Location Card (No iframe) */}
+        <div className="bg-[#FDFBF7] p-8 rounded-3xl border border-[#E8DEC8] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <h2 className="font-serif text-2xl font-bold text-[#211612]">
+              Kitchen & Packing Address
+            </h2>
+            <p className="text-sm text-[#3D2C24]/80">
+              Village Nandsiya, Karguwan Road, Moth, Jhansi 284303
+            </p>
           </div>
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=Village+Nandsiya,+Karguwan+Road,+Moth,+Jhansi+284303"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#211612] hover:bg-[#34221A] text-[#FAF6EE] text-xs font-bold uppercase tracking-wider transition-colors shadow-sm shrink-0 border border-[#211612]"
+          >
+            <Navigation className="w-4 h-4 text-[#C89B3C]" />
+            <span>Open in Google Maps</span>
+          </a>
+        </div>
 
-          <div className="w-full h-96 rounded-3xl overflow-hidden border border-[#E8DEC8] shadow-sm bg-stone-200">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57545.33405788484!2d78.91924515!3d25.71480115!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39775f0a4f5b5f89%3A0x6e2c3a5b06ec9047!2sMoth%2C%20Uttar%20Pradesh%20284303!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen={false}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="AKHIL FOODS Moth Jhansi Uttar Pradesh Location Map"
-            />
-          </div>
+        {/* Wholesale Inquiries Section */}
+        <div id="wholesale" className="pt-2">
+          <WholesaleForm />
         </div>
       </div>
     </div>

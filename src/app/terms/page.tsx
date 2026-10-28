@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `Terms and Conditions | ${BRAND.name}`,
     description: `Plain terms and conditions for Akhil Foods: orders, payments, delivery, cancellations, refunds, food safety, and governing law at Jhansi, Uttar Pradesh.`,
-    url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/terms`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/terms`,
     type: "website",
   },
 };
