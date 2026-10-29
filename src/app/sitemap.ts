@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { INITIAL_PRODUCTS } from "@/lib/data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app";
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "");
 
   // Static routes
   const staticRoutes: MetadataRoute.Sitemap = [

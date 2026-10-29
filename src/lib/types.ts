@@ -38,8 +38,8 @@ export interface CartItem {
 }
 
 export type OrderStatus = "New" | "Packed" | "Shipped" | "Delivered";
-export type PaymentMethod = "Cash on Delivery" | "Pay by UPI QR" | "Razorpay Online (UPI / Cards / Netbanking)";
-export type PaymentStatus = "Pending" | "Paid" | "Failed" | "Awaiting verification";
+export type PaymentMethod = "Cash on Delivery" | "Pay by UPI" | "Pay by UPI QR" | "Razorpay Online (UPI / Cards / Netbanking)" | string;
+export type PaymentStatus = "Pending" | "Paid" | "Failed" | "Awaiting verification" | "Payment pending verification" | string;
 
 export interface OrderItem {
   productId: string;

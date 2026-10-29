@@ -29,6 +29,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = `${product.name} | AKHIL FOODS`;
   const description = `Oyster mushroom pickle made in Jhansi with mustard oil and spices.`;
 
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "");
+
   return {
     title,
     description,
@@ -36,7 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title,
       description,
-      url: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/product/${product.slug}`,
+      url: `${appUrl}/product/${product.slug}`,
       siteName: "AKHIL FOODS",
       images: [
         {
@@ -56,7 +58,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       images: [product.image],
     },
     alternates: {
-      canonical: `/product/${product.slug}`,
+      canonical: `${appUrl}/product/${product.slug}`,
     },
   };
 }
@@ -70,35 +72,40 @@ export default async function ProductDetailPage({ params }: PageProps) {
     return notFound();
   }
 
-  const productSchema = {
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "");
+
+  const productSchema: Record<string, any> = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    image: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}${product.image}`,
+    image: `${appUrl}${product.image}`,
     description: product.description,
     sku: product.id,
+    weight: "400 g",
     brand: {
       "@type": "Brand",
       name: "AKHIL FOODS",
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.rating,
-      reviewCount: product.reviewsCount,
-    },
     offers: {
-      "@type": "AggregateOffer",
+      "@type": "Offer",
       priceCurrency: "INR",
-      lowPrice: product.sizes[0].price,
-      highPrice: product.sizes[product.sizes.length - 1].price,
-      offerCount: product.sizes.length,
-      availability: "https://schema.org/InStock",
+      price: 399,
+      availability: (product.stockCount ?? 100) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       seller: {
         "@type": "Organization",
         name: "AKHIL FOODS",
       },
     },
   };
+
+  // Add aggregateRating only if approved reviews exist
+  if (product.reviewsCount > 0 && product.rating > 0) {
+    productSchema.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: product.rating,
+      reviewCount: product.reviewsCount,
+    };
+  }
 
   return (
     <>

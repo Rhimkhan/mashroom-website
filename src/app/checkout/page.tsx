@@ -81,8 +81,9 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // UPI QR state
-  const upiId = process.env.NEXT_PUBLIC_UPI_ID || "abhishekkumarnandsiya@okaxis";
+  // UPI state: strictly depends on NEXT_PUBLIC_UPI_ID
+  const upiId = process.env.NEXT_PUBLIC_UPI_ID?.trim() || "";
+  const isUpiConfigured = Boolean(upiId);
   const [orderNumber, setOrderNumber] = useState("AF-8001");
   const [utrNumber, setUtrNumber] = useState("");
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
@@ -94,11 +95,13 @@ export default function CheckoutPage() {
   }, []);
 
   // UPI Deep link: upi://pay?pa=<UPI_ID>&pn=Akhil%20Foods&am=<order total>&cu=INR&tn=<order number>
-  const upiDeepLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("Akhil Foods")}&am=${total}&cu=INR&tn=${encodeURIComponent(orderNumber)}`;
+  const upiDeepLink = isUpiConfigured
+    ? `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("Akhil Foods")}&am=${total}&cu=INR&tn=${encodeURIComponent(orderNumber)}`
+    : "";
 
   // Generate UPI QR Code on client
   useEffect(() => {
-    if (paymentMethod === "Pay by UPI QR" && total > 0) {
+    if ((paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR") && isUpiConfigured && total > 0 && upiDeepLink) {
       QRCode.toDataURL(upiDeepLink, {
         width: 240,
         margin: 1.5,
@@ -110,7 +113,7 @@ export default function CheckoutPage() {
         .then((url) => setQrCodeDataUrl(url))
         .catch((err) => console.error("QR Code generation error:", err));
     }
-  }, [paymentMethod, upiDeepLink, total]);
+  }, [paymentMethod, isUpiConfigured, upiDeepLink, total]);
 
   // Copy UPI ID helper
   const handleCopyUpi = () => {
@@ -221,9 +224,9 @@ export default function CheckoutPage() {
       }
     }
 
-    // UPI QR specific validation: 12-digit UTR is required
+    // UPI specific validation: 12-digit UTR is required
     let cleanUtr = "";
-    if (paymentMethod === "Pay by UPI QR") {
+    if (paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR") {
       cleanUtr = utrNumber.replace(/\D/g, "");
       if (cleanUtr.length !== 12) {
         setErrorMsg("Please enter the complete 12-digit UPI reference / UTR transaction ID from your payment receipt.");
@@ -288,14 +291,15 @@ export default function CheckoutPage() {
         return;
       }
 
-      // 2. Pay by UPI QR Flow (Awaiting verification with 12-digit UTR)
-      if (paymentMethod === "Pay by UPI QR") {
+      // 2. Pay by UPI Flow (Stays "Payment pending verification" until admin clicks "Mark as Paid")
+      if (paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR") {
         const res = await fetch("/api/orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ...orderPayload,
-            paymentStatus: "Awaiting verification",
+            paymentMethod: "Pay by UPI",
+            paymentStatus: "Payment pending verification",
             utr: cleanUtr,
             notes: `Paid via UPI to ${upiId} | UTR: ${cleanUtr}`,
           }),
@@ -303,7 +307,7 @@ export default function CheckoutPage() {
 
         const data = await res.json();
         if (!data.success) {
-          throw new Error(data.error || "Failed to record UPI QR order");
+          throw new Error(data.error || "Failed to record UPI order");
         }
 
         clearCart();
@@ -605,30 +609,32 @@ export default function CheckoutPage() {
                   </div>
                 </label>
 
-                {/* Pay by UPI QR (Direct Bank Transfer) */}
-                <label
-                  className={`p-4 rounded-[6px] border cursor-pointer flex items-center gap-3 transition-all ${
-                    paymentMethod === "Pay by UPI QR"
-                      ? "border-[#211612] bg-[#FAF6EE] shadow-sm ring-1 ring-[#211612]"
-                      : "border-[#E8DEC8] bg-[#FDFBF7] hover:border-[#211612]/40"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="Pay by UPI QR"
-                    checked={paymentMethod === "Pay by UPI QR"}
-                    onChange={() => setPaymentMethod("Pay by UPI QR")}
-                    className="accent-[#211612] w-4 h-4"
-                  />
-                  <div>
-                    <div className="flex items-center gap-1.5 font-bold text-sm text-[#211612]">
-                      <QrCode className="w-4 h-4 text-[#A87B28]" />
-                      <span>Pay by UPI QR</span>
+                {/* Pay by UPI (Direct Bank Transfer) */}
+                {isUpiConfigured && (
+                  <label
+                    className={`p-4 rounded-[6px] border cursor-pointer flex items-center gap-3 transition-all ${
+                      paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR"
+                        ? "border-[#211612] bg-[#FAF6EE] shadow-sm ring-1 ring-[#211612]"
+                        : "border-[#E8DEC8] bg-[#FDFBF7] hover:border-[#211612]/40"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="Pay by UPI"
+                      checked={paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR"}
+                      onChange={() => setPaymentMethod("Pay by UPI")}
+                      className="accent-[#211612] w-4 h-4"
+                    />
+                    <div>
+                      <div className="flex items-center gap-1.5 font-bold text-sm text-[#211612]">
+                        <QrCode className="w-4 h-4 text-[#A87B28]" />
+                        <span>Pay by UPI</span>
+                      </div>
+                      <p className="text-xs text-[#3D2C24]/70 mt-0.5">Instant GPay / PhonePe / Paytm</p>
                     </div>
-                    <p className="text-xs text-[#3D2C24]/70 mt-0.5">Instant GPay / PhonePe / Paytm</p>
-                  </div>
-                </label>
+                  </label>
+                )}
 
                 {/* Razorpay Online (Only visible if real Razorpay keys are configured) */}
                 {isRazorpayConfigured && (
@@ -658,8 +664,8 @@ export default function CheckoutPage() {
                 )}
               </div>
 
-              {/* PAY BY UPI QR SECTION */}
-              {paymentMethod === "Pay by UPI QR" && (
+              {/* PAY BY UPI SECTION */}
+              {(paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR") && isUpiConfigured && (
                 <div className="mt-4 p-5 sm:p-6 rounded-[6px] bg-[#FAF6EE] border border-[#C89B3C]/40 space-y-4">
                   <div className="flex items-center justify-between pb-3 border-b border-[#E8DEC8]">
                     <div className="flex items-center gap-2">
@@ -739,7 +745,7 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       maxLength={12}
-                      required={paymentMethod === "Pay by UPI QR"}
+                      required={paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR"}
                       placeholder="e.g. 428192837465"
                       value={utrNumber}
                       onChange={(e) => setUtrNumber(e.target.value.replace(/\D/g, ""))}

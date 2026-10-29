@@ -466,8 +466,8 @@ export async function POST(request: NextRequest) {
     let paymentStatus: Order["paymentStatus"] = "Pending";
     let utrClean: string | undefined = undefined;
 
-    if (paymentMethod === "Pay by UPI QR") {
-      paymentStatus = "Awaiting verification";
+    if (paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR") {
+      paymentStatus = "Payment pending verification";
       const rawUtr = (body.utr || "").replace(/\D/g, "");
       if (rawUtr.length === 12) {
         utrClean = rawUtr;
@@ -675,7 +675,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const { orderId, orderStatus, trackingNumber, courierName, paymentStatus } = body || {};
+    const { orderId, orderStatus, trackingNumber, courierName, paymentStatus, trackingLink, trackingUrl } = body || {};
 
     if (!orderId || typeof orderId !== "string") {
       return NextResponse.json({ success: false, error: "Missing required orderId" }, { status: 400 });
@@ -761,7 +761,13 @@ export async function PATCH(request: NextRequest) {
         }
 
         if (orderForEmail && orderForEmail.email && !orderForEmail.email.includes("@akhilfoods.customer")) {
-          sendOrderStatusEmail(orderForEmail, orderStatus, trackingNumber, courierName).catch((err) => {
+          sendOrderStatusEmail(
+            orderForEmail,
+            orderStatus,
+            trackingNumber || orderForEmail.trackingNumber,
+            courierName || orderForEmail.courierName,
+            trackingLink || trackingUrl
+          ).catch((err) => {
             console.warn("Failed to send order status email:", err);
           });
         }

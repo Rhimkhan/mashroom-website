@@ -545,38 +545,35 @@ If you have any questions, reply here.
   // CSV Export for Orders
   const exportOrdersCSV = () => {
     const headers = [
-      "Order Number",
-      "Date",
-      "Customer Name",
-      "Phone",
-      "Email",
-      "City",
-      "Pincode",
-      "Address",
-      "Total Amount",
-      "Payment Method",
-      "Payment Status",
-      "Order Status",
-      "Tracking Number",
-      "Courier Name"
+      "order number",
+      "date",
+      "name",
+      "phone",
+      "city",
+      "pincode",
+      "items",
+      "total",
+      "payment status",
+      "order status"
     ];
 
-    const rows = orders.map((o) => [
-      `"${o.orderNumber || ""}"`,
-      `"${o.createdAt ? new Date(o.createdAt).toISOString() : ""}"`,
-      `"${(o.customerName || "").replace(/"/g, '""')}"`,
-      `"${o.phone || ""}"`,
-      `"${o.email || ""}"`,
-      `"${(o.city || "").replace(/"/g, '""')}"`,
-      `"${o.pincode || ""}"`,
-      `"${(o.address || "").replace(/"/g, '""')}"`,
-      o.total || 0,
-      `"${o.paymentMethod || ""}"`,
-      `"${o.paymentStatus || ""}"`,
-      `"${o.orderStatus || ""}"`,
-      `"${o.trackingNumber || ""}"`,
-      `"${o.courierName || ""}"`,
-    ]);
+    const rows = orders.map((o) => {
+      const itemsFormatted = (o.items || [])
+        .map((it) => `${it.name} (${it.size}) x${it.quantity}`)
+        .join("; ");
+      return [
+        `"${(o.orderNumber || "").replace(/"/g, '""')}"`,
+        `"${o.createdAt ? new Date(o.createdAt).toISOString() : ""}"`,
+        `"${(o.customerName || "").replace(/"/g, '""')}"`,
+        `"${(o.phone || "").replace(/"/g, '""')}"`,
+        `"${(o.city || "").replace(/"/g, '""')}"`,
+        `"${(o.pincode || "").replace(/"/g, '""')}"`,
+        `"${itemsFormatted.replace(/"/g, '""')}"`,
+        o.total || 0,
+        `"${(o.paymentStatus || "").replace(/"/g, '""')}"`,
+        `"${(o.orderStatus || "").replace(/"/g, '""')}"`,
+      ];
+    });
 
     const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -1000,9 +997,19 @@ If you have any questions, reply here.
                   className="w-full pl-9 pr-3 py-2 rounded-2xl bg-[#FDFBF7] border border-[#E8DEC8] text-xs focus:outline-none focus:ring-2 focus:ring-[#211612]"
                 />
               </div>
-              <span className="text-xs text-stone-500">
-                Showing {filteredOrders.length} orders
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-stone-500">
+                  Showing {filteredOrders.length} orders
+                </span>
+                <button
+                  type="button"
+                  onClick={exportOrdersCSV}
+                  className="px-3.5 py-2 rounded-[6px] bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#211612] text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#C89B3C]" />
+                  <span>Download orders CSV</span>
+                </button>
+              </div>
             </div>
 
             <div className="bg-[#FDFBF7] rounded-[32px] border border-[#E8DEC8] shadow-sm overflow-hidden">
@@ -1076,7 +1083,7 @@ If you have any questions, reply here.
                               className={`px-2.5 py-1 rounded-[4px] text-[10px] font-bold ${
                                 order.paymentStatus === "Paid"
                                   ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                                  : order.paymentStatus === "Awaiting verification"
+                                  : order.paymentStatus === "Awaiting verification" || order.paymentStatus === "Payment pending verification"
                                   ? "bg-amber-100 text-amber-900 border border-amber-300"
                                   : order.paymentMethod.includes("Cash")
                                   ? "bg-amber-100 text-amber-800 border border-amber-200"
@@ -1086,7 +1093,7 @@ If you have any questions, reply here.
                               {order.paymentMethod.includes("Cash")
                                 ? "COD"
                                 : order.paymentMethod.includes("UPI")
-                                ? "UPI QR"
+                                ? "UPI"
                                 : "Online"}{" "}
                               ({order.paymentStatus})
                             </span>
@@ -1481,7 +1488,7 @@ If you have any questions, reply here.
                   className="px-3.5 py-2 rounded-[6px] bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#211612] text-xs font-bold flex items-center gap-1.5 transition-colors"
                 >
                   <Download className="w-3.5 h-3.5 text-[#C89B3C]" />
-                  <span>Export Orders (CSV)</span>
+                  <span>Download orders CSV</span>
                 </button>
               </div>
             </div>
