@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: `Terms and Conditions | ${BRAND.name}`,
   description: `Terms and Conditions for purchasing Mushroom Mela oyster mushroom pickle from Akhil Foods, Village Nandsiya, Karguwan Road, Near Ambedkar Murti, Moth, Jhansi, Uttar Pradesh 284303.`,
   alternates: {
-    canonical: "/terms",
+    canonical: `${(process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "")}/terms`,
   },
   openGraph: {
     title: `Terms and Conditions | ${BRAND.name}`,
@@ -53,7 +53,7 @@ export default function TermsPage() {
             These Terms and Conditions govern your use of this website and purchases of Mushroom Mela oyster mushroom pickle from <strong>Akhil Foods</strong>. By placing an order with us, you agree to these terms in full.
           </p>
           <p>
-            Business details: Akhil Foods, Village Nandsiya, Karguwan Road, Near Ambedkar Murti, Moth, Jhansi, Uttar Pradesh 284303. Proprietor: Abhishek Kumar. FSSAI Lic. No. 22726293000001, GSTIN 09FTOPD3011E1ZZ. WhatsApp: +91 63864 23865. Email: abhishekkumarnandsiya@gmail.com.
+            Business details: Akhil Foods, Village Nandsiya, Karguwan Road, Near Ambedkar Murti, Moth, Jhansi, Uttar Pradesh 284303. Proprietor: Abhishek Kumar. FSSAI Lic. No. 22726293000001, GSTIN 09FTOPD3011E1ZZ. WhatsApp: +91 63864 23865.{process.env.NEXT_PUBLIC_CONTACT_EMAIL ? ` Email: ${process.env.NEXT_PUBLIC_CONTACT_EMAIL}.` : ""}
           </p>
         </div>
 
@@ -172,7 +172,9 @@ export default function TermsPage() {
               <p><strong>Proprietor:</strong> Abhishek Kumar</p>
               <p><strong>Address:</strong> Village Nandsiya, Karguwan Road, Near Ambedkar Murti, Moth, Jhansi, Uttar Pradesh 284303</p>
               <p><strong>WhatsApp / Phone:</strong> +91 63864 23865</p>
-              <p><strong>Email:</strong> abhishekkumarnandsiya@gmail.com</p>
+              {process.env.NEXT_PUBLIC_CONTACT_EMAIL && (
+                <p><strong>Email:</strong> {process.env.NEXT_PUBLIC_CONTACT_EMAIL}</p>
+              )}
               <p><strong>FSSAI Registration:</strong> 22726293000001</p>
               <p><strong>GSTIN:</strong> 09FTOPD3011E1ZZ</p>
             </div>

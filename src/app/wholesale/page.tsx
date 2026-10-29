@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: `Wholesale Inquiries | ${BRAND.name}`,
   description: `Bulk and wholesale order inquiries for Mushroom Mela oyster mushroom pickles. Sourced, prepared and packed in Moth, Jhansi, Uttar Pradesh.`,
   alternates: {
-    canonical: "/wholesale",
+    canonical: `${(process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "")}/wholesale`,
   },
 };
 

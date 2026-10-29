@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     images: ["/images/products/mushroom-mela-front.jpg"],
   },
   alternates: {
-    canonical: "/faq",
+    canonical: `${(process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "")}/faq`,
   },
 };
 

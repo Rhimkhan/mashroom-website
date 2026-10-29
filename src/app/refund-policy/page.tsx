@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: `Refund and Replacement Policy | ${BRAND.name}`,
   description: `Refund and replacement policy for ${BRAND.name}. 48-hour photo reporting policy for damaged or wrong items. No returns on opened food.`,
   alternates: {
-    canonical: "/refund-policy",
+    canonical: `${(process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "")}/refund-policy`,
   },
   openGraph: {
     title: `Refund and Replacement Policy | ${BRAND.name}`,

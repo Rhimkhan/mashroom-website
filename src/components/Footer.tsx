@@ -16,15 +16,17 @@ import {
   Mail,
   Phone,
   MapPin,
-  CheckCircle2,
   Heart,
   Award,
   Sparkles,
   ShieldCheck,
   FileText,
+  MessageSquare,
 } from "lucide-react";
 
 export default function Footer() {
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim();
+
   return (
     <footer className="bg-[#160E0A] text-[#FAF6EE] border-t border-[#C89B3C]/30 pt-16 pb-12 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,13 +64,13 @@ export default function Footer() {
 
         {/* Main Footer Links */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 py-12">
-          {/* Brand Info & Social Icons */}
-          <div className="lg:col-span-2 space-y-4">
+          {/* Brand Info & Registrations */}
+          <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="relative w-12 h-12 rounded-full overflow-hidden border border-[#C89B3C]/50 bg-[#120B08]">
                 <Image
                   src={BRAND.logo}
-                  alt={`${BRAND.name} Pickle Emblem`}
+                  alt={`${BRAND.name} Logo`}
                   fill
                   loading="lazy"
                   sizes="48px"
@@ -82,11 +84,11 @@ export default function Footer() {
                 <p className="text-xs font-serif text-[#D4AF37] tracking-[0.2em] uppercase">{BRAND.tagline}</p>
               </div>
             </div>
-            <p className="text-sm text-[#EADBB6]/85 leading-relaxed max-w-sm font-light">
+            <p className="text-sm text-[#EADBB6]/85 leading-relaxed font-light">
               Oyster mushroom pickle made in Jhansi with mustard oil and spices. Dedicated to honesty, safety, and authentic Indian taste.
             </p>
 
-            {/* Government & Food Safety Registrations Trust Box */}
+            {/* Government & Food Safety Registrations Box */}
             <div className="space-y-2 pt-1">
               <div className="text-xs text-[#D4AF37] font-serif bg-[#2A1D17] px-3.5 py-2.5 rounded-xl flex flex-wrap items-center justify-between gap-x-2.5 gap-y-1 border border-[#C89B3C]/30">
                 <span className="flex items-center gap-1.5 font-bold">
@@ -109,7 +111,6 @@ export default function Footer() {
             <div className="pt-2">
               <p className="text-xs font-serif tracking-[0.18em] uppercase text-[#D4AF37] mb-2 font-medium">Connect with Us:</p>
               <div className="flex items-center gap-2.5">
-                {/* WhatsApp */}
                 <a
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_DEFAULT_MESSAGE)}`}
                   target="_blank"
@@ -122,7 +123,6 @@ export default function Footer() {
                   </svg>
                 </a>
 
-                {/* Instagram (only if NEXT_PUBLIC_INSTAGRAM_URL is set) */}
                 {process.env.NEXT_PUBLIC_INSTAGRAM_URL && (
                   <a
                     href={process.env.NEXT_PUBLIC_INSTAGRAM_URL}
@@ -137,7 +137,6 @@ export default function Footer() {
                   </a>
                 )}
 
-                {/* Facebook (only if NEXT_PUBLIC_FACEBOOK_URL is set) */}
                 {process.env.NEXT_PUBLIC_FACEBOOK_URL && (
                   <a
                     href={process.env.NEXT_PUBLIC_FACEBOOK_URL}
@@ -175,15 +174,6 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/certificates"
-                  className="hover:text-[#D4AF37] text-[#D4AF37] font-medium transition-colors flex items-center gap-1.5"
-                >
-                  <FileText className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  <span>Certificates</span>
-                </Link>
-              </li>
-              <li>
                 <Link href="/gallery" className="hover:text-[#D4AF37] transition-colors">
                   Gallery
                 </Link>
@@ -193,51 +183,100 @@ export default function Footer() {
                   Contact
                 </Link>
               </li>
-            </ul>
-          </div>
-
-          {/* Customer Care & Address */}
-          <div className="space-y-3">
-            <h3 className="font-serif text-sm font-semibold text-[#D4AF37] tracking-wider">Customer Care & Kitchen</h3>
-            <ul className="space-y-2.5 text-sm text-[#EADBB6]/80 font-light">
-              <li className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
-                <span>{BRAND.address}</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-[#D4AF37] shrink-0" />
-                <a href={TEL_LINK} className="hover:text-[#D4AF37]">
-                  {PHONE_DISPLAY}
-                </a>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-[#D4AF37] shrink-0" />
-                <a href={`mailto:${BRAND.email}`} className="hover:text-[#D4AF37]">
-                  {BRAND.email}
-                </a>
-              </li>
-              <li className="pt-2">
-                <Link
-                  href="/track-order"
-                  className="text-xs text-[#D4AF37] hover:underline"
-                >
+              <li>
+                <Link href="/track-order" className="hover:text-[#D4AF37] transition-colors">
                   Track Order
                 </Link>
               </li>
             </ul>
           </div>
 
+          {/* Policies & Certificates */}
+          <div className="space-y-3">
+            <h3 className="font-serif text-sm font-semibold text-[#D4AF37] tracking-wider">Policies & Certificates</h3>
+            <ul className="space-y-2.5 text-sm text-[#EADBB6]/80 font-light">
+              <li>
+                <Link href="/privacy-policy" className="hover:text-[#D4AF37] transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-[#D4AF37] transition-colors">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/shipping-policy" className="hover:text-[#D4AF37] transition-colors">
+                  Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/refund-policy" className="hover:text-[#D4AF37] transition-colors">
+                  Refund & Replacement
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/certificates"
+                  className="hover:text-[#D4AF37] text-[#D4AF37] font-medium transition-colors flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  <span>Certificates & Licences</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Business Address & Contact */}
+          <div className="space-y-3">
+            <h3 className="font-serif text-sm font-semibold text-[#D4AF37] tracking-wider">Business Address & Contact</h3>
+            <ul className="space-y-2.5 text-sm text-[#EADBB6]/80 font-light">
+              <li className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
+                <span>{BRAND.address}</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-[#D4AF37] shrink-0" />
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_DEFAULT_MESSAGE)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#D4AF37]"
+                >
+                  WhatsApp: +91 63864 23865
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-[#D4AF37] shrink-0" />
+                <a href={TEL_LINK} className="hover:text-[#D4AF37]">
+                  Phone: {PHONE_DISPLAY}
+                </a>
+              </li>
+              {contactEmail && (
+                <li className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-[#D4AF37] shrink-0" />
+                  <a href={`mailto:${contactEmail}`} className="hover:text-[#D4AF37]">
+                    {contactEmail}
+                  </a>
+                </li>
+              )}
+            </ul>
+          </div>
         </div>
 
-        {/* Bottom copyright */}
+        {/* Bottom copyright & Mandatory Links Strip */}
         <div className="pt-8 border-t border-[#C89B3C]/20 flex flex-col sm:flex-row items-center justify-between text-xs text-[#EADBB6]/70 gap-4 font-light">
           <p>© 2026 {BRAND.name}. All rights reserved. Made in Jhansi, Uttar Pradesh.</p>
-          <div className="flex gap-4">
-            <Link href="/certificates" className="hover:text-[#D4AF37]">Certificates & FSSAI</Link>
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+            <Link href="/privacy-policy" className="hover:text-[#D4AF37]">Privacy</Link>
             <span>•</span>
-            <Link href="/faq" className="hover:text-[#D4AF37]">Shipping & Care</Link>
+            <Link href="/terms" className="hover:text-[#D4AF37]">Terms</Link>
             <span>•</span>
-            <Link href="/contact" className="hover:text-[#D4AF37]">Contact</Link>
+            <Link href="/shipping-policy" className="hover:text-[#D4AF37]">Shipping</Link>
+            <span>•</span>
+            <Link href="/refund-policy" className="hover:text-[#D4AF37]">Refund</Link>
+            <span>•</span>
+            <Link href="/certificates" className="hover:text-[#D4AF37]">Certificates</Link>
           </div>
         </div>
       </div>

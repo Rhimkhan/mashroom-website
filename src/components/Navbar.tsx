@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Search, Menu, X, PhoneCall, User as UserIcon, Package, LogOut, ChevronDown } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
@@ -105,13 +106,25 @@ function NavbarContent() {
 
             {/* Top Center: Centered Gold & Deep Espresso-Brown Logo */}
             <div className="flex-1 lg:flex-initial text-center lg:px-8">
-              <Link href="/" className="inline-flex flex-col items-center group">
-                <span className="font-serif text-2xl sm:text-3xl font-extrabold tracking-[0.25em] text-[#211612] group-hover:text-[#A87B28] transition-colors">
-                  AKHIL FOODS
-                </span>
-                <span className="font-serif text-xs tracking-[0.2em] text-[#A87B28] font-medium mt-0.5">
-                  Jhansi, Uttar Pradesh
-                </span>
+              <Link href="/" className="inline-flex items-center gap-2.5 sm:gap-3 group">
+                <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden shrink-0 border border-[#C89B3C]/50 bg-[#1C130E] shadow-sm">
+                  <Image
+                    src="/images/akhil-foods-logo.png"
+                    alt="AKHIL FOODS Logo"
+                    fill
+                    sizes="36px"
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="font-serif text-2xl sm:text-3xl font-extrabold tracking-[0.2em] text-[#211612] group-hover:text-[#A87B28] transition-colors leading-tight">
+                    AKHIL FOODS
+                  </span>
+                  <span className="font-serif text-[10px] tracking-[0.18em] text-[#A87B28] font-medium leading-none">
+                    Jhansi, Uttar Pradesh
+                  </span>
+                </div>
               </Link>
             </div>
 

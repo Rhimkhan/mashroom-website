@@ -3,7 +3,6 @@ import crypto from "crypto";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
 import { getLocalOrders, saveLocalOrders } from "@/lib/store";
 
-export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;

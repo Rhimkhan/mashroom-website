@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: `Shipping and Delivery Policy | ${BRAND.name}`,
   description: `Shipping details for Mushroom Mela oyster mushroom pickle from ${BRAND.name}, Village Nandsiya, Moth, Jhansi, Uttar Pradesh. Delivery timelines and packaging safety.`,
   alternates: {
-    canonical: "/shipping-policy",
+    canonical: `${(process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "")}/shipping-policy`,
   },
   openGraph: {
     title: `Shipping and Delivery Policy | ${BRAND.name}`,

@@ -31,7 +31,7 @@ export default function HeroProductCard() {
         <div className="relative z-10 my-4 rounded-2xl overflow-hidden shadow-2xl border border-[#C89B3C]/25 bg-[#120B08]">
           <div className="relative w-full aspect-[4/3]">
             <Image
-              src="/images/mushroom-mela-jar-luxury.jpg"
+              src="/images/products/mushroom-mela-front.jpg"
               alt="Mushroom Mela Oyster Mushroom Pickle 400g Jar"
               fill
               sizes="(max-width: 640px) 100vw, 550px"

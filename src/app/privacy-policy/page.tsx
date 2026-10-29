@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: `Privacy Policy | ${BRAND.name}`,
   description: `Privacy Policy for ${BRAND.name}, Village Nandsiya, Karguwan Road, Near Ambedkar Murti, Moth, Jhansi, Uttar Pradesh 284303. Compliance with Digital Personal Data Protection Act 2023 and Consumer Protection (E-Commerce) Rules 2020.`,
   alternates: {
-    canonical: "/privacy-policy",
+    canonical: `${(process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "")}/privacy-policy`,
   },
   openGraph: {
     title: `Privacy Policy | ${BRAND.name}`,
@@ -136,7 +136,7 @@ export default function PrivacyPolicyPage() {
               6. How to Request Correction or Deletion
             </h2>
             <p className="text-sm">
-              You have the right to review the personal data we hold about you, request corrections to inaccurate information, or request deletion of your records where retention is no longer required by law. To make a request, send an email to <a href="mailto:abhishekkumarnandsiya@gmail.com" className="underline font-medium text-[#211612]">abhishekkumarnandsiya@gmail.com</a> or message us on WhatsApp at +91 63864 23865 with your name and order number. We will respond within 30 days.
+              You have the right to review the personal data we hold about you, request corrections to inaccurate information, or request deletion of your records where retention is no longer required by law. To make a request, message us on WhatsApp at +91 63864 23865 with your name and order number{process.env.NEXT_PUBLIC_CONTACT_EMAIL ? <span> or email us at <a href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`} className="underline font-medium text-[#211612]">{process.env.NEXT_PUBLIC_CONTACT_EMAIL}</a></span> : ""}. We will respond within 30 days.
             </p>
           </section>
 
@@ -163,7 +163,9 @@ export default function PrivacyPolicyPage() {
               <p><strong>Business Name:</strong> Akhil Foods</p>
               <p><strong>Address:</strong> Village Nandsiya, Karguwan Road, Near Ambedkar Murti, Moth, Jhansi, Uttar Pradesh 284303</p>
               <p><strong>WhatsApp / Phone:</strong> +91 63864 23865</p>
-              <p><strong>Email:</strong> abhishekkumarnandsiya@gmail.com</p>
+              {process.env.NEXT_PUBLIC_CONTACT_EMAIL && (
+                <p><strong>Email:</strong> {process.env.NEXT_PUBLIC_CONTACT_EMAIL}</p>
+              )}
               <p><strong>FSSAI Registration:</strong> 22726293000001</p>
               <p><strong>GSTIN:</strong> 09FTOPD3011E1ZZ</p>
             </div>

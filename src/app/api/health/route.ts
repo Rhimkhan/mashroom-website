@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
-export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   // Rate limit: 60 requests per minute
