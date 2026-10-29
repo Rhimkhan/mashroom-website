@@ -1,4 +1,5 @@
 import { Product, Review } from "./types";
+import { FSSAI_NUMBER } from "./config";
 
 export const INITIAL_PRODUCTS: Product[] = [
   {
@@ -62,7 +63,7 @@ export const FAQS = [
   {
     question: "Is the product FSSAI registered?",
     answer:
-      "Licence number 22726293000001, see the Certificates page.",
+      `Licence number ${FSSAI_NUMBER}, see the Certificates page.`,
   },
   {
     question: "Do you deliver across India?",

@@ -166,8 +166,8 @@ export default function PrivacyPolicyPage() {
               {process.env.NEXT_PUBLIC_CONTACT_EMAIL && (
                 <p><strong>Email:</strong> {process.env.NEXT_PUBLIC_CONTACT_EMAIL}</p>
               )}
-              <p><strong>FSSAI Registration:</strong> 22726293000001</p>
-              <p><strong>GSTIN:</strong> 09FTOPD3011E1ZZ</p>
+              <p><strong>FSSAI Registration:</strong> {FSSAI_NUMBER}</p>
+              <p><strong>GSTIN:</strong> {GST_NUMBER}</p>
             </div>
           </section>
         </div>

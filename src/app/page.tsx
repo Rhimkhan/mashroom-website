@@ -237,7 +237,7 @@ export default function HomePage() {
             </div>
             <h3 className="font-serif text-xl font-bold text-[#211612]">FSSAI & MSME Certified</h3>
             <p className="text-sm text-[#3D2C24] leading-relaxed font-sans font-light">
-              Registered with FSSAI (Lic. 22726293000001), GST, and Udyam. Safe 400 g jar packaging with secure pan-India delivery.
+              Registered with FSSAI (Lic. {FSSAI_NUMBER}), GST, and Udyam. Safe 400 g jar packaging with secure pan-India delivery.
             </p>
           </div>
         </div>

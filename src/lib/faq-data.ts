@@ -1,3 +1,5 @@
+import { FSSAI_NUMBER } from "@/lib/config";
+
 export interface FAQItem {
   question: string;
   answer: string;
@@ -21,7 +23,7 @@ export const FAQ_DATA: FAQItem[] = [
     category: "ingredients",
     question: "Is the product FSSAI registered?",
     answer:
-      "Licence number 22726293000001, see the Certificates page.",
+      `Licence number ${FSSAI_NUMBER}, see the Certificates page.`,
   },
   {
     category: "shipping",

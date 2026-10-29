@@ -53,7 +53,7 @@ export default function TermsPage() {
             These Terms and Conditions govern your use of this website and purchases of Mushroom Mela oyster mushroom pickle from <strong>Akhil Foods</strong>. By placing an order with us, you agree to these terms in full.
           </p>
           <p>
-            Business details: Akhil Foods, Village Nandsiya, Karguwan Road, Near Ambedkar Murti, Moth, Jhansi, Uttar Pradesh 284303. Proprietor: Abhishek Kumar. FSSAI Lic. No. 22726293000001, GSTIN 09FTOPD3011E1ZZ. WhatsApp: +91 63864 23865.{process.env.NEXT_PUBLIC_CONTACT_EMAIL ? ` Email: ${process.env.NEXT_PUBLIC_CONTACT_EMAIL}.` : ""}
+            Business details: Akhil Foods, Village Nandsiya, Karguwan Road, Near Ambedkar Murti, Moth, Jhansi, Uttar Pradesh 284303. Proprietor: Abhishek Kumar. FSSAI Lic. No. {FSSAI_NUMBER}, GSTIN {GST_NUMBER}. WhatsApp: +91 63864 23865.{process.env.NEXT_PUBLIC_CONTACT_EMAIL ? ` Email: ${process.env.NEXT_PUBLIC_CONTACT_EMAIL}.` : ""}
           </p>
         </div>
 
@@ -132,7 +132,7 @@ export default function TermsPage() {
               6. Food Safety and Storage per Label
             </h2>
             <p>
-              Mushroom Mela oyster mushroom pickle is manufactured under FSSAI registration number 22726293000001.
+              Mushroom Mela oyster mushroom pickle is manufactured under FSSAI registration number {FSSAI_NUMBER}.
             </p>
             <p>
               Ingredients: mushroom, mustard oil, vinegar, salt, red chilli, coriander, mustard, fennel, fenugreek, cumin, turmeric, ajwain, ginger, garlic, and permitted additives.
@@ -175,8 +175,8 @@ export default function TermsPage() {
               {process.env.NEXT_PUBLIC_CONTACT_EMAIL && (
                 <p><strong>Email:</strong> {process.env.NEXT_PUBLIC_CONTACT_EMAIL}</p>
               )}
-              <p><strong>FSSAI Registration:</strong> 22726293000001</p>
-              <p><strong>GSTIN:</strong> 09FTOPD3011E1ZZ</p>
+              <p><strong>FSSAI Registration:</strong> {FSSAI_NUMBER}</p>
+              <p><strong>GSTIN:</strong> {GST_NUMBER}</p>
             </div>
           </section>
         </div>

@@ -46,6 +46,23 @@ export default function ContactPage() {
     email: BRAND.email,
     url: process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app",
     taxID: BRAND.gstNumber,
+    identifier: [
+      {
+        "@type": "PropertyValue",
+        name: "FSSAI License",
+        value: BRAND.fssaiNumber,
+      },
+      {
+        "@type": "PropertyValue",
+        name: "GSTIN",
+        value: BRAND.gstNumber,
+      },
+      {
+        "@type": "PropertyValue",
+        name: "Udyam Registration",
+        value: BRAND.udyamNumber,
+      },
+    ],
     address: {
       "@type": "PostalAddress",
       streetAddress: BRAND.address,
