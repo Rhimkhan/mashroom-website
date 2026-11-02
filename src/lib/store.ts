@@ -76,6 +76,11 @@ const INITIAL_ORDERS: Order[] = [
 let serverMemoryOrders: Order[] = [...INITIAL_ORDERS];
 let serverMemoryProducts: Product[] = [...INITIAL_PRODUCTS];
 
+/**
+ * Retrieves the catalog of products from browser localStorage or server memory fallback.
+ *
+ * @returns Array of active products with sizes, pricing, and inventory
+ */
 export function getLocalProducts(): Product[] {
   if (typeof window === "undefined") return serverMemoryProducts;
   try {
@@ -91,6 +96,11 @@ export function getLocalProducts(): Product[] {
   }
 }
 
+/**
+ * Persists updated product catalog data to localStorage or server memory fallback.
+ *
+ * @param products - Complete array of updated product records
+ */
 export function saveLocalProducts(products: Product[]): void {
   if (typeof window === "undefined") {
     serverMemoryProducts = products;
@@ -103,6 +113,11 @@ export function saveLocalProducts(products: Product[]): void {
   }
 }
 
+/**
+ * Retrieves all stored customer orders from browser localStorage or server memory fallback.
+ *
+ * @returns Array of customer orders sorted chronologically
+ */
 export function getLocalOrders(): Order[] {
   if (typeof window === "undefined") return serverMemoryOrders;
   try {
@@ -118,6 +133,11 @@ export function getLocalOrders(): Order[] {
   }
 }
 
+/**
+ * Persists an array of customer orders to browser localStorage or server memory fallback.
+ *
+ * @param orders - Array of order objects to persist
+ */
 export function saveLocalOrders(orders: Order[]): void {
   if (typeof window === "undefined") {
     serverMemoryOrders = orders;
@@ -130,6 +150,12 @@ export function saveLocalOrders(orders: Order[]): void {
   }
 }
 
+/**
+ * Prepends a newly placed order to local persistence and returns the created order record.
+ *
+ * @param newOrder - The newly created order entity
+ * @returns The persisted order object
+ */
 export function addLocalOrder(newOrder: Order): Order {
   const current = getLocalOrders();
   const updated = [newOrder, ...current];
@@ -137,6 +163,16 @@ export function addLocalOrder(newOrder: Order): Order {
   return newOrder;
 }
 
+/**
+ * Updates an existing order's fulfillment status, AWB courier tracking, or payment state.
+ *
+ * @param orderId - Unique internal ID of the order to update
+ * @param status - New OrderStatus value (New, Packed, Shipped, Delivered)
+ * @param trackingNumber - Optional courier AWB tracking code
+ * @param courierName - Optional logistics partner name (e.g. BlueDart Express)
+ * @param paymentStatus - Optional updated payment state (Paid, Pending, Failed)
+ * @returns The updated Order entity or null if not found
+ */
 export function updateLocalOrderStatus(
   orderId: string,
   status?: OrderStatus,
@@ -159,6 +195,12 @@ export function updateLocalOrderStatus(
   return updatedOrder;
 }
 
+/**
+ * Searches orders by Order ID (AF-XXXX), telephone number, or email address.
+ *
+ * @param query - Search term matching order number, phone digits, or customer email
+ * @returns Filtered array of matching customer orders
+ */
 export function findOrderByNumberOrPhone(query: string): Order[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
@@ -176,6 +218,11 @@ export function findOrderByNumberOrPhone(query: string): Order[] {
 const LOCAL_STORAGE_REVIEWS_KEY = "akhil_foods_reviews_v1";
 let serverMemoryReviews: import("./types").ProductReview[] = [];
 
+/**
+ * Retrieves customer review records from localStorage or server memory fallback.
+ *
+ * @returns Array of product review entities
+ */
 export function getLocalReviews(): import("./types").ProductReview[] {
   if (typeof window === "undefined") return serverMemoryReviews;
   try {
@@ -186,6 +233,11 @@ export function getLocalReviews(): import("./types").ProductReview[] {
   }
 }
 
+/**
+ * Persists product review records to localStorage or server memory fallback.
+ *
+ * @param reviews - Array of review objects
+ */
 export function saveLocalReviews(reviews: import("./types").ProductReview[]): void {
   if (typeof window === "undefined") {
     serverMemoryReviews = reviews;
@@ -198,6 +250,12 @@ export function saveLocalReviews(reviews: import("./types").ProductReview[]): vo
   }
 }
 
+/**
+ * Adds a new pending customer review to local persistence.
+ *
+ * @param rev - Submitted product review entity
+ * @returns The persisted review object
+ */
 export function addLocalReview(rev: import("./types").ProductReview): import("./types").ProductReview {
   const list = getLocalReviews();
   const updated = [rev, ...list];
@@ -205,6 +263,13 @@ export function addLocalReview(rev: import("./types").ProductReview): import("./
   return rev;
 }
 
+/**
+ * Updates moderation approval status of a customer review.
+ *
+ * @param id - Review identifier
+ * @param status - Moderation verdict ('pending', 'approved', 'rejected')
+ * @returns True if review was found and updated, false otherwise
+ */
 export function updateLocalReviewStatus(id: string, status: "pending" | "approved" | "rejected"): boolean {
   const list = getLocalReviews();
   const idx = list.findIndex((r) => r.id === id);
@@ -218,6 +283,11 @@ export function updateLocalReviewStatus(id: string, status: "pending" | "approve
 const LOCAL_STORAGE_WHOLESALE_KEY = "akhil_foods_wholesale_v1";
 let serverMemoryWholesale: import("./types").WholesaleInquiry[] = [];
 
+/**
+ * Retrieves commercial wholesale B2B inquiry records.
+ *
+ * @returns Array of wholesale inquiry entries
+ */
 export function getLocalWholesaleInquiries(): import("./types").WholesaleInquiry[] {
   if (typeof window === "undefined") return serverMemoryWholesale;
   try {
@@ -228,6 +298,11 @@ export function getLocalWholesaleInquiries(): import("./types").WholesaleInquiry
   }
 }
 
+/**
+ * Persists commercial wholesale B2B inquiries to storage.
+ *
+ * @param inquiries - Array of wholesale inquiry objects
+ */
 export function saveLocalWholesaleInquiries(inquiries: import("./types").WholesaleInquiry[]): void {
   if (typeof window === "undefined") {
     serverMemoryWholesale = inquiries;
@@ -240,6 +315,12 @@ export function saveLocalWholesaleInquiries(inquiries: import("./types").Wholesa
   }
 }
 
+/**
+ * Adds a new commercial wholesale inquiry to local persistence.
+ *
+ * @param inq - Wholesale inquiry details
+ * @returns The persisted inquiry entity
+ */
 export function addLocalWholesaleInquiry(inq: import("./types").WholesaleInquiry): import("./types").WholesaleInquiry {
   const list = getLocalWholesaleInquiries();
   const updated = [inq, ...list];
