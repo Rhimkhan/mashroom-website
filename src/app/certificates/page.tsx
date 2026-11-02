@@ -2,8 +2,8 @@ import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  ShieldCheck,
-  Award,
+
+
   ExternalLink,
   CheckCircle2,
   Calendar,

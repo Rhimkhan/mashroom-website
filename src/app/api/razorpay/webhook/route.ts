@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   let rawBody: string;
   try {
     rawBody = await request.text();
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Failed to read request body" }, { status: 400 });
   }
 
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
   let eventData: any;
   try {
     eventData = JSON.parse(rawBody);
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 

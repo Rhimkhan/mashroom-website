@@ -13,7 +13,7 @@ import {
   MessageSquare,
   Clock,
   ShieldCheck,
-  CheckCircle2,
+
   RefreshCw,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";

@@ -13,12 +13,12 @@ import {
   ShieldCheck,
   CheckCircle,
 } from "lucide-react";
-import { INITIAL_PRODUCTS, REVIEWS, FAQS } from "@/lib/data";
+import { INITIAL_PRODUCTS, FAQS } from "@/lib/data";
 import { useCart } from "@/lib/cart-context";
 import { BRAND } from "@/lib/brand";
 import { Product, ProductSize } from "@/lib/types";
 import HeroProductCard from "@/components/HeroProductCard";
-import { WHATSAPP_NUMBER, WHATSAPP_DEFAULT_MESSAGE, FSSAI_NUMBER, GST_NUMBER, UDYAM_NUMBER } from "@/lib/config";
+import { WHATSAPP_NUMBER, WHATSAPP_DEFAULT_MESSAGE, FSSAI_NUMBER } from "@/lib/config";
 import { fetchWithTimeout } from "@/lib/fetch-timeout";
 
 export default function HomePage() {
@@ -40,9 +40,9 @@ export default function HomePage() {
       .catch((err) => console.log("Using cached products:", err));
   }, []);
 
-  const handleSizeChange = (productId: string, size: ProductSize) => {
-    setSelectedSizes((prev) => ({ ...prev, [productId]: size }));
-  };
+
+
+
 
   return (
     <div className="bg-[#FAF6EE]">

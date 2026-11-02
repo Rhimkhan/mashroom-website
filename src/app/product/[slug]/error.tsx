@@ -26,7 +26,7 @@ export default function ProductError({
             Product temporarily unavailable
           </h2>
           <p className="text-xs sm:text-sm text-[#3D2C24]/80 leading-relaxed">
-            We couldn't retrieve this product's information right now. Please try again or browse other products in our shop.
+            We couldn&apos;t retrieve this product&apos;s information right now. Please try again or browse other products in our shop.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">

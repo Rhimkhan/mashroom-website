@@ -1,9 +1,9 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Shield, Phone, Mail, MapPin, ArrowLeft } from "lucide-react";
+import { Shield, ArrowLeft } from "lucide-react";
 import { BRAND } from "@/lib/brand";
-import { PHONE_DISPLAY, WHATSAPP_NUMBER, TEL_LINK, FSSAI_NUMBER, GST_NUMBER } from "@/lib/config";
+import { FSSAI_NUMBER, GST_NUMBER } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: `Privacy Policy | ${BRAND.name}`,

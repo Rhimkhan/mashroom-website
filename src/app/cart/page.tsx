@@ -15,7 +15,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-import { BRAND } from "@/lib/brand";
+
 import { WHATSAPP_NUMBER } from "@/lib/config";
 
 export default function CartPage() {

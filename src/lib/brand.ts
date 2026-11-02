@@ -3,7 +3,7 @@ import {
   WHATSAPP_NUMBER,
   FSSAI_NUMBER,
   FSSAI_VALIDITY,
-  FSSAI_DISPLAY,
+
   GST_NUMBER,
   UDYAM_NUMBER,
 } from "./config";

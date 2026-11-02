@@ -1,7 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Truck, MapPin, Phone, Mail, ArrowLeft, Clock, ShieldCheck } from "lucide-react";
+import { Truck, MapPin, Phone, ArrowLeft, Clock, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { PHONE_DISPLAY, WHATSAPP_NUMBER, TEL_LINK } from "@/lib/config";
 
