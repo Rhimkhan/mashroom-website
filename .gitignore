@@ -1,6 +1,4 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# Dependencies
 /node_modules
 /.pnp
 .pnp.*
@@ -10,33 +8,76 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-
-# next.js
+# Next.js Build Outputs & Cache
 /.next/
 /out/
-
-# production
 /build
+.turbo
 
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Panic & Debug Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+next-panic-*.log
 
-# env files
+# Environment & Local Configuration
 .env*
 !.env.example
+*.env.local
 
-# vercel
+# Operating System Files
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# IDE & Editor Configurations
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*~
+
+# Vercel Deployment Cache
 .vercel
 
-# typescript
+# Certificates & Private Keys
+*.pem
+*.key
+*.cert
+*.pfx
+
+# Testing & Coverage
+/coverage
+
+# TypeScript Build Info
 *.tsbuildinfo
 next-env.d.ts
+
+# Temporary Scratch Files
+scratch/
