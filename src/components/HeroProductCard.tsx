@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { INITIAL_PRODUCTS } from "@/lib/data";
+import { formatPrice } from "@/lib/format";
 
 export default function HeroProductCard() {
   const product = INITIAL_PRODUCTS[0]; // Mushroom Mela Pickle
@@ -70,7 +71,7 @@ export default function HeroProductCard() {
         <div className="relative z-10 pt-4 border-t border-[#C89B3C]/20 flex items-center justify-between text-[#FAF6EE] gap-3">
           <div className="flex items-baseline gap-2">
             <span className="font-serif text-2xl font-bold text-[#D4AF37] tracking-wide">
-              ₹399
+              {formatPrice(product?.sizes[0]?.price || 399)}
             </span>
             <span className="text-xs text-[#EADBB6]/80 font-serif italic">
               400 g jar
