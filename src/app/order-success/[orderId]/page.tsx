@@ -170,7 +170,7 @@ function OrderSuccessContent() {
                     <div className="relative w-12 h-12 rounded-[4px] overflow-hidden bg-[#FAF6EE] shrink-0 border border-[#E8DEC8]">
                       <Image
                         src={item.image}
-                        alt={item.name}
+                        alt={`${item.name} (${item.size}) - Confirmed order item`}
                         fill
                         loading="lazy"
                         sizes="48px"

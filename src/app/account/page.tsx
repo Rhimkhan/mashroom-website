@@ -349,7 +349,7 @@ export default function AccountPage() {
                               <div className="relative w-14 h-14 rounded-[6px] overflow-hidden bg-[#1C130E] border border-[#C89B3C]/25 shrink-0">
                                 <Image
                                   src={item.image || "/images/products/mushroom-mela-front.jpg"}
-                                  alt={item.name}
+                                  alt={`${item.name} (${item.size || "400g"}) - Order item`}
                                   fill
                                   sizes="56px"
                                   className="object-cover"

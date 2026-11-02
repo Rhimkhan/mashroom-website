@@ -89,7 +89,7 @@ export default function CartPage() {
                   <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-[6px] overflow-hidden bg-[#FAF6EE] shrink-0 border border-[#E8DEC8] flex items-center justify-center p-1">
                     <Image
                       src={item.image}
-                      alt={item.name}
+                      alt={`${item.name} (${item.size}) in cart`}
                       fill
                       loading="lazy"
                       sizes="(max-width: 640px) 80px, 96px"

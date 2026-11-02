@@ -231,7 +231,7 @@ function ProductDetailContent() {
                 >
                   <Image
                     src={imgUrl}
-                    alt={`Pickle Thumbnail ${idx + 1}`}
+                    alt={`${product.name} view ${idx + 1}`}
                     fill
                     loading="lazy"
                     sizes="80px"
@@ -514,7 +514,7 @@ function ProductDetailContent() {
                     <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-[#E8DEC8] bg-[#FAF6EE]">
                       <Image
                         src={rev.photoUrl}
-                        alt="Customer Photo"
+                        alt={`Customer review photo from ${rev.customerName}`}
                         fill
                         loading="lazy"
                         sizes="80px"

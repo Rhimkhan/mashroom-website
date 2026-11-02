@@ -1235,7 +1235,7 @@ If you have any questions, reply here.
                     <div className="relative aspect-square bg-[#FAF6EE]">
                       <Image
                         src={p.image || "/images/products/mushroom-mela-front.jpg"}
-                        alt={p.name}
+                        alt={`${p.name} - Catalog product`}
                         fill
                         className="object-contain p-2"
                       />
@@ -1948,7 +1948,7 @@ If you have any questions, reply here.
                     <div className="relative w-16 h-16 rounded-[6px] overflow-hidden bg-white border border-[#E8DEC8] shrink-0">
                       <Image
                         src={prodImage}
-                        alt="Product preview"
+                        alt="New product photo preview"
                         fill
                         className="object-cover"
                       />

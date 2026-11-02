@@ -283,7 +283,7 @@ export default function HomePage() {
                   <div className="relative aspect-square overflow-hidden bg-[#FAF6EE] p-4 flex items-center justify-center border-b border-[#E8DEC8]">
                     <Image
                       src={product.image}
-                      alt={product.name}
+                      alt={`${product.name} - AKHIL FOODS 400g Jar`}
                       fill
                       loading="lazy"
                       sizes="(max-width: 768px) 100vw, 448px"
