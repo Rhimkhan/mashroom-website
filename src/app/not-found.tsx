@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft, Compass, Home, Package, PhoneCall, Sparkles } from "lucide-react";
+import { ShoppingBag, Home, Package, PhoneCall, Sparkles } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { WHATSAPP_NUMBER, PHONE_DISPLAY } from "@/lib/config";
 
@@ -23,7 +23,7 @@ export default function NotFound() {
             Jar Not Found!
           </h1>
           <p className="text-sm sm:text-base text-[#3D2C24]/80 font-sans max-w-md mx-auto leading-relaxed">
-            It seems this page has gone missing like the last spoonful of our oyster mushroom pickle. Let’s get you back to the flavor!
+            It seems this page has gone missing like the last spoonful of our oyster mushroom pickle. Let&apos;s get you back to the flavor!
           </p>
         </div>
 
@@ -33,6 +33,7 @@ export default function NotFound() {
             <Link
               href="/"
               className="flex items-center justify-center gap-2 px-5 py-3 rounded-[6px] bg-[#211612] text-[#FAF6EE] hover:bg-[#1C130E] text-xs sm:text-sm font-bold transition-colors shadow-sm"
+              aria-label="Return to homepage"
             >
               <Home className="w-4 h-4 text-[#C89B3C]" />
               <span>Back to Home</span>
@@ -41,9 +42,10 @@ export default function NotFound() {
             <Link
               href="/shop"
               className="flex items-center justify-center gap-2 px-5 py-3 rounded-[6px] bg-[#FAF6EE] text-[#211612] hover:bg-[#F2ECE0] border border-[#E8DEC8] text-xs sm:text-sm font-bold transition-colors shadow-sm"
+              aria-label="Browse our pickle collection in shop"
             >
-              <Compass className="w-4 h-4 text-[#C89B3C]" />
-              <span>Browse Pickles</span>
+              <ShoppingBag className="w-4 h-4 text-[#C89B3C]" />
+              <span>Shop All Pickles</span>
             </Link>
           </div>
 
@@ -51,6 +53,7 @@ export default function NotFound() {
             <Link
               href="/track-order"
               className="flex items-center justify-center gap-1.5 py-2 text-[#3D2C24]/80 hover:text-[#211612] font-semibold"
+              aria-label="Track your order"
             >
               <Package className="w-3.5 h-3.5 text-[#C89B3C]" />
               <span>Track Your Order</span>
@@ -61,6 +64,7 @@ export default function NotFound() {
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-1.5 py-2 text-[#3D2C24]/80 hover:text-[#211612] font-semibold"
+              aria-label="Contact WhatsApp customer support"
             >
               <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
               <span>WhatsApp Support ({PHONE_DISPLAY})</span>
