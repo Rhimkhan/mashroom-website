@@ -135,58 +135,75 @@ export default function GalleryClient() {
           ))}
         </div>
 
-        {/* Grid with semantic h2 */}
+        {/* Grid with semantic h2 and empty state */}
         <div>
           <h2 className="sr-only">Our Photo Collection</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredItems.map((item, idx) => (
-              <div
-                key={item.id}
-                onClick={() => setModalIndex(idx)}
-                className="rounded-3xl overflow-hidden bg-[#FDFBF7] border border-[#E8DEC8] shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col justify-between"
+          {filteredItems.length === 0 ? (
+            <div className="bg-[#FDFBF7] p-12 rounded-3xl border border-[#E8DEC8] text-center space-y-3 max-w-md mx-auto my-8">
+              <Sparkles className="w-8 h-8 text-[#A87B28] mx-auto opacity-70" />
+              <h3 className="font-serif text-lg font-bold text-[#211612]">No Photos in This Category</h3>
+              <p className="text-xs text-[#3D2C24]/70">
+                Check back soon or select another category above.
+              </p>
+              <button
+                type="button"
+                onClick={() => setActiveCategory("all")}
+                className="mt-2 inline-flex items-center gap-1.5 text-xs font-serif font-bold text-[#A87B28] hover:text-[#211612] underline uppercase tracking-wider"
               >
-                <div className="relative aspect-square overflow-hidden bg-[#FAF6EE] flex items-center justify-center p-3">
-                  <Image
-                    src={item.image}
-                    alt={item.alt}
-                    fill
-                    loading="lazy"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <span className="absolute top-3 left-3 bg-[#1C130E]/90 backdrop-blur-sm text-[#FAF6EE] text-xs font-bold px-3 py-1 rounded-full shadow-md border border-[#C89B3C]/40">
-                    {item.categoryLabel}
-                  </span>
-                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="p-3 rounded-full bg-[#FAF6EE]/90 text-[#211612] shadow-lg">
-                      <Eye className="w-5 h-5" />
+                View All Categories
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {filteredItems.map((item, idx) => (
+                <div
+                  key={item.id}
+                  onClick={() => setModalIndex(idx)}
+                  className="rounded-3xl overflow-hidden bg-[#FDFBF7] border border-[#E8DEC8] shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="relative aspect-square overflow-hidden bg-[#FAF6EE] flex items-center justify-center p-3">
+                    <Image
+                      src={item.image}
+                      alt={item.alt}
+                      fill
+                      loading="lazy"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className="absolute top-3 left-3 bg-[#1C130E]/90 backdrop-blur-sm text-[#FAF6EE] text-xs font-bold px-3 py-1 rounded-full shadow-md border border-[#C89B3C]/40">
+                      {item.categoryLabel}
                     </span>
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="p-3 rounded-full bg-[#FAF6EE]/90 text-[#211612] shadow-lg">
+                        <Eye className="w-5 h-5" />
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 space-y-2">
+                    <h3 className="font-serif text-base font-bold text-[#211612] group-hover:text-[#A87B28] transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-[#3D2C24]/80 line-clamp-2 leading-relaxed">
+                      {item.subtitle}
+                    </p>
+                    {item.shopSlug && (
+                      <div className="pt-2">
+                        <Link
+                          href={`/product/${item.shopSlug}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#A87B28] hover:text-[#211612] underline underline-offset-4"
+                        >
+                          <span>View Product</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
-
-                <div className="p-5 space-y-2">
-                  <h3 className="font-serif text-base font-bold text-[#211612] group-hover:text-[#A87B28] transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-[#3D2C24]/80 line-clamp-2 leading-relaxed">
-                    {item.subtitle}
-                  </p>
-                  {item.shopSlug && (
-                    <div className="pt-2">
-                      <Link
-                        href={`/product/${item.shopSlug}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#A87B28] hover:text-[#211612] underline underline-offset-4"
-                      >
-                        <span>View Product</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Modal Lightbox */}
