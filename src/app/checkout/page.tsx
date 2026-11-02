@@ -715,6 +715,7 @@ export default function CheckoutPage() {
                             onClick={handleCopyUpi}
                             className="p-1 text-[#A87B28] hover:text-[#211612] transition-colors"
                             title="Copy UPI ID"
+                            aria-label="Copy Beneficiary UPI ID to clipboard"
                           >
                             {copiedUpi ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                           </button>

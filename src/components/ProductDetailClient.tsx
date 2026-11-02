@@ -567,6 +567,7 @@ function ProductDetailContent() {
                   type="button"
                   onClick={() => setShowReviewModal(false)}
                   className="p-1 rounded-full text-stone-500 hover:text-[#211612]"
+                  aria-label="Close review modal"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -664,6 +665,7 @@ function ProductDetailContent() {
                           type="button"
                           onClick={() => setReviewForm({ ...reviewForm, rating: star })}
                           className="p-1 text-amber-500 hover:scale-110 transition-transform"
+                          aria-label={`Rate ${star} out of 5 stars`}
                         >
                           <Star
                             className={`w-6 h-6 ${
