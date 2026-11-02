@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      NEXT_PUBLIC_APP_URL: "https://akhil-mushroom-pickle.vercel.app"
+      NEXT_PUBLIC_BRAND_NAME: "AKHIL FOODS"
+      NEXT_PUBLIC_BRAND_TAGLINE: "Great Food, Better Life"
+      NEXT_PUBLIC_WHATSAPP_NUMBER: "916386423865"
+      NEXT_PUBLIC_UPI_ID: "abhishekkumarnandsiya@okaxis"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run TypeScript Typecheck
+        run: npm run typecheck
+
+      - name: Build Production Application
+        run: npm run build
