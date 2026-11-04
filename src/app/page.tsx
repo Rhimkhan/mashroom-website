@@ -24,7 +24,7 @@ import { fetchWithTimeout } from "@/lib/fetch-timeout";
 export default function HomePage() {
   const { addToCart, buyNow } = useCart();
   const [productsList, setProductsList] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [selectedSizes, setSelectedSizes] = useState<Record<string, ProductSize>>({
+  const [selectedSizes] = useState<Record<string, ProductSize>>({
     "prod-mushroom-mela": "400g",
   });
   const [faqOpenIndex, setFaqOpenIndex] = useState<number | null>(0);

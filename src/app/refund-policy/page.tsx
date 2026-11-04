@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { RefreshCw, Camera, AlertTriangle, CheckCircle2, Phone, ArrowLeft, Clock } from "lucide-react";
 import { BRAND } from "@/lib/brand";
-import { PHONE_DISPLAY, WHATSAPP_NUMBER, TEL_LINK, FSSAI_NUMBER } from "@/lib/config";
+import { WHATSAPP_NUMBER, FSSAI_NUMBER } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: `Refund and Replacement Policy | ${BRAND.name}`,

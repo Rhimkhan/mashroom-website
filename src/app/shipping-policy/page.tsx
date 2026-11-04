@@ -1,9 +1,9 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Truck, MapPin, Phone, ArrowLeft, Clock, ShieldCheck } from "lucide-react";
+import { Truck, MapPin, ArrowLeft, Clock, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
-import { PHONE_DISPLAY, WHATSAPP_NUMBER, TEL_LINK } from "@/lib/config";
+import { WHATSAPP_NUMBER } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: `Shipping and Delivery Policy | ${BRAND.name}`,

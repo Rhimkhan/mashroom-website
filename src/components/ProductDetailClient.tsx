@@ -18,13 +18,13 @@ import {
   ShoppingBag,
   Zap,
   X,
-  Upload,
+
 } from "lucide-react";
 import { INITIAL_PRODUCTS } from "@/lib/data";
 import { useCart } from "@/lib/cart-context";
 import { Product, ProductSize, ProductReview } from "@/lib/types";
 import { BRAND } from "@/lib/brand";
-import { WHATSAPP_NUMBER, PHONE_DISPLAY } from "@/lib/config";
+import { PHONE_DISPLAY } from "@/lib/config";
 import PincodeChecker from "@/components/PincodeChecker";
 import { fetchWithTimeout } from "@/lib/fetch-timeout";
 
