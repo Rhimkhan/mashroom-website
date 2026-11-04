@@ -56,9 +56,9 @@ function NavbarContent() {
   return (
     <>
       {/* Top clean information strip */}
-      <div className="bg-[#1A110D] text-[#EADBB6] text-xs py-1.5 px-4 text-center font-serif tracking-[0.28em] uppercase flex items-center justify-center gap-3 border-b border-[#C89B3C]/20">
+      <div className="bg-[#1A110D] text-[#EADBB6] text-xs py-1.5 px-4 text-center font-serif tracking-wider flex items-center justify-center gap-3 border-b border-[#C89B3C]/20">
         <span>Jhansi, Uttar Pradesh</span>
-        <span className="text-[#C89B3C]/40">•</span>
+        <span className="text-[#A87B28]">•</span>
         <span>Oyster Mushroom Pickle</span>
       </div>
 
@@ -121,7 +121,7 @@ function NavbarContent() {
                   <span className="font-serif text-2xl sm:text-3xl font-extrabold tracking-[0.2em] text-[#211612] group-hover:text-[#A87B28] transition-colors leading-tight">
                     AKHIL FOODS
                   </span>
-                  <span className="font-serif text-[10px] tracking-[0.18em] text-[#A87B28] font-medium leading-none">
+                  <span className="font-serif text-xs tracking-wider text-[#A87B28] font-medium leading-none">
                     Jhansi, Uttar Pradesh
                   </span>
                 </div>
@@ -206,7 +206,7 @@ function NavbarContent() {
                     </button>
 
                     {userDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#FAF6EE] border border-[#DDD3C4] shadow-2xl py-2 z-50 animate-in fade-in-50">
+                      <div className="absolute right-0 mt-2 w-56 rounded-xl bg-[#FAF6EE] border border-[#DDD3C4] shadow-2xl py-2 z-50 animate-in fade-in-50">
                         <div className="px-4 py-2 border-b border-[#E8DEC8]">
                           <p className="text-xs uppercase font-serif tracking-widest text-[#A87B28] font-bold">
                             Customer Account
@@ -294,7 +294,7 @@ function NavbarContent() {
         {mobileMenuOpen && (
           <div className="lg:hidden bg-[#FAF6EE] border-t border-[#E6DCBF] px-5 pt-5 pb-7 space-y-5 shadow-2xl animate-in slide-in-from-top-2">
             {/* Mobile Customer Authentication Section */}
-            <div className="p-3 bg-[#FDFBF7] rounded-2xl border border-[#DDD3C4]">
+            <div className="p-3 bg-[#FDFBF7] rounded-xl border border-[#DDD3C4]">
               {!user ? (
                 <button
                   type="button"

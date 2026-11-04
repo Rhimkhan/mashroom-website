@@ -33,32 +33,32 @@ export default function Footer() {
         {/* Trust Badges Strip */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pb-12 border-b border-[#C89B3C]/20 text-center">
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-2xl bg-[#2A1D17] flex items-center justify-center text-[#D4AF37] mb-3 shadow-sm border border-[#C89B3C]/25">
+            <div className="w-12 h-12 rounded-xl bg-[#2A1D17] flex items-center justify-center text-[#D4AF37] mb-3 shadow-sm border border-[#C89B3C]/25">
               <Award className="w-6 h-6" />
             </div>
             <h3 className="font-serif font-semibold text-sm text-[#FAF6EE]">Made in Jhansi</h3>
-            <p className="text-xs text-[#EADBB6]/70 mt-1 font-light">Village Nandsiya, Moth (UP)</p>
+            <p className="text-xs text-[#EADBB6] mt-1 font-light">Village Nandsiya, Moth (UP)</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-2xl bg-[#2A1D17] flex items-center justify-center text-[#D4AF37] mb-3 shadow-sm border border-[#C89B3C]/25">
+            <div className="w-12 h-12 rounded-xl bg-[#2A1D17] flex items-center justify-center text-[#D4AF37] mb-3 shadow-sm border border-[#C89B3C]/25">
               <Sparkles className="w-6 h-6" />
             </div>
             <h3 className="font-serif font-semibold text-sm text-[#FAF6EE]">Pure Spices & Oil</h3>
-            <p className="text-xs text-[#EADBB6]/70 mt-1 font-light">Mustard oil & whole spices</p>
+            <p className="text-xs text-[#EADBB6] mt-1 font-light">Mustard oil & whole spices</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-2xl bg-[#2A1D17] flex items-center justify-center text-[#D4AF37] mb-3 shadow-sm border border-[#C89B3C]/25">
+            <div className="w-12 h-12 rounded-xl bg-[#2A1D17] flex items-center justify-center text-[#D4AF37] mb-3 shadow-sm border border-[#C89B3C]/25">
               <Heart className="w-6 h-6" />
             </div>
             <h3 className="font-serif font-semibold text-sm text-[#FAF6EE]">Oyster Mushrooms</h3>
-            <p className="text-xs text-[#EADBB6]/70 mt-1 font-light">Tender 400 g jar packaging</p>
+            <p className="text-xs text-[#EADBB6] mt-1 font-light">Tender 400 g jar packaging</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-2xl bg-[#2A1D17] flex items-center justify-center text-[#D4AF37] mb-3 shadow-sm border border-[#C89B3C]/25">
+            <div className="w-12 h-12 rounded-xl bg-[#2A1D17] flex items-center justify-center text-[#D4AF37] mb-3 shadow-sm border border-[#C89B3C]/25">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <h3 className="font-serif font-semibold text-sm text-[#FAF6EE]">FSSAI Registered</h3>
-            <p className="text-xs text-[#EADBB6]/70 mt-1 font-light">Lic. No. {FSSAI_NUMBER}</p>
+            <p className="text-xs text-[#EADBB6] mt-1 font-light">Lic. No. {FSSAI_NUMBER}</p>
           </div>
         </div>
 
@@ -95,13 +95,13 @@ export default function Footer() {
                   <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
                   <span>FSSAI Lic. No. {FSSAI_NUMBER}</span>
                 </span>
-                <span className="text-caption text-[#EADBB6]/80">(Valid till {FSSAI_VALIDITY})</span>
+                <span className="text-caption text-[#EADBB6]">(Valid till {FSSAI_VALIDITY})</span>
               </div>
               <div className="flex flex-wrap gap-2 text-caption font-serif text-[#EADBB6]">
-                <span className="bg-[#2A1D17] px-3 py-1.5 rounded-lg border border-[#C89B3C]/20">
+                <span className="bg-[#2A1D17] px-3 py-1.5 rounded-xl border border-[#C89B3C]/20">
                   GSTIN: <strong className="text-[#D4AF37]">{GST_NUMBER}</strong>
                 </span>
-                <span className="bg-[#2A1D17] px-3 py-1.5 rounded-lg border border-[#C89B3C]/20">
+                <span className="bg-[#2A1D17] px-3 py-1.5 rounded-xl border border-[#C89B3C]/20">
                   Udyam: <strong className="text-[#D4AF37]">{UDYAM_NUMBER}</strong>
                 </span>
               </div>
@@ -265,7 +265,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom copyright & Mandatory Links Strip */}
-        <div className="pt-8 border-t border-[#C89B3C]/20 flex flex-col sm:flex-row items-center justify-between text-xs text-[#EADBB6]/70 gap-4 font-light">
+        <div className="pt-8 border-t border-[#C89B3C]/20 flex flex-col sm:flex-row items-center justify-between text-xs text-[#EADBB6] gap-4 font-light">
           <p>© 2026 {BRAND.name}. All rights reserved. Made in Jhansi, Uttar Pradesh.</p>
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
             <Link href="/privacy-policy" className="hover:text-[#D4AF37]">Privacy</Link>
