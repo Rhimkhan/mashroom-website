@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "AKHIL FOODS — Artisanal Mushroom Pickles",
+    name: "AKHIL FOODS - Authentic Mushroom Pickles",
     short_name: "AKHIL FOODS",
     description:
-      "Handcrafted Artisanal Oyster Mushroom Pickles made with pure mustard oil, whole spices, and zero chemical shortcuts. Prepared in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.",
+      "Authentic Oyster Mushroom Pickles made with pure mustard oil, whole spices, and zero chemical shortcuts. Prepared in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.",
     start_url: "/",
     display: "standalone",
     background_color: "#FAF6EE",

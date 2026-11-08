@@ -69,7 +69,7 @@ export default function ContactClient() {
                 Our Kitchen & Workshop
               </h2>
               <p className="text-sm text-[#FAF6EE]/80 leading-relaxed">
-                Handcrafting authentic Oyster Mushroom Pickles in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.
+                Preparing authentic Oyster Mushroom Pickles in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.
               </p>
 
               <div className="space-y-4 pt-2 text-sm">
@@ -132,9 +132,9 @@ export default function ContactClient() {
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_DEFAULT_MESSAGE)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-center py-2.5 rounded-full bg-[#25D366] text-white font-bold hover:bg-[#20ba59] transition-colors shadow-md text-sm"
+                className="block text-center py-2.5 rounded-md bg-[#25D366] text-white font-bold hover:bg-[#20ba59] transition-colors shadow-md text-sm"
               >
-                Chat on WhatsApp (+91 69665 58899)
+                Chat on WhatsApp (+91 63864 23865)
               </a>
             </div>
 
@@ -187,7 +187,7 @@ export default function ContactClient() {
                         message: "",
                       });
                     }}
-                    className="px-6 py-2.5 rounded-full bg-[#211612] text-[#FAF6EE] border border-[#C89B3C]/40 text-sm font-bold hover:bg-[#1C130E] transition-colors"
+                    className="px-6 py-2.5 rounded-md bg-[#211612] text-[#FAF6EE] border border-[#C89B3C]/40 text-sm font-bold hover:bg-[#1C130E] transition-colors"
                   >
                     Send Another Message
                   </button>
@@ -273,7 +273,7 @@ export default function ContactClient() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 rounded-full bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm shadow-xl transition-all flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-md bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm shadow-xl transition-all flex items-center justify-center gap-2"
                 >
                   <Send className="w-4 h-4 text-[#C89B3C]" />
                   <span>{loading ? "Sending Message..." : "Submit Message"}</span>

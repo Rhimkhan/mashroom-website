@@ -115,7 +115,7 @@ export default function Footer() {
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_DEFAULT_MESSAGE)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-[#2A1D17] hover:bg-[#C89B3C] text-[#D4AF37] hover:text-[#211612] flex items-center justify-center transition-all border border-[#C89B3C]/30"
+                  className="w-9 h-9 rounded-md bg-[#2A1D17] hover:bg-[#C89B3C] text-[#D4AF37] hover:text-[#211612] flex items-center justify-center transition-all border border-[#C89B3C]/30"
                   aria-label="WhatsApp"
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -128,7 +128,7 @@ export default function Footer() {
                     href={process.env.NEXT_PUBLIC_INSTAGRAM_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-full bg-[#2A1D17] hover:bg-[#C89B3C] text-[#D4AF37] hover:text-[#211612] flex items-center justify-center transition-all border border-[#C89B3C]/30"
+                    className="w-9 h-9 rounded-md bg-[#2A1D17] hover:bg-[#C89B3C] text-[#D4AF37] hover:text-[#211612] flex items-center justify-center transition-all border border-[#C89B3C]/30"
                     aria-label="Instagram"
                   >
                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -142,7 +142,7 @@ export default function Footer() {
                     href={process.env.NEXT_PUBLIC_FACEBOOK_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-full bg-[#2A1D17] hover:bg-[#C89B3C] text-[#D4AF37] hover:text-[#211612] flex items-center justify-center transition-all border border-[#C89B3C]/30"
+                    className="w-9 h-9 rounded-md bg-[#2A1D17] hover:bg-[#C89B3C] text-[#D4AF37] hover:text-[#211612] flex items-center justify-center transition-all border border-[#C89B3C]/30"
                     aria-label="Facebook"
                   >
                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">

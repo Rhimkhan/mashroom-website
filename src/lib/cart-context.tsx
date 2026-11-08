@@ -45,8 +45,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (storedCoupon === "AKHIL10") {
         setAppliedCoupon("AKHIL10");
         setDiscountPercent(10);
-      } else if (storedCoupon === "FREESHIP") {
-        setAppliedCoupon("FREESHIP");
+
+
       }
     } catch (e) {
       console.error("Failed to load cart from storage", e);
@@ -149,13 +149,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setDiscountPercent(10);
       localStorage.setItem("akhil_foods_coupon", "AKHIL10");
       return { success: true, message: "Coupon applied! Flat 10% discount added." };
-    } else if (clean === "FREESHIP") {
-      setAppliedCoupon("FREESHIP");
-      setDiscountPercent(0);
-      localStorage.setItem("akhil_foods_coupon", "FREESHIP");
-      return { success: true, message: "Coupon applied! Enjoy Free Shipping." };
+
+
+
+
+
     } else {
-      return { success: false, message: "Invalid coupon code. Try AKHIL10 or FREESHIP" };
+      return { success: false, message: "Invalid coupon code. Try AKHIL10" };
     }
   };
 
@@ -171,7 +171,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Shipping calculation
   let shipping = 0;
   if (subtotal > 0) {
-    if (subtotal >= BRAND.freeShippingThreshold || appliedCoupon === "FREESHIP") {
+    if (subtotal >= BRAND.freeShippingThreshold) {
       shipping = 0;
     } else {
       shipping = BRAND.defaultShippingCost;

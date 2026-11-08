@@ -80,13 +80,13 @@ export default function ShopClient() {
         {/* Header Title Section */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <span className="text-xs font-bold text-[#FAF6EE] bg-[#1C130E] px-4 py-1.5 rounded-full border border-[#C89B3C]/40 inline-block shadow-sm">
-            Handcrafted in Moth, Jhansi
+            Made in Moth, Jhansi
           </span>
           <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-[#211612] tracking-tight">
-            Artisanal Mushroom Pickles
+            Authentic Mushroom Pickles
           </h1>
           <p className="text-sm sm:text-base text-[#3D2C24]/85 leading-relaxed font-sans font-light">
-            Crafted with farm-fresh oyster mushrooms, cold-pressed mustard oil, and whole stone-ground spices in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.
+            Crafted with farm-fresh oyster mushrooms, pure mustard oil, and traditional whole spices in Village Nandsiya, Moth, Jhansi, Uttar Pradesh.
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export default function ShopClient() {
                 key={flavour}
                 type="button"
                 onClick={() => setSelectedFlavour(flavour)}
-                className={`px-3 py-1.5 rounded-full text-xs font-serif tracking-wider uppercase font-semibold transition-all ${
+                className={`px-3 py-1.5 rounded-md text-xs font-serif tracking-wider uppercase font-semibold transition-all ${
                   selectedFlavour === flavour
                     ? "bg-[#211612] text-[#FAF6EE] shadow-sm"
                     : "bg-[#FAF6EE] text-stone-600 hover:text-[#211612] hover:bg-[#EFE8DD] border border-[#E8DEC8]"
@@ -161,7 +161,7 @@ export default function ShopClient() {
                   setSelectedFlavour("all");
                   setSearchQuery("");
                 }}
-                className="mt-2 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#211612] text-[#FAF6EE] text-xs font-serif uppercase tracking-wider hover:bg-[#34221A] transition-colors"
+                className="mt-2 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md bg-[#211612] text-[#FAF6EE] text-xs font-serif uppercase tracking-wider hover:bg-[#34221A] transition-colors"
               >
                 Reset Filters
               </button>

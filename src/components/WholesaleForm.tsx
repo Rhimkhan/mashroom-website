@@ -95,7 +95,7 @@ export default function WholesaleForm() {
                   website_url: "",
                 });
               }}
-              className="px-6 py-2.5 rounded-full bg-[#211612] text-[#FAF6EE] text-xs font-bold uppercase tracking-wider hover:bg-[#34221A] transition-colors"
+              className="px-6 py-2.5 rounded-md bg-[#211612] text-[#FAF6EE] text-xs font-bold uppercase tracking-wider hover:bg-[#34221A] transition-colors"
             >
               Submit Another Inquiry
             </button>
@@ -214,7 +214,7 @@ export default function WholesaleForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-xl bg-[#211612] hover:bg-[#34221A] text-[#FAF6EE] font-serif text-xs font-bold uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2 border border-[#C89B3C]/30 disabled:opacity-50"
+            className="w-full py-3.5 rounded-md bg-[#211612] hover:bg-[#34221A] text-[#FAF6EE] font-serif text-xs font-bold uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2 border border-[#C89B3C]/30 disabled:opacity-50"
           >
             {loading ? (
               <span>Submitting Inquiry...</span>

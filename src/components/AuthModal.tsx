@@ -99,7 +99,7 @@ export default function AuthModal() {
         <button
           type="button"
           onClick={closeAuthModal}
-          className="absolute top-5 right-5 p-2 rounded-full text-[#211612]/60 hover:text-[#211612] hover:bg-[#EDE3C8] transition-colors focus:outline-none focus:ring-1 focus:ring-[#211612]"
+          className="absolute top-5 right-5 p-2 rounded-md text-[#211612]/60 hover:text-[#211612] hover:bg-[#EDE3C8] transition-colors focus:outline-none focus:ring-1 focus:ring-[#211612]"
           aria-label="Close modal"
         >
           <X className="w-5 h-5" />

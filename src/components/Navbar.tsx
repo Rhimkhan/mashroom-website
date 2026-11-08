@@ -77,7 +77,7 @@ function NavbarContent() {
               {/* HOME in a thin, rounded dark-espresso button */}
               <Link
                 href="/"
-                className={`btn-pill ${
+                className={`btn-sm ${
                   pathname === "/"
                     ? "bg-[#211612] text-[#FAF6EE] border border-[#211612] shadow"
                     : "bg-[#211612] text-[#FAF6EE] hover:bg-[#34221A] border border-[#211612]"
@@ -183,7 +183,7 @@ function NavbarContent() {
                   <button
                     type="button"
                     onClick={() => openAuthModal("signin")}
-                    className="btn-pill bg-transparent text-[#211612] border border-[#DDD3C4] hover:bg-[#EDE3C8] hover:border-[#211612]"
+                    className="btn-sm bg-transparent text-[#211612] border border-[#DDD3C4] hover:bg-[#EDE3C8] hover:border-[#211612]"
                     title="Login / Sign up"
                     aria-label="Login or Sign up"
                   >
@@ -195,7 +195,7 @@ function NavbarContent() {
                     <button
                       type="button"
                       onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                      className="btn-pill bg-[#FDFBF7] text-[#211612] border border-[#DDD3C4] shadow-sm hover:bg-[#EDE3C8]"
+                      className="btn-sm bg-[#FDFBF7] text-[#211612] border border-[#DDD3C4] shadow-sm hover:bg-[#EDE3C8]"
                       aria-label="User Account Menu"
                     >
                       <UserIcon className="w-3.5 h-3.5 text-[#A87B28]" />

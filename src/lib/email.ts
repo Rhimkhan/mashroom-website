@@ -30,7 +30,7 @@ export async function sendEmailWithResend(
     const fromEmail =
       process.env.EMAIL_FROM ||
       process.env.RESEND_FROM_EMAIL ||
-      "Akhil Foods <orders@akhilfoods.com>";
+      "Akhil Foods <onboarding@resend.dev>";
 
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",

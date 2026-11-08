@@ -136,14 +136,14 @@ export default function FAQClient() {
               href={`https://wa.me/${BRAND.whatsappNumber}?text=Hi%20Akhil%20Foods,%20I%20have%20a%20question%20about%20your%20oyster%20mushroom%20pickles.`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-7 py-3 rounded-full bg-[#25D366] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md hover:bg-[#20ba59] transition-all"
+              className="px-7 py-3 rounded-md bg-[#25D366] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md hover:bg-[#20ba59] transition-all"
             >
               <MessageCircle className="w-4 h-4 fill-white" />
               <span>Ask on WhatsApp Directly</span>
             </a>
             <Link
               href="/contact"
-              className="px-7 py-3 rounded-full bg-[#211612] hover:bg-[#2A1D17] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm transition-colors"
+              className="px-7 py-3 rounded-md bg-[#211612] hover:bg-[#2A1D17] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm transition-colors"
             >
               Contact Support Desk
             </Link>

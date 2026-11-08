@@ -124,7 +124,7 @@ export default function GalleryClient() {
               key={cat.key}
               type="button"
               onClick={() => setActiveCategory(cat.key)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all shadow-sm ${
+              className={`px-4 py-2 rounded-md text-sm font-semibold transition-all shadow-sm ${
                 activeCategory === cat.key
                   ? "bg-[#211612] text-[#FAF6EE] border border-[#C89B3C]/40 shadow-md"
                   : "bg-[#FDFBF7] text-[#211612] hover:bg-[#FAF6EE] border border-[#E8DEC8]"
@@ -219,7 +219,7 @@ export default function GalleryClient() {
               <button
                 type="button"
                 onClick={() => setModalIndex(null)}
-                className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-[#1C130E]/70 text-[#FAF6EE] hover:bg-[#1C130E] flex items-center justify-center transition-colors"
+                className="absolute top-4 right-4 z-10 w-10 h-10 rounded-md bg-[#1C130E]/70 text-[#FAF6EE] hover:bg-[#1C130E] flex items-center justify-center transition-colors"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
@@ -228,7 +228,7 @@ export default function GalleryClient() {
               <button
                 type="button"
                 onClick={handlePrev}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-[#FDFBF7]/90 hover:bg-[#FDFBF7] text-[#211612] flex items-center justify-center shadow-lg transition-all border border-[#E8DEC8]"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-md bg-[#FDFBF7]/90 hover:bg-[#FDFBF7] text-[#211612] flex items-center justify-center shadow-lg transition-all border border-[#E8DEC8]"
                 aria-label="Previous"
               >
                 <ChevronLeft className="w-6 h-6" />
@@ -237,7 +237,7 @@ export default function GalleryClient() {
               <button
                 type="button"
                 onClick={handleNext}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-[#FDFBF7]/90 hover:bg-[#FDFBF7] text-[#211612] flex items-center justify-center shadow-lg transition-all border border-[#E8DEC8]"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-md bg-[#FDFBF7]/90 hover:bg-[#FDFBF7] text-[#211612] flex items-center justify-center shadow-lg transition-all border border-[#E8DEC8]"
                 aria-label="Next"
               >
                 <ChevronRight className="w-6 h-6" />
@@ -268,7 +268,7 @@ export default function GalleryClient() {
                 {activeItem.shopSlug && (
                   <Link
                     href={`/product/${activeItem.shopSlug}`}
-                    className="shrink-0 px-5 py-2.5 rounded-full bg-[#211612] hover:bg-[#2A1D17] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm shadow-md transition-all flex items-center gap-1.5"
+                    className="shrink-0 px-5 py-2.5 rounded-md bg-[#211612] hover:bg-[#2A1D17] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm shadow-md transition-all flex items-center gap-1.5"
                   >
                     <span>Order Now</span>
                     <ArrowRight className="w-4 h-4 text-[#C89B3C]" />
@@ -290,7 +290,7 @@ export default function GalleryClient() {
           <div className="pt-2">
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm shadow-xl transition-all"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-md bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm shadow-xl transition-all"
             >
               <span>Explore The Shop</span>
               <ArrowRight className="w-4 h-4 text-[#C89B3C]" />

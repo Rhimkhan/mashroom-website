@@ -415,7 +415,7 @@ export default function CheckoutPage() {
       const message =
         err instanceof Error
           ? err.message
-          : "Something went wrong while processing your payment. Please try again.";
+          : "We could not place your order. Please try again or WhatsApp us at +91 63864 23865.";
       setErrorMsg(message);
       setLoading(false);
     }
@@ -441,9 +441,17 @@ export default function CheckoutPage() {
         </div>
 
         {errorMsg && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-[6px] text-sm flex items-center gap-2">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-[6px] text-sm flex items-center justify-between gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMsg}</span>
+            <a
+              href="https://wa.me/916386423865?text=Hi%20Akhil%20Foods,%20I%20am%20having%20trouble%20placing%20my%20order"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-bold text-red-800 underline shrink-0 hover:text-red-950 ml-auto"
+            >
+              WhatsApp Support
+            </a>
           </div>
         )}
 
@@ -621,15 +629,15 @@ export default function CheckoutPage() {
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="Pay by UPI"
+                      value="Pay by UPI QR"
                       checked={paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR"}
-                      onChange={() => setPaymentMethod("Pay by UPI")}
+                      onChange={() => setPaymentMethod("Pay by UPI QR")}
                       className="accent-[#211612] w-4 h-4"
                     />
                     <div>
                       <div className="flex items-center gap-1.5 font-bold text-sm text-[#211612]">
                         <QrCode className="w-4 h-4 text-[#A87B28]" />
-                        <span>Pay by UPI</span>
+                        <span>Pay by UPI QR</span>
                       </div>
                       <p className="text-xs text-[#3D2C24]/70 mt-0.5">Instant GPay / PhonePe / Paytm</p>
                     </div>

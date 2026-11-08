@@ -360,7 +360,7 @@ function ProductDetailContent() {
                 type="button"
                 disabled={isOutOfStock}
                 onClick={() => addToCart(product, selectedSize, quantity, true)}
-                className={`py-3.5 px-6 rounded-full border-2 border-[#211612] font-bold text-sm transition-all text-center shadow-sm flex items-center justify-center gap-2 ${
+                className={`py-3.5 px-6 rounded-md border-2 border-[#211612] font-bold text-sm transition-all text-center shadow-sm flex items-center justify-center gap-2 ${
                   isOutOfStock
                     ? "opacity-50 cursor-not-allowed bg-stone-200 text-stone-500 border-stone-300"
                     : "text-[#211612] hover:bg-[#211612] hover:text-[#FAF6EE] hover:scale-[1.02] active:scale-95"
@@ -374,7 +374,7 @@ function ProductDetailContent() {
                 type="button"
                 disabled={isOutOfStock}
                 onClick={() => buyNow(product, selectedSize, quantity)}
-                className={`py-3.5 px-6 rounded-full border border-[#C89B3C]/40 font-bold text-sm shadow-xl transition-all text-center flex items-center justify-center gap-2 ${
+                className={`py-3.5 px-6 rounded-md border border-[#C89B3C]/40 font-bold text-sm shadow-xl transition-all text-center flex items-center justify-center gap-2 ${
                   isOutOfStock
                     ? "opacity-50 cursor-not-allowed bg-stone-300 text-stone-500 border-stone-300"
                     : "bg-[#211612] hover:bg-[#1C130E] text-[#FAF6EE] hover:scale-[1.02] active:scale-95"
@@ -391,7 +391,7 @@ function ProductDetailContent() {
                 href={whatsappOrderUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3.5 px-6 rounded-full bg-[#1C130E] hover:bg-[#2A1D17] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-sm"
+                className="w-full py-3.5 px-6 rounded-md bg-[#1C130E] hover:bg-[#2A1D17] text-[#FAF6EE] border border-[#C89B3C]/40 font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-sm"
               >
                 <MessageCircle className="w-4 h-4 text-[#25D366]" />
                 <span>Order on WhatsApp ({PHONE_DISPLAY})</span>
@@ -479,7 +479,7 @@ function ProductDetailContent() {
               <button
                 type="button"
                 onClick={() => setShowReviewModal(true)}
-                className="px-5 py-2.5 rounded-full bg-[#211612] text-[#FAF6EE] text-xs font-bold uppercase tracking-wider hover:bg-[#34221A] transition-colors self-start"
+                className="px-5 py-2.5 rounded-md bg-[#211612] text-[#FAF6EE] text-xs font-bold uppercase tracking-wider hover:bg-[#34221A] transition-colors self-start"
               >
                 Write a Review
               </button>
@@ -566,7 +566,7 @@ function ProductDetailContent() {
                 <button
                   type="button"
                   onClick={() => setShowReviewModal(false)}
-                  className="p-1 rounded-full text-stone-500 hover:text-[#211612]"
+                  className="p-1 rounded-md text-stone-500 hover:text-[#211612]"
                   aria-label="Close review modal"
                 >
                   <X className="w-5 h-5" />
@@ -586,7 +586,7 @@ function ProductDetailContent() {
                       setShowReviewModal(false);
                       setReviewSuccessMsg(null);
                     }}
-                    className="px-6 py-2 rounded-full bg-[#211612] text-[#FAF6EE] text-xs font-bold uppercase tracking-wider"
+                    className="px-6 py-2 rounded-md bg-[#211612] text-[#FAF6EE] text-xs font-bold uppercase tracking-wider"
                   >
                     Close
                   </button>

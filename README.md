@@ -74,7 +74,7 @@
    - Smooth slide-in animations powered by Framer Motion.
    - Persistent basket with `localStorage` fallback.
    - Dynamic Free Shipping Progress Meter (threshold: ₹699).
-   - Instant coupon discount validation (e.g. `AKHIL10`, `FREESHIP`).
+   - Instant coupon discount validation (e.g. `AKHIL10`).
 
 3. **Multi-Rail Checkout (`/checkout`):**
    - Address validation and instant postal delivery verification for 19,000+ Indian pincodes.

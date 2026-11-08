@@ -435,8 +435,8 @@ export async function POST(request: NextRequest) {
       if (rawCoupon === "AKHIL10") {
         serverDiscount = Math.round((serverSubtotal * 10) / 100);
         verifiedCouponCode = "AKHIL10";
-      } else if (rawCoupon === "FREESHIP") {
-        verifiedCouponCode = "FREESHIP";
+
+
       } else {
         return NextResponse.json(
           {
@@ -450,7 +450,7 @@ export async function POST(request: NextRequest) {
 
     // Recalculate shipping on the server
     let serverShipping = BRAND.defaultShippingCost;
-    if (serverSubtotal >= BRAND.freeShippingThreshold || verifiedCouponCode === "FREESHIP") {
+    if (serverSubtotal >= BRAND.freeShippingThreshold) {
       serverShipping = 0;
     }
 
@@ -508,7 +508,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "We could not place your order, please try again or order on WhatsApp",
+          error: "We could not place your order. Please try again or WhatsApp us at +91 63864 23865.",
         },
         { status: 500 }
       );
@@ -550,7 +550,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
               {
                 success: false,
-                error: "We could not place your order, please try again or order on WhatsApp",
+                error: "We could not place your order. Please try again or WhatsApp us at +91 63864 23865.",
               },
               { status: 500 }
             );
@@ -564,7 +564,7 @@ export async function POST(request: NextRequest) {
           return NextResponse.json(
             {
               success: false,
-              error: "We could not place your order, please try again or order on WhatsApp",
+              error: "We could not place your order. Please try again or WhatsApp us at +91 63864 23865.",
             },
             { status: 500 }
           );
@@ -577,7 +577,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "We could not place your order, please try again or order on WhatsApp",
+          error: "We could not place your order. Please try again or WhatsApp us at +91 63864 23865.",
         },
         { status: 500 }
       );
@@ -635,7 +635,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Orders POST error:", error);
     return NextResponse.json(
-      { success: false, error: "We could not place your order, please try again or order on WhatsApp" },
+      { success: false, error: "We could not place your order. Please try again or WhatsApp us at +91 63864 23865." },
       { status: 500 }
     );
   }
