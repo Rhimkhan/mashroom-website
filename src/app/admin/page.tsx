@@ -49,6 +49,7 @@ import {
   updateLocalOrderStatus,
   getLocalReviews,
   getLocalWholesaleInquiries,
+  normalizeOrderRow,
 } from "@/lib/store";
 import { INITIAL_PRODUCTS } from "@/lib/data";
 import { BRAND } from "@/lib/brand";
@@ -80,6 +81,7 @@ export default function AdminPage() {
   const [salesPeriod, setSalesPeriod] = useState<"today" | "7days" | "30days">("today");
   const [reviewFilter, setReviewFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   // View Order Details Modal
   const [selectedOrderForView, setSelectedOrderForView] = useState<Order | null>(null);
@@ -124,26 +126,46 @@ export default function AdminPage() {
   // Load Data
   const loadData = async () => {
     setLoading(true);
+    setApiError(null);
     try {
       // 1. Fetch Orders
-      const resOrders = await fetchWithTimeout("/api/orders", { cache: "no-store" }, 4000);
-      const ordersData = await resOrders.json();
-      if (ordersData?.orders && Array.isArray(ordersData.orders) && ordersData.orders.length > 0) {
-        setOrders(ordersData.orders);
-      } else {
-        setOrders(getLocalOrders());
+      let ordersLoaded = false;
+      try {
+        const resOrders = await fetchWithTimeout("/api/orders", { cache: "no-store" }, 4000);
+        const ordersData = await resOrders.json();
+        if (ordersData?.success && Array.isArray(ordersData.orders)) {
+          setOrders(ordersData.orders.map(normalizeOrderRow));
+          ordersLoaded = true;
+        } else if (ordersData?.orders && Array.isArray(ordersData.orders)) {
+          setOrders(ordersData.orders.map(normalizeOrderRow));
+          ordersLoaded = true;
+        }
+      } catch (err) {
+        console.warn("Orders API fetch failed:", err);
+      }
+
+      if (!ordersLoaded) {
+        const local = getLocalOrders();
+        setOrders((local || []).map(normalizeOrderRow));
       }
 
       // 2. Fetch Products
-      const resProducts = await fetchWithTimeout("/api/products", { cache: "no-store" }, 4000);
-      const productsData = await resProducts.json();
-      if (
-        productsData?.products &&
-        Array.isArray(productsData.products) &&
-        productsData.products.length > 0
-      ) {
-        setProducts(productsData.products);
-      } else {
+      let productsLoaded = false;
+      try {
+        const resProducts = await fetchWithTimeout("/api/products", { cache: "no-store" }, 4000);
+        const productsData = await resProducts.json();
+        if (productsData?.success && Array.isArray(productsData.products)) {
+          setProducts(productsData.products);
+          productsLoaded = true;
+        } else if (productsData?.products && Array.isArray(productsData.products)) {
+          setProducts(productsData.products);
+          productsLoaded = true;
+        }
+      } catch (err) {
+        console.warn("Products API fetch failed:", err);
+      }
+
+      if (!productsLoaded) {
         const local = getLocalProducts();
         setProducts(local.length ? local : INITIAL_PRODUCTS);
       }
@@ -152,7 +174,9 @@ export default function AdminPage() {
       try {
         const resReviews = await fetchWithTimeout("/api/admin/reviews", { cache: "no-store" }, 4000);
         const revData = await resReviews.json();
-        if (revData?.reviews && Array.isArray(revData.reviews)) {
+        if (revData?.success && Array.isArray(revData.reviews)) {
+          setReviews(revData.reviews);
+        } else if (revData?.reviews && Array.isArray(revData.reviews)) {
           setReviews(revData.reviews);
         } else {
           setReviews(getLocalReviews());
@@ -165,7 +189,9 @@ export default function AdminPage() {
       try {
         const resWholesale = await fetchWithTimeout("/api/wholesale", { cache: "no-store" }, 4000);
         const wData = await resWholesale.json();
-        if (wData?.inquiries && Array.isArray(wData.inquiries)) {
+        if (wData?.success && Array.isArray(wData.inquiries)) {
+          setWholesaleInquiries(wData.inquiries);
+        } else if (wData?.inquiries && Array.isArray(wData.inquiries)) {
           setWholesaleInquiries(wData.inquiries);
         } else {
           setWholesaleInquiries(getLocalWholesaleInquiries());
@@ -175,7 +201,8 @@ export default function AdminPage() {
       }
     } catch (e) {
       console.error("Load data error:", e);
-      setOrders(getLocalOrders());
+      setApiError("Unable to reach live database. Operating in local store mode.");
+      setOrders(getLocalOrders().map(normalizeOrderRow));
       setProducts(getLocalProducts());
     } finally {
       setLoading(false);
@@ -704,7 +731,7 @@ If you have any questions, reply here.
   }, [orders, currentTime]);
 
   // Metrics
-  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+  const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
   const pendingOrders = orders.filter(
     (o) => o.orderStatus === "New" || o.orderStatus === "Packed"
   ).length;
@@ -858,6 +885,21 @@ If you have any questions, reply here.
           <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 p-3.5 rounded-2xl text-xs font-semibold flex items-center gap-2 shadow-sm animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>{feedbackMsg}</span>
+          </div>
+        )}
+
+        {apiError && (
+          <div className="bg-amber-50 border border-amber-300 text-amber-900 p-3.5 rounded-[6px] text-xs font-semibold flex items-center justify-between shadow-sm animate-in fade-in">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>{apiError}</span>
+            </div>
+            <button
+              onClick={() => setApiError(null)}
+              className="text-amber-700 hover:text-amber-900 font-bold px-2 py-0.5 text-xs"
+            >
+              ✕
+            </button>
           </div>
         )}
 
@@ -1027,6 +1069,13 @@ If you have any questions, reply here.
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E8DEC8]/50">
+                    {filteredOrders.length === 0 && (
+                      <tr>
+                        <td colSpan={7} className="p-8 text-center text-xs text-stone-400">
+                          No customer orders found matching your search.
+                        </td>
+                      </tr>
+                    )}
                     {filteredOrders.map((order) => {
                       const cleanPhone = order.phone?.replace(/\D/g, "") || "";
                       const waUrl = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(
@@ -1044,10 +1093,12 @@ If you have any questions, reply here.
                               <Eye className="w-3 h-3 text-stone-400" />
                             </button>
                             <div className="text-[10px] text-stone-400 font-normal">
-                              {new Date(order.createdAt).toLocaleDateString("en-IN", {
-                                day: "numeric",
-                                month: "short",
-                              })}
+                              {order.createdAt && !isNaN(new Date(order.createdAt).getTime())
+                                ? new Date(order.createdAt).toLocaleDateString("en-IN", {
+                                    day: "numeric",
+                                    month: "short",
+                                  })
+                                : "Recent"}
                             </div>
                           </td>
 
@@ -1085,14 +1136,14 @@ If you have any questions, reply here.
                                   ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
                                   : order.paymentStatus === "Awaiting verification" || order.paymentStatus === "Payment pending verification"
                                   ? "bg-amber-100 text-amber-900 border border-amber-300"
-                                  : order.paymentMethod.includes("Cash")
+                                  : (order.paymentMethod || "").includes("Cash")
                                   ? "bg-amber-100 text-amber-800 border border-amber-200"
                                   : "bg-stone-100 text-stone-700 border border-stone-200"
                               }`}
                             >
-                              {order.paymentMethod.includes("Cash")
+                              {(order.paymentMethod || "").includes("Cash")
                                 ? "COD"
-                                : order.paymentMethod.includes("UPI")
+                                : (order.paymentMethod || "").includes("UPI")
                                 ? "UPI"
                                 : "Online"}{" "}
                               ({order.paymentStatus})
@@ -1226,6 +1277,11 @@ If you have any questions, reply here.
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filteredProducts.length === 0 && (
+                <div className="col-span-full p-8 text-center text-xs text-stone-400 bg-[#FDFBF7] rounded-[6px] border border-[#E8DEC8]">
+                  No products found in catalog.
+                </div>
+              )}
               {filteredProducts.map((p) => (
                 <div
                   key={p.id}
@@ -1517,11 +1573,18 @@ If you have any questions, reply here.
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E8DEC8]/60">
+                    {customerList.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="p-8 text-center text-xs text-stone-400">
+                          No customer records found.
+                        </td>
+                      </tr>
+                    )}
                     {customerList
                       .filter(
                         (c) =>
-                          c.name.toLowerCase().includes(searchCustomer.toLowerCase()) ||
-                          c.phone.includes(searchCustomer)
+                          (c.name || "").toLowerCase().includes(searchCustomer.toLowerCase()) ||
+                          (c.phone || "").includes(searchCustomer)
                       )
                       .map((cust, i) => (
                         <tr key={i} className="hover:bg-[#FAF6EE]/50">
@@ -1632,7 +1695,7 @@ If you have any questions, reply here.
 
                           <td className="p-4">
                             <div className="flex items-center gap-1 text-[#A87B28] font-bold">
-                              <span>{"★".repeat(rev.rating)}</span>
+                              <span>{"★".repeat(Math.max(1, Math.min(5, Math.round(Number(rev.rating) || 5))))}</span>
                               <span className="text-stone-400 font-normal">({rev.rating}/5)</span>
                             </div>
                             <div className="text-[10px] text-stone-400 mt-0.5">
@@ -1748,6 +1811,13 @@ If you have any questions, reply here.
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E8DEC8]/60">
+                    {wholesaleInquiries.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="p-8 text-center text-xs text-stone-400">
+                          No wholesale inquiries received yet.
+                        </td>
+                      </tr>
+                    )}
                     {wholesaleInquiries.map((inq) => (
                       <tr key={inq.id} className="hover:bg-[#FAF6EE]/50">
                         <td className="p-4">
@@ -1761,7 +1831,7 @@ If you have any questions, reply here.
 
                         <td className="p-4">
                           <a
-                            href={`https://wa.me/91${inq.phone.replace(/\D/g, "")}`}
+                            href={`https://wa.me/91${(inq.phone || "").replace(/\D/g, "")}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="font-mono text-[#A87B28] font-bold hover:underline flex items-center gap-1"
@@ -1784,11 +1854,11 @@ If you have any questions, reply here.
                         </td>
 
                         <td className="p-4 text-stone-500 font-mono text-[11px]">
-                          {new Date(inq.createdAt).toLocaleDateString("en-IN", {
+                          {inq.createdAt && !isNaN(new Date(inq.createdAt).getTime()) ? new Date(inq.createdAt).toLocaleDateString("en-IN", {
                             day: "numeric",
                             month: "short",
                             year: "numeric",
-                          })}
+                          }) : "Recent"}
                         </td>
                       </tr>
                     ))}

@@ -21,7 +21,7 @@ const INITIAL_ORDERS: Order[] = [
       {
         productId: "prod-mushroom-mela",
         name: "Mushroom Mela Oyster Mushroom Pickle",
-        size: "400g",
+        size: "400 g",
         price: 399,
         quantity: 2,
         image: "/images/products/mushroom-mela-front.jpg",
@@ -53,7 +53,7 @@ const INITIAL_ORDERS: Order[] = [
       {
         productId: "prod-mushroom-mela",
         name: "Mushroom Mela Oyster Mushroom Pickle",
-        size: "400g",
+        size: "400 g",
         price: 399,
         quantity: 1,
         image: "/images/products/mushroom-mela-front.jpg",
@@ -114,22 +114,103 @@ export function saveLocalProducts(products: Product[]): void {
 }
 
 /**
+ * Normalizes an order from Supabase (snake_case) or legacy local store (camelCase)
+ * to a strictly-typed, defensive Order object where all required fields are guaranteed non-null.
+ */
+export function normalizeOrderRow(row: any): Order {
+  if (!row || typeof row !== "object") {
+    return {
+      id: `ord-${Date.now()}`,
+      orderNumber: "AF-UNKNOWN",
+      customerName: "Customer",
+      email: "",
+      phone: "",
+      address: "",
+      landmark: undefined,
+      city: "",
+      state: "",
+      pincode: "",
+      items: [],
+      subtotal: 0,
+      shipping: 0,
+      discount: 0,
+      couponCode: undefined,
+      total: 0,
+      paymentMethod: "UPI",
+      paymentStatus: "Pending",
+      orderStatus: "New",
+      notes: undefined,
+      utr: undefined,
+      trackingNumber: undefined,
+      courierName: undefined,
+      userId: undefined,
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+  let items: any[] = [];
+  if (Array.isArray(row.items)) {
+    items = row.items;
+  } else if (typeof row.items === "string") {
+    try {
+      const parsed = JSON.parse(row.items);
+      if (Array.isArray(parsed)) items = parsed;
+    } catch {
+      items = [];
+    }
+  }
+
+  const rawPaymentMethod = row.paymentMethod || row.payment_method || "UPI";
+  const rawPaymentStatus = row.paymentStatus || row.payment_status || "Pending";
+  const rawOrderStatus = row.orderStatus || row.order_status || "New";
+
+  return {
+    id: String(row.id || `ord-${Date.now()}`),
+    orderNumber: String(row.orderNumber || row.order_number || "AF-ORDER"),
+    customerName: String(row.customerName || row.customer_name || "Customer"),
+    email: String(row.email || ""),
+    phone: String(row.phone || ""),
+    address: String(row.address || ""),
+    landmark: row.landmark ? String(row.landmark) : undefined,
+    city: String(row.city || ""),
+    state: String(row.state || ""),
+    pincode: String(row.pincode || ""),
+    items,
+    subtotal: Number(row.subtotal) || 0,
+    shipping: Number(row.shipping) || 0,
+    discount: Number(row.discount) || 0,
+    couponCode: row.couponCode || row.coupon_code || undefined,
+    total: Number(row.total) || 0,
+    paymentMethod: String(rawPaymentMethod),
+    paymentStatus: rawPaymentStatus as PaymentStatus,
+    orderStatus: rawOrderStatus as OrderStatus,
+    notes: row.notes ? String(row.notes) : undefined,
+    utr: row.utr ? String(row.utr) : undefined,
+    trackingNumber: row.trackingNumber || row.tracking_number || undefined,
+    courierName: row.courierName || row.courier_name || undefined,
+    userId: row.userId || row.user_id || undefined,
+    createdAt: row.createdAt || row.created_at || new Date().toISOString(),
+  };
+}
+
+/**
  * Retrieves all stored customer orders from browser localStorage or server memory fallback.
  *
  * @returns Array of customer orders sorted chronologically
  */
 export function getLocalOrders(): Order[] {
-  if (typeof window === "undefined") return serverMemoryOrders;
+  if (typeof window === "undefined") return serverMemoryOrders.map(normalizeOrderRow);
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_ORDERS_KEY);
     if (!raw) {
       localStorage.setItem(LOCAL_STORAGE_ORDERS_KEY, JSON.stringify(INITIAL_ORDERS));
-      return INITIAL_ORDERS;
+      return INITIAL_ORDERS.map(normalizeOrderRow);
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.map(normalizeOrderRow) : INITIAL_ORDERS.map(normalizeOrderRow);
   } catch (err) {
     console.error("Error reading local orders:", err);
-    return serverMemoryOrders;
+    return serverMemoryOrders.map(normalizeOrderRow);
   }
 }
 
@@ -209,7 +290,7 @@ export function findOrderByNumberOrPhone(query: string): Order[] {
     (o) =>
       o.orderNumber.toLowerCase() === q ||
       o.id.toLowerCase() === q ||
-      o.phone.replace(/\D/g, "").includes(q.replace(/\D/g, "")) ||
+      (o.phone || "").replace(/\D/g, "").includes(q.replace(/\D/g, "")) ||
       o.email.toLowerCase() === q
   );
 }

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { Order, OrderStatus, Product } from "@/lib/types";
-import { getLocalOrders, addLocalOrder, updateLocalOrderStatus, getLocalProducts, saveLocalProducts, saveLocalOrders } from "@/lib/store";
+import { getLocalOrders, addLocalOrder, updateLocalOrderStatus, getLocalProducts, saveLocalProducts, saveLocalOrders, normalizeOrderRow } from "@/lib/store";
 import { INITIAL_PRODUCTS } from "@/lib/data";
-import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
+import { supabase, isSupabaseConfigured, createSupabaseReqClient } from "@/lib/supabase-server";
 import { sendOrderNotificationEmail, sendOrderStatusEmail } from "@/lib/email";
 import { BRAND } from "@/lib/brand";
 import { verifyAdminSession } from "@/lib/admin-auth";
@@ -183,7 +183,8 @@ export async function GET(request: NextRequest) {
       }
       const { data, error } = await req;
       if (!error && data) {
-        return NextResponse.json({ success: true, orders: data });
+        const normalized = data.map(normalizeOrderRow);
+        return NextResponse.json({ success: true, orders: normalized });
       }
       if (error) {
         console.error("[CRITICAL] Supabase orders list error:", error);
@@ -369,7 +370,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            error: `Requested quantity for "${product.name}" exceeds available stock (${product.stockCount} available).`,
+            error: `Requested quantity for "${product.name}" exceeds available stock.`,
           },
           { status: 400 }
         );
@@ -474,6 +475,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Extract verified user_id strictly on the server from verified session cookies
+    let verifiedUserId: string | null = null;
+    try {
+      const authClient = createSupabaseReqClient(request);
+      const {
+        data: { user: authUser },
+      } = await authClient.auth.getUser();
+      if (authUser?.id) {
+        verifiedUserId = authUser.id;
+      }
+    } catch (authErr) {
+      console.warn("Could not verify session for order:", authErr);
+    }
+
     const newOrder: Order = {
       id: orderId,
       orderNumber: orderNumber,
@@ -498,7 +513,7 @@ export async function POST(request: NextRequest) {
       notes: utrClean
         ? (body.notes ? `${escapeAndTrim(body.notes).slice(0, 150)} | UTR: ${utrClean}` : `UTR: ${utrClean}`)
         : escapeAndTrim(body.notes).slice(0, 200),
-      userId: body.userId || undefined,
+      userId: verifiedUserId || undefined,
       createdAt: new Date().toISOString(),
     };
 
@@ -546,7 +561,36 @@ export async function POST(request: NextRequest) {
 
         if (insertError) {
           console.error("[CRITICAL] Supabase order insert failed in production:", insertError);
-          if (process.env.NODE_ENV === "production") {
+          if (insertError.message?.includes("user_id") || (insertError as any).code === "42703") {
+            const retryRow: any = {
+              id: newOrder.id,
+              order_number: newOrder.orderNumber,
+              customer_name: newOrder.customerName,
+              email: newOrder.email,
+              phone: newOrder.phone,
+              address: newOrder.address,
+              landmark: newOrder.landmark,
+              city: newOrder.city,
+              state: newOrder.state,
+              pincode: newOrder.pincode,
+              items: newOrder.items,
+              subtotal: newOrder.subtotal,
+              shipping: newOrder.shipping,
+              discount: newOrder.discount,
+              coupon_code: newOrder.couponCode,
+              total: newOrder.total,
+              payment_method: newOrder.paymentMethod,
+              payment_status: newOrder.paymentStatus,
+              order_status: newOrder.orderStatus,
+              notes: newOrder.notes,
+              created_at: newOrder.createdAt,
+            };
+            const { error: retryError } = await supabase.from("orders").insert([retryRow]);
+            if (!retryError) {
+              supabaseInserted = true;
+            }
+          }
+          if (!supabaseInserted && process.env.NODE_ENV === "production") {
             return NextResponse.json(
               {
                 success: false,
