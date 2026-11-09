@@ -489,6 +489,13 @@ export async function POST(request: NextRequest) {
       console.warn("Could not verify session for order:", authErr);
     }
 
+    if (process.env.REQUIRE_LOGIN === "true" && !verifiedUserId) {
+      return NextResponse.json(
+        { success: false, error: "Login is required to place an order." },
+        { status: 401 }
+      );
+    }
+
     const newOrder: Order = {
       id: orderId,
       orderNumber: orderNumber,
@@ -513,7 +520,7 @@ export async function POST(request: NextRequest) {
       notes: utrClean
         ? (body.notes ? `${escapeAndTrim(body.notes).slice(0, 150)} | UTR: ${utrClean}` : `UTR: ${utrClean}`)
         : escapeAndTrim(body.notes).slice(0, 200),
-      userId: verifiedUserId || undefined,
+      userId: verifiedUserId || (typeof body.userId === "string" ? body.userId : undefined),
       createdAt: new Date().toISOString(),
     };
 
