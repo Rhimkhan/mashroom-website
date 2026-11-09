@@ -104,19 +104,19 @@ header :focus-visible {
   /* Unified Button System: 4 Clear Consistent Styles (Target < 5) */
   /* Style 1: Primary Action (Deep Espresso Solid with warm cream text) */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-[#211612] text-[#FAF6EE] hover:bg-[#34221A] font-serif font-bold py-3 px-6 rounded-md text-xs tracking-[0.18em] uppercase border border-[#211612] transition-all shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B3C];
+    @apply inline-flex items-center justify-center gap-2 bg-[#211612] text-[#FAF6EE] hover:bg-[#34221A] font-serif font-bold py-3 px-6 rounded-xl text-xs tracking-[0.18em] uppercase border border-[#211612] transition-all shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B3C];
   }
   /* Style 2: Secondary / Outline Action (Transparent with Espresso border) */
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 border border-[#211612] text-[#211612] hover:bg-[#211612] hover:text-[#FAF6EE] font-serif font-semibold py-3 px-6 rounded-md text-xs tracking-[0.18em] uppercase transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#211612];
+    @apply inline-flex items-center justify-center gap-2 border border-[#211612] text-[#211612] hover:bg-[#211612] hover:text-[#FAF6EE] font-serif font-semibold py-3 px-6 rounded-xl text-xs tracking-[0.18em] uppercase transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#211612];
   }
   /* Style 3: Pill Action for Navbar & Badges */
-  .btn-sm {
-    @apply inline-flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-md text-xs font-serif tracking-[0.18em] uppercase transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#211612];
+  .btn-pill {
+    @apply inline-flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-serif tracking-[0.18em] uppercase transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#211612];
   }
   /* Style 4: Minimalist Icon-only Button */
   .btn-icon {
-    @apply flex items-center justify-center p-2 min-w-[44px] min-h-[44px] rounded-md text-[#211612] hover:bg-[#EDE3C8] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#211612];
+    @apply flex items-center justify-center p-2 rounded-xl text-[#211612] hover:bg-[#EDE3C8] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#211612];
   }
 }
 

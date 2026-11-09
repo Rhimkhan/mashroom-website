@@ -56,7 +56,7 @@ export default function CartDrawer() {
             <div className="flex items-center gap-2.5">
               <ShoppingBag className="w-5 h-5 text-[#D4AF37]" />
               <h2 className="font-serif text-lg font-bold tracking-wide text-[#FAF6EE]">
-                Pickle Basket
+                Artisanal Pickle Basket
               </h2>
               <span className="text-xs bg-[#2A1D17] text-[#D4AF37] px-2.5 py-0.5 rounded-full font-serif border border-[#C89B3C]/20">
                 {items.reduce((s, i) => s + i.quantity, 0)} jars
@@ -64,7 +64,7 @@ export default function CartDrawer() {
             </div>
             <button
               onClick={() => setIsDrawerOpen(false)}
-              className="p-1.5 rounded-md hover:bg-[#2A1D17] text-[#FAF6EE] transition-colors"
+              className="p-1.5 rounded-full hover:bg-[#2A1D17] text-[#FAF6EE] transition-colors"
               aria-label="Close cart"
             >
               <X className="w-5 h-5" />
@@ -102,7 +102,7 @@ export default function CartDrawer() {
                 </div>
                 <h3 className="font-serif text-lg font-bold text-[#211612]">Your basket is empty</h3>
                 <p className="text-sm text-[#3D2C24] max-w-xs mx-auto font-light">
-                  Add our signature 400g Mushroom Mela Oyster Mushroom Pickle to your basket.
+                  Add our signature 400 g Mushroom Mela Oyster Mushroom Pickle to your basket.
                 </p>
                 <button
                   onClick={() => setIsDrawerOpen(false)}
@@ -120,10 +120,8 @@ export default function CartDrawer() {
                   <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[#FAF6EE] shrink-0 border border-[#E8DEC8]">
                     <Image
                       src={item.image}
-                      alt={`${item.name} - Pickle Jar`}
+                      alt={`${item.name} - Handcrafted Pickle Jar`}
                       fill
-                      loading="lazy"
-                      sizes="80px"
                       className="object-cover"
                     />
                   </div>
@@ -138,7 +136,6 @@ export default function CartDrawer() {
                           onClick={() => removeFromCart(item.productId, item.size)}
                           className="text-[#211612]/50 hover:text-red-700 transition-colors p-0.5"
                           title="Remove item"
-                          aria-label={`Remove ${item.name} (${item.size}) from cart`}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -150,7 +147,7 @@ export default function CartDrawer() {
 
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#E8DEC8]">
                       {/* Quantity Controller */}
-                      <div className="flex items-center border border-[#E8DEC8] rounded-md bg-[#FAF6EE] px-1 py-0.5">
+                      <div className="flex items-center border border-[#E8DEC8] rounded-full bg-[#FAF6EE] px-1 py-0.5">
                         <button
                           onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1)}
                           className="p-1 hover:text-[#211612] text-stone-600"
@@ -246,14 +243,14 @@ export default function CartDrawer() {
                 <Link
                   href="/cart"
                   onClick={() => setIsDrawerOpen(false)}
-                  className="py-3 px-4 rounded-md border border-[#211612] text-[#211612] font-serif font-bold text-xs uppercase tracking-wider text-center hover:bg-[#211612] hover:text-[#FAF6EE] transition-all"
+                  className="py-3 px-4 rounded-xl border border-[#211612] text-[#211612] font-serif font-bold text-xs uppercase tracking-wider text-center hover:bg-[#211612] hover:text-[#FAF6EE] transition-all"
                 >
                   View Basket
                 </Link>
                 <Link
                   href="/checkout"
                   onClick={() => setIsDrawerOpen(false)}
-                  className="py-3 px-4 rounded-md bg-[#211612] hover:bg-[#34221A] text-[#FAF6EE] font-serif font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1.5 shadow-md transition-all border border-[#211612]"
+                  className="py-3 px-4 rounded-xl bg-[#211612] hover:bg-[#34221A] text-[#FAF6EE] font-serif font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1.5 shadow-md transition-all border border-[#211612]"
                 >
                   <span>Checkout</span>
                   <ArrowRight className="w-4 h-4" />
@@ -269,10 +266,10 @@ export default function CartDrawer() {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 rounded-md bg-[#2A1D17] hover:bg-[#38271F] text-[#FAF6EE] font-serif font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-[#C89B3C]/30 shadow-sm transition-all"
+                className="w-full py-2.5 rounded-xl bg-[#2A1D17] hover:bg-[#38271F] text-[#FAF6EE] font-serif font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-[#C89B3C]/30 shadow-sm transition-all"
               >
                 <MessageCircle className="w-4 h-4 text-[#C89B3C]" />
-                <span>Order on WhatsApp</span>
+                <span>Order via WhatsApp Concierge</span>
               </a>
             </div>
           )}

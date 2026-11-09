@@ -1,5 +1,4 @@
 import { Product, Review } from "./types";
-import { FSSAI_NUMBER } from "./config";
 
 export const INITIAL_PRODUCTS: Product[] = [
   {
@@ -41,9 +40,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     isFeatured: true,
     stockCount: 100,
     sizes: [
-      { size: "400g", price: 399, originalPrice: 399, inStock: true },
+      { size: "400 g", price: 399, originalPrice: 399, inStock: true },
     ],
-    badges: ["Oyster Mushroom", "400g Jar", "FSSAI Registered"],
+    badges: ["Oyster Mushroom", "400 g Jar", "FSSAI Registered"],
   },
 ];
 
@@ -51,29 +50,34 @@ export const REVIEWS: Review[] = [];
 
 export const FAQS = [
   {
-    question: "What ingredients are used in the pickle?",
+    question: "Where is AKHIL FOODS located?",
     answer:
-      "Mushroom, mustard oil, vinegar, salt, red chilli, coriander, mustard, fennel, fenugreek, cumin, turmeric, ajwain, ginger, garlic, permitted additives.",
+      "AKHIL FOODS is based in Village Nandsiya, Karguwan Road, Near Ambedkar Murti, Moth, Jhansi, Uttar Pradesh 284303. All our mushroom pickles are prepared and packed right here.",
+  },
+  {
+    question: "What ingredients are used in Mushroom Mela Oyster Mushroom Pickle?",
+    answer:
+      "As stated on the label: Mushroom, Mustard Oil, Vinegar, Salt, Red Chilli, Coriander, Mustard, Fennel, Fenugreek, Cumin, Turmeric, Ajwain, Ginger, Garlic, and Permitted Additives. Net quantity is 400 g.",
   },
   {
     question: "How should I store the pickle?",
     answer:
-      "Keep in a cool dry place, away from sunlight, use a clean dry spoon.",
+      "Store in a cool, dry place. Keep away from direct sunlight. Always use a clean, dry spoon.",
   },
   {
-    question: "Is the product FSSAI registered?",
+    question: "Is AKHIL FOODS FSSAI certified and registered?",
     answer:
-      `Licence number ${FSSAI_NUMBER}, see the Certificates page.`,
+      "Yes, AKHIL FOODS holds FSSAI Lic. No. 22726293000001 (valid till 31-12-2026), GSTIN 09FTOPD3011E1ZZ, and Udyam Reg. No. UDYAM-UP-39-0059446.",
   },
   {
-    question: "Do you deliver across India?",
+    question: "Do you deliver across India and how long does it take?",
     answer:
-      "We ship across India. Delivery time depends on your location. See the Shipping Policy page.",
+      "Yes, we ship across India. We do not promise fixed delivery days; delivery time depends on the courier partner and your delivery location and pin code.",
   },
   {
-    question: "How do I order?",
+    question: "How can I place an order?",
     answer:
-      "Add to cart, enter address, pay online or choose cash on delivery, or order on WhatsApp.",
+      "You can order directly on our website checkout (Cash on Delivery, Pay by UPI QR, or Online Payment) or message us directly on WhatsApp at +91 63864 23865 (wa.me/916386423865).",
   },
 ];
 

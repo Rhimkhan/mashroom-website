@@ -263,6 +263,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSession(null);
     try {
       localStorage.removeItem(LOCAL_USER_KEY);
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
     } catch {
       // ignore
     }

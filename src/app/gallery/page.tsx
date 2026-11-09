@@ -2,7 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import GalleryClient from "@/components/GalleryClient";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   title: "Gallery | AKHIL FOODS Mushroom Pickles",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
         url: "/images/products/mushroom-mela-front.jpg",
         width: 1200,
         height: 900,
-        alt: "Mushroom Mela Oyster Mushroom Pickle 400g Jar - Akhil Foods Jhansi",
+        alt: "Mushroom Mela Oyster Mushroom Pickle 400 g Jar - Akhil Foods Jhansi",
       },
     ],
     locale: "en_IN",

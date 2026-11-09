@@ -22,7 +22,7 @@ import { getLocalOrders } from "@/lib/store";
 import { WHATSAPP_NUMBER } from "@/lib/config";
 
 export default function AccountPage() {
-  const { user, loading: authLoading, openAuthModal, signOut } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -45,10 +45,35 @@ export default function AccountPage() {
         if (userEmail) queryParams.set("email", userEmail);
         if (userId) queryParams.set("userId", userId);
 
-        const res = await fetch(`/api/orders?${queryParams.toString()}`);
+        const res = await fetch("/api/account/orders");
         const data = await res.json();
         if (data.success && Array.isArray(data.orders)) {
-          serverOrders = data.orders;
+          serverOrders = data.orders.map((o: any) => ({
+            id: o.id,
+            orderNumber: o.order_number || o.orderNumber,
+            customerName: o.customer_name || o.customerName,
+            email: o.email,
+            phone: o.phone,
+            address: o.address,
+            landmark: o.landmark,
+            city: o.city,
+            state: o.state,
+            pincode: o.pincode,
+            items: o.items || [],
+            subtotal: Number(o.subtotal) || 0,
+            shipping: Number(o.shipping) || 0,
+            discount: Number(o.discount) || 0,
+            couponCode: o.coupon_code || o.couponCode,
+            total: Number(o.total) || 0,
+            paymentMethod: o.payment_method || o.paymentMethod,
+            paymentStatus: o.payment_status || o.paymentStatus,
+            orderStatus: o.order_status || o.orderStatus,
+            trackingNumber: o.tracking_number || o.trackingNumber,
+            courierName: o.courier_name || o.courierName,
+            notes: o.notes,
+            userId: o.user_id || o.userId,
+            createdAt: o.created_at || o.createdAt,
+          }));
         }
       } catch (err) {
         console.warn("Server orders fetch warning:", err);
@@ -144,14 +169,14 @@ export default function AccountPage() {
           <div className="space-y-3 pt-2">
             <button
               type="button"
-              onClick={() => openAuthModal("signin")}
+              onClick={() => (window.location.href = "/login?next=/account")}
               className="w-full py-3.5 rounded-[6px] bg-[#211612] hover:bg-[#34221A] text-[#FAF6EE] font-serif font-bold text-xs tracking-[0.2em] uppercase transition-colors shadow-sm border border-[#211612]"
             >
               Sign In
             </button>
             <button
               type="button"
-              onClick={() => openAuthModal("signup")}
+              onClick={() => (window.location.href = "/login?next=/account")}
               className="w-full py-3 rounded-[6px] bg-transparent hover:bg-[#EDE3C8] text-[#211612] font-serif font-medium text-xs tracking-[0.16em] uppercase transition-colors border border-[#DDD3C4]"
             >
               Create New Account
@@ -227,7 +252,7 @@ export default function AccountPage() {
               title="Log out"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Logout</span>
+              <span className="hidden sm:inline">Sign out</span>
             </button>
           </div>
         </div>
@@ -349,7 +374,7 @@ export default function AccountPage() {
                               <div className="relative w-14 h-14 rounded-[6px] overflow-hidden bg-[#1C130E] border border-[#C89B3C]/25 shrink-0">
                                 <Image
                                   src={item.image || "/images/products/mushroom-mela-front.jpg"}
-                                  alt={`${item.name} (${item.size || "400g"}) - Order item`}
+                                  alt={`${item.name} (${item.size || "400 g"}) - Order item`}
                                   fill
                                   sizes="56px"
                                   className="object-cover"

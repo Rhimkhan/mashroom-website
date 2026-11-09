@@ -2,18 +2,17 @@ import React from "react";
 import { Metadata } from "next";
 import ContactClient from "@/components/ContactClient";
 import { BRAND } from "@/lib/brand";
-import { PHONE_DISPLAY } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Contact Us & Location in Jhansi | AKHIL FOODS",
   description:
-    `Get in touch with AKHIL FOODS in Village Nandsiya, Moth, Jhansi, Uttar Pradesh - 284303. Order inquiries, customer support, and direct WhatsApp ordering on ${PHONE_DISPLAY}.`,
+    "Get in touch with AKHIL FOODS in Village Nandsiya, Moth, Jhansi, Uttar Pradesh - 284303. Order inquiries, customer support, and direct WhatsApp ordering on 916386423865.",
   keywords: ["AKHIL FOODS", "Contact", "Jhansi"],
   openGraph: {
     title: "Contact Us & Location | AKHIL FOODS",
     description:
-      `Reach out to AKHIL FOODS in Village Nandsiya, Moth, Jhansi, Uttar Pradesh. Quick WhatsApp support on ${PHONE_DISPLAY}.`,
-    url: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/contact`,
+      "Reach out to AKHIL FOODS in Village Nandsiya, Moth, Jhansi, Uttar Pradesh. Quick WhatsApp support on 916386423865.",
+    url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/contact`,
     siteName: "AKHIL FOODS",
     images: [
       {
@@ -33,7 +32,7 @@ export const metadata: Metadata = {
     images: ["/images/products/mushroom-mela-front.jpg"],
   },
   alternates: {
-    canonical: `${(process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "")}/contact`,
+    canonical: "/contact",
   },
 };
 
@@ -42,28 +41,11 @@ export default function ContactPage() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: BRAND.name,
-    image: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/images/products/mushroom-mela-front.jpg`,
+    image: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/images/products/mushroom-mela-front.jpg`,
     telephone: BRAND.phone,
     email: BRAND.email,
-    url: process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app",
+    url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
     taxID: BRAND.gstNumber,
-    identifier: [
-      {
-        "@type": "PropertyValue",
-        name: "FSSAI License",
-        value: BRAND.fssaiNumber,
-      },
-      {
-        "@type": "PropertyValue",
-        name: "GSTIN",
-        value: BRAND.gstNumber,
-      },
-      {
-        "@type": "PropertyValue",
-        name: "Udyam Registration",
-        value: BRAND.udyamNumber,
-      },
-    ],
     address: {
       "@type": "PostalAddress",
       streetAddress: BRAND.address,

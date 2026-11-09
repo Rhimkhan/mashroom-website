@@ -1,4 +1,4 @@
-export type ProductSize = "400g" | "250g" | "500g" | "1kg" | string;
+export type ProductSize = "400 g" | "250 g" | "500 g" | "1 kg" | string;
 
 export interface ProductPriceOption {
   size: ProductSize;

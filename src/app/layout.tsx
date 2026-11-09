@@ -4,33 +4,33 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import CartDrawer from "@/components/CartDrawer";
+import AuthModal from "@/components/AuthModal";
 import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
-import Analytics from "@/components/Analytics";
-import ClientOverlays from "@/components/ClientOverlays";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
 const poppins = Poppins({
   subsets: ["latin"],
   variable: "--font-poppins",
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://akhilfoods.com"),
   title: {
-    default: "AKHIL FOODS | Oyster Mushroom Pickle",
+    default: "AKHIL FOODS | Artisanal Handcrafted Mushroom Pickles",
     template: "%s | AKHIL FOODS",
   },
   description:
-    "Oyster mushroom pickle made in Jhansi with mustard oil and spices by AKHIL FOODS. Great Food, Better Life.",
+    "Experience authentic artisanal oyster mushroom pickles handcrafted in Village Nandsiya, Moth, Jhansi, Uttar Pradesh by AKHIL FOODS with fresh mushrooms, pure mustard oil, and traditional spices. Great Food, Better Life.",
   keywords: [
     "mushroom pickle",
     "akhil foods",
@@ -39,10 +39,10 @@ export const metadata: Metadata = {
     "jhansi pickles",
     "uttar pradesh pickle",
     "pure mustard oil pickle",
-    "mushroom pickle online",
+    "handcrafted pickle online",
     "fssai registered pickle",
   ],
-  authors: [{ name: "AKHIL FOODS", url: process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app" }],
+  authors: [{ name: "AKHIL FOODS", url: "https://akhilfoods.com" }],
   creator: "AKHIL FOODS",
   publisher: "AKHIL FOODS",
   formatDetection: {
@@ -50,16 +50,16 @@ export const metadata: Metadata = {
     email: false,
   },
   openGraph: {
-    title: "AKHIL FOODS | Oyster Mushroom Pickle",
-    description: "Oyster mushroom pickle made in Jhansi with mustard oil and spices.",
-    url: process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app",
+    title: "AKHIL FOODS | Artisanal Handcrafted Mushroom Pickles",
+    description: "Great Food, Better Life. Authentic handcrafted oyster mushroom pickles from Village Nandsiya, Moth, Jhansi, Uttar Pradesh.",
+    url: "https://akhilfoods.com",
     siteName: "AKHIL FOODS",
     images: [
       {
         url: "/images/products/mushroom-mela-front.jpg",
         width: 1200,
         height: 630,
-        alt: "AKHIL FOODS Mushroom Mela Oyster Mushroom Pickle 400g Jar",
+        alt: "AKHIL FOODS Mushroom Mela Oyster Mushroom Pickle 400 g Jar",
       },
     ],
     locale: "en_IN",
@@ -67,8 +67,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AKHIL FOODS | Oyster Mushroom Pickle",
-    description: "Oyster mushroom pickle made in Jhansi with mustard oil and spices.",
+    title: "AKHIL FOODS | Artisanal Mushroom Pickles",
+    description: "Authentic handcrafted oyster mushroom pickles from Jhansi, Uttar Pradesh.",
     images: ["/images/products/mushroom-mela-front.jpg"],
   },
   robots: {
@@ -82,11 +82,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
-    ? {
-        google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
-      }
-    : undefined,
 };
 
 export default function RootLayout({
@@ -105,9 +100,9 @@ export default function RootLayout({
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />
-            <ClientOverlays />
+            <CartDrawer />
+            <AuthModal />
             <FloatingWhatsApp />
-            <Analytics />
           </CartProvider>
         </AuthProvider>
       </body>

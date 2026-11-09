@@ -3,12 +3,12 @@ import { Metadata } from "next";
 import ShopClient from "@/components/ShopClient";
 import { INITIAL_PRODUCTS } from "@/lib/data";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   title: "Shop Mushroom Mela Oyster Mushroom Pickle | AKHIL FOODS",
   description:
-    "Buy Mushroom Mela Oyster Mushroom Pickle (400g) by AKHIL FOODS, Village Nandsiya, Moth, Jhansi, Uttar Pradesh. Prepared with mustard oil and spices.",
+    "Buy Mushroom Mela Oyster Mushroom Pickle (400 g) by AKHIL FOODS, Village Nandsiya, Moth, Jhansi, Uttar Pradesh. Prepared with mustard oil and spices.",
   keywords: ["AKHIL FOODS", "Mushroom Pickle"],
   openGraph: {
     title: "Shop Mushroom Mela Oyster Mushroom Pickle | AKHIL FOODS",
@@ -51,7 +51,7 @@ export default function ShopPage() {
       item: {
         "@type": "Product",
         name: prod.name,
-        image: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}${prod.image}`,
+        image: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}${prod.image}`,
         description: prod.description,
         sku: prod.id,
         offers: {

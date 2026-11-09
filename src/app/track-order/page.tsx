@@ -11,7 +11,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
-import { ORDER_STATUSES } from "@/lib/order-status";
 
 interface TrackedOrder {
   orderNumber: string;
@@ -66,7 +65,6 @@ export default function TrackOrderPage() {
     try {
       const res = await fetch("/api/orders/track", {
         method: "POST",
-        cache: "no-store",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderNumber: cleanOrderNumber,
@@ -91,11 +89,11 @@ export default function TrackOrderPage() {
     }
   };
 
-  const statuses = ORDER_STATUSES;
+  const statuses = ["New", "Packed", "Shipped", "Delivered"];
 
   const getStepStatus = (orderStatus: string, step: string) => {
-    const currentIndex = (statuses as readonly string[]).indexOf(orderStatus);
-    const stepIndex = (statuses as readonly string[]).indexOf(step);
+    const currentIndex = statuses.indexOf(orderStatus);
+    const stepIndex = statuses.indexOf(step);
     if (currentIndex >= stepIndex && currentIndex !== -1) return "completed";
     return "pending";
   };

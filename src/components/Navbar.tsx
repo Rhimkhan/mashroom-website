@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, Suspense, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Search, Menu, X, PhoneCall, User as UserIcon, Package, LogOut, ChevronDown } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
@@ -43,23 +42,23 @@ function NavbarContent() {
 
   const leftNav = [
     { href: "/our-story", label: "OUR STORY" },
-    { href: "/shop", label: "SHOP" },
+    { href: "/shop", label: "THE SHOP" },
   ];
 
   const rightNav = [
-    { href: "/certificates", label: "CERTIFICATES" },
-    { href: "/gallery", label: "GALLERY" },
+    { href: "/certificates", label: "THE PROVENANCE" },
+    { href: "/gallery", label: "OUR JOURNEY" },
   ];
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Account";
 
   return (
     <>
-      {/* Top clean information strip */}
-      <div className="bg-[#1A110D] text-[#EADBB6] text-xs py-1.5 px-4 text-center font-serif tracking-wider flex items-center justify-center gap-3 border-b border-[#C89B3C]/20">
-        <span>Jhansi, Uttar Pradesh</span>
-        <span className="text-[#A87B28]">•</span>
-        <span>Oyster Mushroom Pickle</span>
+      {/* Top understated luxury atelier strip */}
+      <div className="bg-[#1A110D] text-[#EADBB6] text-xs py-1.5 px-4 text-center font-serif tracking-[0.28em] uppercase flex items-center justify-center gap-3 border-b border-[#C89B3C]/20">
+        <span>Jhansi Atelier</span>
+        <span className="text-[#C89B3C]/40">•</span>
+        <span>Artisanal Oyster Mushroom Pickle</span>
       </div>
 
       {/* Main Luxury Navigation Bar with Centered Gold & Espresso Logo */}
@@ -72,18 +71,18 @@ function NavbarContent() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Desktop Left: Navigation */}
+            {/* Desktop Left: Rounded Dark-Espresso Button for THE ATELIER + OUR STORY + THE SHOP */}
             <nav className="hidden lg:flex items-center space-x-7 text-xs font-serif tracking-[0.22em] text-[#211612]">
-              {/* HOME in a thin, rounded dark-espresso button */}
+              {/* THE ATELIER in a thin, rounded dark-espresso button */}
               <Link
                 href="/"
-                className={`btn-sm ${
+                className={`btn-pill ${
                   pathname === "/"
                     ? "bg-[#211612] text-[#FAF6EE] border border-[#211612] shadow"
                     : "bg-[#211612] text-[#FAF6EE] hover:bg-[#34221A] border border-[#211612]"
                 }`}
               >
-                HOME
+                THE ATELIER
               </Link>
 
               {leftNav.map((link) => {
@@ -106,29 +105,17 @@ function NavbarContent() {
 
             {/* Top Center: Centered Gold & Deep Espresso-Brown Logo */}
             <div className="flex-1 lg:flex-initial text-center lg:px-8">
-              <Link href="/" className="inline-flex items-center gap-2.5 sm:gap-3 group">
-                <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden shrink-0 border border-[#C89B3C]/50 bg-[#1C130E] shadow-sm">
-                  <Image
-                    src="/images/akhil-foods-logo.png"
-                    alt="AKHIL FOODS Logo"
-                    fill
-                    sizes="36px"
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-                <div className="flex flex-col text-left">
-                  <span className="font-serif text-2xl sm:text-3xl font-extrabold tracking-[0.2em] text-[#211612] group-hover:text-[#A87B28] transition-colors leading-tight">
-                    AKHIL FOODS
-                  </span>
-                  <span className="font-serif text-xs tracking-wider text-[#A87B28] font-medium leading-none">
-                    Jhansi, Uttar Pradesh
-                  </span>
-                </div>
+              <Link href="/" className="inline-flex flex-col items-center group">
+                <span className="font-serif text-2xl sm:text-3xl font-extrabold tracking-[0.25em] text-[#211612] group-hover:text-[#A87B28] transition-colors">
+                  AKHIL FOODS
+                </span>
+                <span className="font-serif text-xs tracking-[0.2em] text-[#A87B28] font-medium mt-0.5">
+                  Jhansi • Artisanal
+                </span>
               </Link>
             </div>
 
-            {/* Desktop Right: Navigation */}
+            {/* Desktop Right: THE PROVENANCE + OUR JOURNEY */}
             <nav className="hidden lg:flex items-center space-x-7 text-xs font-serif tracking-[0.22em] text-[#211612]">
               {rightNav.map((link) => {
                 const isActive = pathname === link.href;
@@ -183,7 +170,7 @@ function NavbarContent() {
                   <button
                     type="button"
                     onClick={() => openAuthModal("signin")}
-                    className="btn-sm bg-transparent text-[#211612] border border-[#DDD3C4] hover:bg-[#EDE3C8] hover:border-[#211612]"
+                    className="btn-pill bg-transparent text-[#211612] border border-[#DDD3C4] hover:bg-[#EDE3C8] hover:border-[#211612]"
                     title="Login / Sign up"
                     aria-label="Login or Sign up"
                   >
@@ -195,7 +182,7 @@ function NavbarContent() {
                     <button
                       type="button"
                       onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                      className="btn-sm bg-[#FDFBF7] text-[#211612] border border-[#DDD3C4] shadow-sm hover:bg-[#EDE3C8]"
+                      className="btn-pill bg-[#FDFBF7] text-[#211612] border border-[#DDD3C4] shadow-sm hover:bg-[#EDE3C8]"
                       aria-label="User Account Menu"
                     >
                       <UserIcon className="w-3.5 h-3.5 text-[#A87B28]" />
@@ -206,10 +193,10 @@ function NavbarContent() {
                     </button>
 
                     {userDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-56 rounded-xl bg-[#FAF6EE] border border-[#DDD3C4] shadow-2xl py-2 z-50 animate-in fade-in-50">
+                      <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#FAF6EE] border border-[#DDD3C4] shadow-2xl py-2 z-50 animate-in fade-in-50">
                         <div className="px-4 py-2 border-b border-[#E8DEC8]">
                           <p className="text-xs uppercase font-serif tracking-widest text-[#A87B28] font-bold">
-                            Customer Account
+                            Atelier Member
                           </p>
                           <p className="text-xs font-medium text-[#211612] truncate mt-0.5">
                             {user.email}
@@ -248,7 +235,7 @@ function NavbarContent() {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg lg:hidden text-[#211612] hover:bg-[#EDE3C8] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#211612]"
+                className="p-2 rounded-lg lg:hidden text-[#211612] hover:bg-[#EDE3C8] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#211612]"
                 aria-label="Toggle menu"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -272,7 +259,7 @@ function NavbarContent() {
                   <Search className="w-4 h-4 text-[#211612]/50 absolute left-3 top-2.5" />
                   <input
                     type="text"
-                    placeholder="Search pickle, ingredients, spices..."
+                    placeholder="Search artisanal jars, ingredients, spices..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#FAF6EE] text-[#211612] rounded-lg border border-[#D5C6A0] focus:outline-none focus:ring-1 focus:ring-[#211612]"
@@ -294,7 +281,7 @@ function NavbarContent() {
         {mobileMenuOpen && (
           <div className="lg:hidden bg-[#FAF6EE] border-t border-[#E6DCBF] px-5 pt-5 pb-7 space-y-5 shadow-2xl animate-in slide-in-from-top-2">
             {/* Mobile Customer Authentication Section */}
-            <div className="p-3 bg-[#FDFBF7] rounded-xl border border-[#DDD3C4]">
+            <div className="p-3 bg-[#FDFBF7] rounded-2xl border border-[#DDD3C4]">
               {!user ? (
                 <button
                   type="button"
@@ -351,7 +338,7 @@ function NavbarContent() {
 
             <div className="space-y-1 font-serif tracking-[0.2em] text-xs">
               <span className="text-xs tracking-[0.3em] uppercase font-sans text-[#211612]/50 px-3 block mb-1">
-                Navigation
+                The Atelier & Collection
               </span>
               <Link
                 href="/"
@@ -362,7 +349,7 @@ function NavbarContent() {
                     : "text-[#211612] hover:bg-[#EDE3C8]"
                 }`}
               >
-                HOME
+                THE ATELIER
               </Link>
               {[...leftNav, ...rightNav].map((link) => (
                 <Link
@@ -427,11 +414,11 @@ function NavbarContent() {
                     : "text-[#211612]/80 hover:bg-[#EDE3C8]"
                 }`}
               >
-                Contact
+                Atelier Concierge
               </Link>
             </div>
 
-            {/* WhatsApp Order */}
+            {/* WhatsApp Atelier Direct Concierge */}
             <div className="pt-2">
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_DEFAULT_MESSAGE)}`}
@@ -440,7 +427,7 @@ function NavbarContent() {
                 className="w-full py-3 rounded-xl bg-[#211612] text-[#FAF6EE] text-xs font-serif tracking-[0.2em] uppercase font-bold flex items-center justify-center gap-2 border border-[#211612] shadow"
               >
                 <PhoneCall className="w-3.5 h-3.5 text-[#C89B3C]" />
-                <span>Order on WhatsApp</span>
+                <span>WhatsApp Concierge</span>
               </a>
             </div>
           </div>

@@ -142,7 +142,7 @@ export async function sendOrderNotificationEmail(order: Order): Promise<EmailRes
 
   // Admin Notification Template (if ADMIN_NOTIFICATION_EMAIL is configured)
   if (adminEmail && adminEmail.trim() !== "") {
-    const adminSubject = `[NEW ORDER #${order.orderNumber}] - Rs ${order.total} from ${order.customerName} (${order.paymentMethod.includes("Cash") ? "COD" : "Online"})`;
+    const adminSubject = `[NEW ORDER #${order.orderNumber}] - Rs ${order.total} from ${order.customerName} (${(order.paymentMethod || "").includes("Cash") ? "COD" : "Online"})`;
     const adminHtml = `
 <!DOCTYPE html>
 <html>

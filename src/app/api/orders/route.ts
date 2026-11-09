@@ -36,9 +36,7 @@ async function getProductById(productId: string): Promise<Product | null> {
           isFeatured: Boolean(data.is_featured),
           stockCount: Number(data.stock_count ?? data.stock ?? 50),
           sizes: Array.isArray(data.sizes) ? data.sizes : [
-            { size: "250g", price: 299, originalPrice: 350, inStock: true },
-            { size: "500g", price: 549, originalPrice: 650, inStock: true },
-            { size: "1kg", price: 999, originalPrice: 1200, inStock: true },
+            { size: "400 g", price: 399, originalPrice: 399, inStock: true },
           ],
           badges: Array.isArray(data.badges) ? data.badges : [],
         };
@@ -376,11 +374,12 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Re-read price by exact size
-      const requestedSize = (item.size || "250g").trim();
-      const matchedSize = product.sizes?.find(
-        (s) => s.size.toLowerCase() === requestedSize.toLowerCase()
-      );
+      // Re-read price by exact size with whitespace/format normalization ("400 g" vs "400g")
+      const requestedSize = (item.size || "400 g").trim();
+      const normalizeSize = (sz: string) => (sz || "").toLowerCase().replace(/\s+/g, "");
+      const matchedSize =
+        product.sizes?.find((s) => normalizeSize(s.size) === normalizeSize(requestedSize)) ||
+        (product.sizes?.length === 1 ? product.sizes[0] : undefined);
 
       if (!matchedSize) {
         return NextResponse.json(
@@ -417,7 +416,7 @@ export async function POST(request: NextRequest) {
       verifiedItems.push({
         productId: product.id,
         name: product.name,
-        size: matchedSize.size,
+        size: (matchedSize.size || requestedSize).replace(/^400g$/i, "400 g"),
         price: verifiedUnitPrice,
         quantity: quantity,
         image: product.image || "/images/hero-pickle.jpg",

@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  Sparkles,
   ChevronRight,
   MessageSquare,
   Award,
@@ -16,33 +15,16 @@ import {
 import { INITIAL_PRODUCTS, FAQS } from "@/lib/data";
 import { useCart } from "@/lib/cart-context";
 import { BRAND } from "@/lib/brand";
-import { Product, ProductSize } from "@/lib/types";
+import { ProductSize } from "@/lib/types";
 import HeroProductCard from "@/components/HeroProductCard";
 import { WHATSAPP_NUMBER, WHATSAPP_DEFAULT_MESSAGE, FSSAI_NUMBER } from "@/lib/config";
-import { fetchWithTimeout } from "@/lib/fetch-timeout";
 
 export default function HomePage() {
   const { addToCart, buyNow } = useCart();
-  const [productsList, setProductsList] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [selectedSizes] = useState<Record<string, ProductSize>>({
-    "prod-mushroom-mela": "400g",
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, ProductSize>>({
+    "prod-mushroom-mela": "400 g",
   });
   const [faqOpenIndex, setFaqOpenIndex] = useState<number | null>(0);
-
-  useEffect(() => {
-    fetchWithTimeout("/api/products", undefined, 3500)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.products && Array.isArray(data.products) && data.products.length > 0) {
-          setProductsList(data.products);
-        }
-      })
-      .catch((err) => console.log("Using cached products:", err));
-  }, []);
-
-
-
-
 
   return (
     <div className="bg-[#FAF6EE]">
@@ -83,7 +65,7 @@ export default function HomePage() {
 
               {/* Narrative-Style Paragraph in Refined Deep Espresso-Brown */}
               <p className="editorial-body text-base text-[#3D2C24] max-w-xl mx-auto lg:mx-0 leading-[1.8] font-sans font-light">
-                Oyster mushroom pickle made in Jhansi with mustard oil and spices.
+                Oyster mushroom pickle made in Jhansi with mustard oil and traditional spices. Prepared in hygienic micro-batches and packed into sealed 400 g jars.
               </p>
 
               {/* Action Buttons: Unified btn-primary and btn-outline */}
@@ -92,7 +74,7 @@ export default function HomePage() {
                   href="#featured-product"
                   className="btn-primary w-full sm:w-auto"
                 >
-                  <span>Shop Now</span>
+                  <span>Discover The Batch</span>
                   <ArrowRight className="w-4 h-4 text-[#C89B3C]" />
                 </Link>
 
@@ -103,7 +85,7 @@ export default function HomePage() {
                   className="btn-outline w-full sm:w-auto"
                 >
                   <MessageSquare className="w-4 h-4 text-[#211612]" />
-                  <span>Order on WhatsApp</span>
+                  <span>WhatsApp Concierge</span>
                 </a>
               </div>
 
@@ -115,7 +97,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-center gap-2 bg-[#EFE8DD] border border-[#DDD3C4] px-4 py-2 rounded-full shadow-sm">
                   <CheckCircle className="w-4 h-4 text-[#A87B28]" />
-                  <span>400g Net Quantity</span>
+                  <span>400 g Net Quantity</span>
                 </div>
               </div>
             </motion.div>
@@ -133,7 +115,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* REST OF SECTIONS */}
+      {/* REST OF SECTIONS WITH ARTISANAL SPACING */}
       <div className="space-y-20 sm:space-y-28">
 
       {/* STATS STRIP */}
@@ -142,10 +124,10 @@ export default function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div className="space-y-1.5">
               <div className="font-serif text-4xl lg:text-5xl font-light text-[#211612]">
-                400g
+                400 g
               </div>
               <p className="text-xs font-serif tracking-wider text-[#A87B28] font-medium">
-                Net Weight 400 g jar
+                Net Weight 400 g PET jar
               </p>
             </div>
             <div className="space-y-1.5">
@@ -158,10 +140,10 @@ export default function HomePage() {
             </div>
             <div className="space-y-1.5">
               <div className="font-serif text-4xl lg:text-5xl font-light text-[#211612]">
-                Jhansi
+                0%
               </div>
               <p className="text-xs font-serif tracking-wider text-[#A87B28] font-medium">
-                Made in Uttar Pradesh
+                Chemical Shortcuts
               </p>
             </div>
             <div className="space-y-1.5">
@@ -192,26 +174,26 @@ export default function HomePage() {
             Why Akhil Foods Tastes Unbelievably Authentic
           </h2>
           <p className="text-sm sm:text-base text-[#3D2C24] leading-relaxed font-light">
-            Crafted with real care in Village Nandsiya, Moth, Jhansi, Uttar Pradesh. We use tender oyster mushrooms, mustard oil, and time-honoured whole spices.
+            Crafted with real care in Village Nandsiya, Moth, Jhansi, Uttar Pradesh. We use tender oyster mushrooms, pungent cold-pressed mustard oil, and time-honoured whole spices.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Card 1: Made in Jhansi */}
+          {/* Card 1: 100% Homemade */}
           <div className="clay-card p-8 bg-[#FDFBF7] rounded-2xl space-y-5 hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-xl border border-[#E8DEC8]">
-            <div className="w-14 h-14 rounded-2xl bg-[#EFE8DD] border border-[#DDD3C4] flex items-center justify-center shadow-inner">
-              <Award className="w-7 h-7 text-[#A87B28]" />
+            <div className="w-14 h-14 rounded-2xl bg-[#EFE8DD] border border-[#DDD3C4] flex items-center justify-center text-2xl shadow-inner">
+              🏡
             </div>
-            <h3 className="font-serif text-xl font-bold text-[#211612]">Made in Jhansi</h3>
+            <h3 className="font-serif text-xl font-bold text-[#211612]">100% Homemade</h3>
             <p className="text-sm text-[#3D2C24] leading-relaxed font-sans font-light">
-              Prepared in Jhansi, Uttar Pradesh with authentic family care and clean, hygienic preparation.
+              Handcrafted in artisanal batches in Jhansi, Uttar Pradesh with authentic family care and clean, hygienic preparation.
             </p>
           </div>
 
           {/* Card 2: Pure Ingredients */}
           <div className="clay-card p-8 bg-[#FDFBF7] rounded-2xl space-y-5 hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-xl border border-[#E8DEC8]">
-            <div className="w-14 h-14 rounded-2xl bg-[#EFE8DD] border border-[#DDD3C4] flex items-center justify-center shadow-inner">
-              <Sparkles className="w-7 h-7 text-[#A87B28]" />
+            <div className="w-14 h-14 rounded-2xl bg-[#EFE8DD] border border-[#DDD3C4] flex items-center justify-center text-2xl shadow-inner">
+              🌿
             </div>
             <h3 className="font-serif text-xl font-bold text-[#211612]">Pure Mustard Oil & Spices</h3>
             <p className="text-sm text-[#3D2C24] leading-relaxed font-sans font-light">
@@ -221,8 +203,8 @@ export default function HomePage() {
 
           {/* Card 3: Quality Oyster Mushrooms */}
           <div className="clay-card p-8 bg-[#FDFBF7] rounded-2xl space-y-5 hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-xl border border-[#E8DEC8]">
-            <div className="w-14 h-14 rounded-2xl bg-[#EFE8DD] border border-[#DDD3C4] flex items-center justify-center shadow-inner">
-              <CheckCircle className="w-7 h-7 text-[#A87B28]" />
+            <div className="w-14 h-14 rounded-2xl bg-[#EFE8DD] border border-[#DDD3C4] flex items-center justify-center text-2xl shadow-inner">
+              🍄
             </div>
             <h3 className="font-serif text-xl font-bold text-[#211612]">Tender Oyster Mushrooms</h3>
             <p className="text-sm text-[#3D2C24] leading-relaxed font-sans font-light">
@@ -232,12 +214,12 @@ export default function HomePage() {
 
           {/* Card 4: Certified & Safe */}
           <div className="clay-card p-8 bg-[#FDFBF7] rounded-2xl space-y-5 hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-xl border border-[#E8DEC8]">
-            <div className="w-14 h-14 rounded-2xl bg-[#EFE8DD] border border-[#DDD3C4] flex items-center justify-center shadow-inner">
-              <ShieldCheck className="w-7 h-7 text-[#A87B28]" />
+            <div className="w-14 h-14 rounded-2xl bg-[#EFE8DD] border border-[#DDD3C4] flex items-center justify-center text-2xl shadow-inner">
+              🛡️
             </div>
             <h3 className="font-serif text-xl font-bold text-[#211612]">FSSAI & MSME Certified</h3>
             <p className="text-sm text-[#3D2C24] leading-relaxed font-sans font-light">
-              Registered with FSSAI (Lic. {FSSAI_NUMBER}), GST, and Udyam. Safe 400 g jar packaging with secure pan-India delivery.
+              Registered with FSSAI (Lic. 22726293000001), GST, and Udyam. Safe 400 g food-grade PET jar packaging with secure pan-India delivery.
             </p>
           </div>
         </div>
@@ -261,17 +243,16 @@ export default function HomePage() {
             Mushroom Mela Oyster Pickle
           </h2>
           <p className="text-sm sm:text-base text-[#3D2C24] mt-2 font-sans font-light">
-            Our signature 400 g jar of authentic Oyster Mushroom Pickle made by AKHIL FOODS.
+            Our signature 400 g jar of authentic Oyster Mushroom Pickle handcrafted by AKHIL FOODS.
           </p>
         </div>
 
         {/* Centered Product Showcase Card */}
         <div className="flex justify-center">
-          {productsList.map((product) => {
-            const currentSize = selectedSizes[product.id] || "400g";
+          {INITIAL_PRODUCTS.map((product) => {
+            const currentSize = selectedSizes[product.id] || "400 g";
             const sizeOption =
               product.sizes.find((s) => s.size === currentSize) || product.sizes[0];
-            const isOutOfStock = (product.stockCount ?? 1) <= 0;
 
             return (
               <div
@@ -283,10 +264,8 @@ export default function HomePage() {
                   <div className="relative aspect-square overflow-hidden bg-[#FAF6EE] p-4 flex items-center justify-center border-b border-[#E8DEC8]">
                     <Image
                       src={product.image}
-                      alt={`${product.name} - AKHIL FOODS 400g Jar`}
+                      alt={product.name}
                       fill
-                      loading="lazy"
-                      sizes="(max-width: 768px) 100vw, 448px"
                       className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                     />
                     {product.badges[0] && (
@@ -295,23 +274,15 @@ export default function HomePage() {
                       </span>
                     )}
                     <span className="absolute top-3.5 right-3.5 bg-[#EFE8DD] text-[#211612] text-caption font-serif font-bold px-2.5 py-1 rounded-full shadow-md border border-[#DDD3C4]">
-                      400g Jar
+                      400 g Jar
                     </span>
                   </div>
 
                   {/* Content Container */}
                   <div className="p-6 space-y-3.5">
-                    <div className="flex items-center justify-between text-caption font-semibold px-3 py-1.5 rounded-xl border">
-                      {isOutOfStock ? (
-                        <span className="text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">
-                          Out of Stock
-                        </span>
-                      ) : (
-                        <span className="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                          In Stock ({product.stockCount} available)
-                        </span>
-                      )}
-                      <span className="text-[#3D2C24]/70 font-serif">Jhansi, UP</span>
+                    <div className="flex items-center justify-between text-caption font-semibold text-emerald-800 bg-emerald-50/80 px-3 py-1.5 rounded-xl border border-emerald-200">
+                      <span>✓ In Stock</span>
+                      <span className="text-[#3D2C24]/70 font-serif">Jhansi Atelier, UP</span>
                     </div>
 
                     <Link href={`/product/${product.slug}`} className="block">
@@ -324,7 +295,7 @@ export default function HomePage() {
                       {product.subtitle}
                     </p>
 
-                    {/* Informative Spec Display */}
+                    {/* Informative Spec Display (Not a deceptive button affordance) */}
                     <div className="pt-2">
                       <div className="flex items-center justify-between py-2 px-3.5 rounded-xl bg-[#FAF6EE] border border-[#E8DEC8] text-xs font-serif text-[#211612]">
                         <span className="font-semibold text-[#A87B28] uppercase tracking-wider">
@@ -352,19 +323,17 @@ export default function HomePage() {
                 <div className="p-6 pt-0 grid grid-cols-2 gap-2.5">
                   <button
                     type="button"
-                    disabled={isOutOfStock}
                     onClick={() => addToCart(product, currentSize, 1)}
-                    className="btn-outline w-full !py-2.5 !px-3 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="btn-outline w-full !py-2.5 !px-3"
                   >
-                    {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+                    Add to Cart
                   </button>
                   <button
                     type="button"
-                    disabled={isOutOfStock}
                     onClick={() => buyNow(product, currentSize, 1)}
-                    className="btn-primary w-full !py-2.5 !px-3 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="btn-primary w-full !py-2.5 !px-3"
                   >
-                    {isOutOfStock ? "Out of Stock" : "Buy Now"}
+                    Buy Now
                   </button>
                 </div>
               </div>
@@ -378,7 +347,7 @@ export default function HomePage() {
             href="/shop"
             className="btn-outline inline-flex items-center gap-2.5 !py-3 !px-8 text-xs font-serif tracking-[0.2em] uppercase font-bold"
           >
-            <span>Visit Shop</span>
+            <span>Visit Full Atelier Shop</span>
             <ArrowRight className="w-4 h-4 text-[#A87B28]" />
           </Link>
         </div>
@@ -403,13 +372,11 @@ export default function HomePage() {
                   src="/images/products/mushroom-mela-side.jpg"
                   alt="Mushroom Mela Jar by Akhil Foods Jhansi"
                   fill
-                  loading="lazy"
-                  sizes="(max-width: 1024px) 100vw, 450px"
                   className="object-contain p-4"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#120B08]/80 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-4 left-4 right-4 bg-[#1C130E]/90 backdrop-blur-md p-3.5 rounded-xl border border-[#C89B3C]/25 text-caption text-[#D4AF37] font-serif tracking-wide">
-                  Packed in Village Nandsiya, Moth, Jhansi, UP
+                  🌾 Packed in Village Nandsiya, Moth, Jhansi, UP
                 </div>
               </div>
             </div>
@@ -426,11 +393,11 @@ export default function HomePage() {
               </h2>
 
               <p className="text-sm sm:text-base text-[#EADBB6]/90 leading-relaxed font-sans font-light">
-                {BRAND.name} was founded in Village Nandsiya, Moth, Jhansi with a clear vision: {BRAND.tagline}. We set out to prepare pure, delicious, and honest pickles made with tender oyster mushrooms, mustard oil, and time-honoured whole spices.
+                {BRAND.name} was founded in Village Nandsiya, Moth, Jhansi with a clear vision: {BRAND.tagline}. We set out to prepare pure, delicious, and honest pickles made with tender oyster mushrooms, cold-pressed mustard oil, and time-honoured whole spices.
               </p>
 
               <p className="text-sm sm:text-base text-[#EADBB6]/90 leading-relaxed font-sans font-light">
-                Our signature &ldquo;Mushroom Mela&rdquo; pickle is packed into 400 g jars, and certified by FSSAI (Lic. No. {FSSAI_NUMBER}). No fake claims, just honest quality delivered straight from our kitchen to your home.
+                Our signature &ldquo;Mushroom Mela&rdquo; pickle is crafted in clean micro-batches, packed into 400 g sealed PET jars, and certified by FSSAI (Lic. No. {FSSAI_NUMBER}). No fake claims, just honest quality delivered straight from our kitchen to your home.
               </p>
 
               <div className="pt-2 flex flex-col sm:flex-row gap-4">
@@ -453,7 +420,53 @@ export default function HomePage() {
         </div>
       </motion.section>
 
+      {/* 5. REVIEWS SECTION (BE THE FIRST TO REVIEW) */}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.7 }}
+        className="bg-[#F5EFEB] py-16 sm:py-24 border-y border-[#E5DAC6]"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-xl mx-auto mb-10 space-y-3">
+            <span className="text-xs font-serif font-bold uppercase tracking-[0.25em] text-[#A87B28] bg-[#EFE8DD] px-4 py-1.5 rounded-full border border-[#DDD3C4] shadow-sm">
+              Customer Reviews
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#211612]">
+              Real Customer Feedback
+            </h2>
+            <p className="text-sm sm:text-base text-[#3D2C24] font-light">
+              We value complete honesty. We never publish fake testimonials or invented reviews.
+            </p>
+          </div>
 
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-[#FDFBF7] p-8 sm:p-12 rounded-2xl border border-[#E8DEC8] shadow-lg text-center space-y-5">
+              <div className="w-16 h-16 rounded-2xl bg-[#EFE8DD] border border-[#DDD3C4] flex items-center justify-center text-3xl mx-auto">
+                ⭐
+              </div>
+              <h3 className="font-serif text-2xl font-bold text-[#211612]">
+                Be the first to review Mushroom Mela!
+              </h3>
+              <p className="text-sm text-[#3D2C24] max-w-md mx-auto leading-relaxed font-light">
+                Have you tasted our 400 g Mushroom Mela Oyster Mushroom Pickle? We would love to hear your genuine feedback! Send us your review on WhatsApp.
+              </p>
+              <div className="pt-2">
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi Akhil Foods, I would like to share my honest review of the Mushroom Mela Pickle:")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary"
+                >
+                  <MessageSquare className="w-4 h-4 text-[#C89B3C]" />
+                  <span>Share Your Review on WhatsApp</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.section>
 
       {/* 6. FAQ ACCORDION SECTION */}
       <motion.section
@@ -529,7 +542,7 @@ export default function HomePage() {
               Taste The Pure Goodness of Mushroom Mela
             </h2>
             <p className="text-sm sm:text-base text-[#EADBB6]/90 leading-relaxed font-sans font-light">
-              Made by {BRAND.name} in Village Nandsiya, Moth, Jhansi, UP. 400g of flavourful oyster mushrooms steeped in mustard oil and traditional spices.
+              Handcrafted by {BRAND.name} in Village Nandsiya, Moth, Jhansi, UP. 400 g of flavourful oyster mushrooms steeped in mustard oil and traditional spices.
             </p>
             <div className="pt-3">
               <Link

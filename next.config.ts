@@ -19,7 +19,8 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/(.*)",
+        // Apply security headers to pages, skipping static bundles, assets, and images
+        source: "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:jpg|jpeg|gif|png|webp|avif|ico|svg|mp4|webm|pdf)).*)",
         headers: [
           {
             key: "Strict-Transport-Security",

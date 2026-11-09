@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import React from "react";
 
+const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app").replace(/\/$/, "");
+
 export const metadata: Metadata = {
   title: "Order Receipt | Akhil Foods",
   robots: {
@@ -12,6 +14,9 @@ export const metadata: Metadata = {
       follow: false,
       noimageindex: true,
     },
+  },
+  alternates: {
+    canonical: `${appUrl}/order-success`,
   },
 };
 

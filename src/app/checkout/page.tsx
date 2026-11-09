@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { BRAND } from "@/lib/brand";
-import { FSSAI_NUMBER, WHATSAPP_NUMBER } from "@/lib/config";
+import { FSSAI_NUMBER } from "@/lib/config";
 import { PaymentMethod } from "@/lib/types";
 import { useAuth } from "@/lib/auth-context";
 
@@ -81,9 +81,8 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // UPI state: strictly depends on NEXT_PUBLIC_UPI_ID
-  const upiId = process.env.NEXT_PUBLIC_UPI_ID?.trim() || "";
-  const isUpiConfigured = Boolean(upiId);
+  // UPI QR state
+  const upiId = process.env.NEXT_PUBLIC_UPI_ID || "abhishekkumarnandsiya@okaxis";
   const [orderNumber, setOrderNumber] = useState("AF-8001");
   const [utrNumber, setUtrNumber] = useState("");
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
@@ -95,13 +94,11 @@ export default function CheckoutPage() {
   }, []);
 
   // UPI Deep link: upi://pay?pa=<UPI_ID>&pn=Akhil%20Foods&am=<order total>&cu=INR&tn=<order number>
-  const upiDeepLink = isUpiConfigured
-    ? `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("Akhil Foods")}&am=${total}&cu=INR&tn=${encodeURIComponent(orderNumber)}`
-    : "";
+  const upiDeepLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("Akhil Foods")}&am=${total}&cu=INR&tn=${encodeURIComponent(orderNumber)}`;
 
   // Generate UPI QR Code on client
   useEffect(() => {
-    if ((paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR") && isUpiConfigured && total > 0 && upiDeepLink) {
+    if (paymentMethod === "Pay by UPI QR" && total > 0) {
       QRCode.toDataURL(upiDeepLink, {
         width: 240,
         margin: 1.5,
@@ -113,7 +110,7 @@ export default function CheckoutPage() {
         .then((url) => setQrCodeDataUrl(url))
         .catch((err) => console.error("QR Code generation error:", err));
     }
-  }, [paymentMethod, isUpiConfigured, upiDeepLink, total]);
+  }, [paymentMethod, upiDeepLink, total]);
 
   // Copy UPI ID helper
   const handleCopyUpi = () => {
@@ -224,9 +221,9 @@ export default function CheckoutPage() {
       }
     }
 
-    // UPI specific validation: 12-digit UTR is required
+    // UPI QR specific validation: 12-digit UTR is required
     let cleanUtr = "";
-    if (paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR") {
+    if (paymentMethod === "Pay by UPI QR") {
       cleanUtr = utrNumber.replace(/\D/g, "");
       if (cleanUtr.length !== 12) {
         setErrorMsg("Please enter the complete 12-digit UPI reference / UTR transaction ID from your payment receipt.");
@@ -291,15 +288,14 @@ export default function CheckoutPage() {
         return;
       }
 
-      // 2. Pay by UPI Flow (Stays "Payment pending verification" until admin clicks "Mark as Paid")
-      if (paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR") {
+      // 2. Pay by UPI QR Flow (Awaiting verification with 12-digit UTR)
+      if (paymentMethod === "Pay by UPI QR") {
         const res = await fetch("/api/orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ...orderPayload,
-            paymentMethod: "Pay by UPI",
-            paymentStatus: "Payment pending verification",
+            paymentStatus: "Awaiting verification",
             utr: cleanUtr,
             notes: `Paid via UPI to ${upiId} | UTR: ${cleanUtr}`,
           }),
@@ -307,7 +303,7 @@ export default function CheckoutPage() {
 
         const data = await res.json();
         if (!data.success) {
-          throw new Error(data.error || "Failed to record UPI order");
+          throw new Error(data.error || "Failed to record UPI QR order");
         }
 
         clearCart();
@@ -415,7 +411,7 @@ export default function CheckoutPage() {
       const message =
         err instanceof Error
           ? err.message
-          : "We could not place your order. Please try again or WhatsApp us at +91 63864 23865.";
+          : "Something went wrong while processing your payment. Please try again.";
       setErrorMsg(message);
       setLoading(false);
     }
@@ -441,17 +437,9 @@ export default function CheckoutPage() {
         </div>
 
         {errorMsg && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-[6px] text-sm flex items-center justify-between gap-2">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-[6px] text-sm flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMsg}</span>
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi Akhil Foods, I am having trouble placing my order")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-bold text-red-800 underline shrink-0 hover:text-red-950 ml-auto"
-            >
-              WhatsApp Support
-            </a>
           </div>
         )}
 
@@ -617,32 +605,30 @@ export default function CheckoutPage() {
                   </div>
                 </label>
 
-                {/* Pay by UPI (Direct Bank Transfer) */}
-                {isUpiConfigured && (
-                  <label
-                    className={`p-4 rounded-[6px] border cursor-pointer flex items-center gap-3 transition-all ${
-                      paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR"
-                        ? "border-[#211612] bg-[#FAF6EE] shadow-sm ring-1 ring-[#211612]"
-                        : "border-[#E8DEC8] bg-[#FDFBF7] hover:border-[#211612]/40"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="Pay by UPI QR"
-                      checked={paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR"}
-                      onChange={() => setPaymentMethod("Pay by UPI QR")}
-                      className="accent-[#211612] w-4 h-4"
-                    />
-                    <div>
-                      <div className="flex items-center gap-1.5 font-bold text-sm text-[#211612]">
-                        <QrCode className="w-4 h-4 text-[#A87B28]" />
-                        <span>Pay by UPI QR</span>
-                      </div>
-                      <p className="text-xs text-[#3D2C24]/70 mt-0.5">Instant GPay / PhonePe / Paytm</p>
+                {/* Pay by UPI QR (Direct Bank Transfer) */}
+                <label
+                  className={`p-4 rounded-[6px] border cursor-pointer flex items-center gap-3 transition-all ${
+                    paymentMethod === "Pay by UPI QR"
+                      ? "border-[#211612] bg-[#FAF6EE] shadow-sm ring-1 ring-[#211612]"
+                      : "border-[#E8DEC8] bg-[#FDFBF7] hover:border-[#211612]/40"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Pay by UPI QR"
+                    checked={paymentMethod === "Pay by UPI QR"}
+                    onChange={() => setPaymentMethod("Pay by UPI QR")}
+                    className="accent-[#211612] w-4 h-4"
+                  />
+                  <div>
+                    <div className="flex items-center gap-1.5 font-bold text-sm text-[#211612]">
+                      <QrCode className="w-4 h-4 text-[#A87B28]" />
+                      <span>Pay by UPI QR</span>
                     </div>
-                  </label>
-                )}
+                    <p className="text-xs text-[#3D2C24]/70 mt-0.5">Instant GPay / PhonePe / Paytm</p>
+                  </div>
+                </label>
 
                 {/* Razorpay Online (Only visible if real Razorpay keys are configured) */}
                 {isRazorpayConfigured && (
@@ -672,8 +658,8 @@ export default function CheckoutPage() {
                 )}
               </div>
 
-              {/* PAY BY UPI SECTION */}
-              {(paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR") && isUpiConfigured && (
+              {/* PAY BY UPI QR SECTION */}
+              {paymentMethod === "Pay by UPI QR" && (
                 <div className="mt-4 p-5 sm:p-6 rounded-[6px] bg-[#FAF6EE] border border-[#C89B3C]/40 space-y-4">
                   <div className="flex items-center justify-between pb-3 border-b border-[#E8DEC8]">
                     <div className="flex items-center gap-2">
@@ -723,7 +709,6 @@ export default function CheckoutPage() {
                             onClick={handleCopyUpi}
                             className="p-1 text-[#A87B28] hover:text-[#211612] transition-colors"
                             title="Copy UPI ID"
-                            aria-label="Copy Beneficiary UPI ID to clipboard"
                           >
                             {copiedUpi ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                           </button>
@@ -754,7 +739,7 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       maxLength={12}
-                      required={paymentMethod === "Pay by UPI" || paymentMethod === "Pay by UPI QR"}
+                      required={paymentMethod === "Pay by UPI QR"}
                       placeholder="e.g. 428192837465"
                       value={utrNumber}
                       onChange={(e) => setUtrNumber(e.target.value.replace(/\D/g, ""))}
@@ -783,14 +768,7 @@ export default function CheckoutPage() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative w-12 h-12 rounded-[4px] overflow-hidden bg-[#FAF6EE] shrink-0 border border-[#E8DEC8]">
-                      <Image
-                        src={item.image}
-                        alt={`${item.name} (${item.size}) - Checkout order summary`}
-                        fill
-                        loading="lazy"
-                        sizes="48px"
-                        className="object-contain p-0.5"
-                      />
+                      <Image src={item.image} alt={item.name} fill className="object-contain p-0.5" />
                     </div>
                     <div>
                       <h3 className="font-bold text-[#211612] text-sm line-clamp-1">{item.name}</h3>

@@ -15,7 +15,6 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-
 import { WHATSAPP_NUMBER } from "@/lib/config";
 
 export default function CartPage() {
@@ -87,14 +86,7 @@ export default function CartPage() {
               >
                 <div className="flex items-center gap-4 w-full sm:w-auto">
                   <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-[6px] overflow-hidden bg-[#FAF6EE] shrink-0 border border-[#E8DEC8] flex items-center justify-center p-1">
-                    <Image
-                      src={item.image}
-                      alt={`${item.name} (${item.size}) in cart`}
-                      fill
-                      loading="lazy"
-                      sizes="(max-width: 640px) 80px, 96px"
-                      className="object-contain p-1"
-                    />
+                    <Image src={item.image} alt={item.name} fill className="object-contain p-1" />
                   </div>
                   <div>
                     <h3 className="font-serif text-base sm:text-lg font-bold text-[#211612]">
@@ -140,7 +132,6 @@ export default function CartPage() {
                     onClick={() => removeFromCart(item.productId, item.size)}
                     className="p-2 text-stone-400 hover:text-red-700 transition-colors"
                     title="Remove item"
-                    aria-label={`Remove ${item.name} (${item.size}) from cart`}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

@@ -25,9 +25,7 @@ function normalizeProductRow(row: any): Product {
     isFeatured: Boolean(row.is_featured ?? true),
     stockCount: Number(row.stock ?? row.stock_count ?? 50),
     sizes: Array.isArray(row.sizes) ? row.sizes : [
-      { size: "250g", price: 299, originalPrice: 350, inStock: true },
-      { size: "500g", price: 549, originalPrice: 650, inStock: true },
-      { size: "1kg", price: 999, originalPrice: 1200, inStock: true },
+      { size: "400 g", price: 399, originalPrice: 399, inStock: true },
     ],
     badges: Array.isArray(row.badges) ? row.badges : ["Fresh Harvest"],
   };
