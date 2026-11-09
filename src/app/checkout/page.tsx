@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { BRAND } from "@/lib/brand";
-import { FSSAI_NUMBER } from "@/lib/config";
+import { FSSAI_NUMBER, WHATSAPP_NUMBER } from "@/lib/config";
 import { PaymentMethod } from "@/lib/types";
 import { useAuth } from "@/lib/auth-context";
 
@@ -445,7 +445,7 @@ export default function CheckoutPage() {
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMsg}</span>
             <a
-              href="https://wa.me/916386423865?text=Hi%20Akhil%20Foods,%20I%20am%20having%20trouble%20placing%20my%20order"
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi Akhil Foods, I am having trouble placing my order")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs font-bold text-red-800 underline shrink-0 hover:text-red-950 ml-auto"

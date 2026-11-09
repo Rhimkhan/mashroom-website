@@ -24,7 +24,7 @@ import { INITIAL_PRODUCTS } from "@/lib/data";
 import { useCart } from "@/lib/cart-context";
 import { Product, ProductSize, ProductReview } from "@/lib/types";
 import { BRAND } from "@/lib/brand";
-import { PHONE_DISPLAY } from "@/lib/config";
+import { PHONE_DISPLAY, WHATSAPP_NUMBER } from "@/lib/config";
 import PincodeChecker from "@/components/PincodeChecker";
 import { fetchWithTimeout } from "@/lib/fetch-timeout";
 
@@ -37,7 +37,7 @@ function ProductDetailContent() {
     return INITIAL_PRODUCTS.find((p) => p.slug === slug) || null;
   });
 
-  const [selectedSize, setSelectedSize] = useState<ProductSize>("400g");
+  const [selectedSize, setSelectedSize] = useState<ProductSize>("400 g");
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImage, setSelectedImage] = useState<string>("/images/products/mushroom-mela-front.jpg");
   const [copied, setCopied] = useState<boolean>(false);
@@ -102,7 +102,7 @@ function ProductDetailContent() {
   const currentSizeOption =
     product.sizes?.find((s) => s.size === selectedSize) ||
     product.sizes?.[0] || {
-      size: "400g",
+      size: "400 g",
       price: 399,
       originalPrice: 399,
       inStock: true,
@@ -156,11 +156,11 @@ function ProductDetailContent() {
     }
   };
 
-  // WhatsApp order message: wa.me/916386423865 with prefilled message containing product name, quantity and price
+  // Direct WhatsApp order link with pre-filled encoded text
   const prefilledWhatsAppMessage = encodeURIComponent(
     `Hi Akhil Foods, I want to order ${product.name} (${currentSizeOption.size}) - Quantity: ${quantity}, Price: Rs ${currentSizeOption.price * quantity}`
   );
-  const whatsappOrderUrl = `https://wa.me/916386423865?text=${prefilledWhatsAppMessage}`;
+  const whatsappOrderUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${prefilledWhatsAppMessage}`;
 
   return (
     <div className="py-8 sm:py-16 bg-[#FAF6EE] min-h-screen">
@@ -248,7 +248,7 @@ function ProductDetailContent() {
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#A87B28]">
                 <span>Village Nandsiya, Moth, Jhansi</span>
                 <span>•</span>
-                <span>FSSAI Lic. {BRAND.fssaiNumber}</span>
+                <span>FSSAI Lic. No. {BRAND.fssaiNumber}</span>
               </div>
 
               <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#211612] leading-tight">
@@ -276,7 +276,7 @@ function ProductDetailContent() {
                   </span>
                 ) : (
                   <span className="text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    In Stock ({product.stockCount} jars available)
+                    In Stock
                   </span>
                 )}
               </div>
@@ -287,6 +287,10 @@ function ProductDetailContent() {
               <div className="flex items-baseline gap-3">
                 <span className="font-serif text-3xl sm:text-4xl font-extrabold text-[#211612]">
                   Rs {currentSizeOption.price * quantity}
+                </span>
+                <span className="text-stone-400 text-sm font-serif">•</span>
+                <span className="text-sm text-[#3D2C24]/80 font-serif">
+                  {currentSizeOption.size} jar
                 </span>
                 {currentSizeOption.originalPrice > currentSizeOption.price && (
                   <span className="text-sm text-stone-400 line-through">

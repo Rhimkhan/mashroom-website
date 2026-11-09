@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { CheckCircle2, Building2, Send } from "lucide-react";
+import { CheckCircle2, Building2, Send, MessageSquare } from "lucide-react";
+import { WHATSAPP_NUMBER } from "@/lib/config";
 
 export default function WholesaleForm() {
   const [formData, setFormData] = useState({
@@ -99,6 +100,19 @@ export default function WholesaleForm() {
             >
               Submit Another Inquiry
             </button>
+
+          <div className="pt-2 text-center">
+            <span className="text-xs text-[#3D2C24]/70 block mb-2 font-medium">Need immediate bulk pricing or wholesale sample jars?</span>
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi Akhil Foods, I would like to inquire about wholesale / bulk orders of Mushroom Mela pickles.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
+            >
+              <MessageSquare className="w-4 h-4 fill-white" />
+              <span>Connect on WhatsApp with Wholesale Desk</span>
+            </a>
+          </div>
           </div>
         </div>
       ) : (
@@ -225,6 +239,19 @@ export default function WholesaleForm() {
               </>
             )}
           </button>
+
+          <div className="pt-2 text-center">
+            <span className="text-xs text-[#3D2C24]/70 block mb-2 font-medium">Need immediate bulk pricing or wholesale sample jars?</span>
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi Akhil Foods, I would like to inquire about wholesale / bulk orders of Mushroom Mela pickles.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
+            >
+              <MessageSquare className="w-4 h-4 fill-white" />
+              <span>Connect on WhatsApp with Wholesale Desk</span>
+            </a>
+          </div>
         </form>
       )}
     </div>

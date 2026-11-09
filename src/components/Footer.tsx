@@ -85,7 +85,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-sm text-[#EADBB6]/85 leading-relaxed font-light">
-              Oyster mushroom pickle made in Jhansi with mustard oil and spices. Dedicated to honesty, safety, and authentic Indian taste.
+              Dedicated to honesty, food safety, and authentic Indian flavours from Village Nandsiya, Moth.
             </p>
 
             {/* Government & Food Safety Registrations Box */}
@@ -243,7 +243,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="hover:text-[#D4AF37]"
                 >
-                  WhatsApp: +91 63864 23865
+                  WhatsApp: {PHONE_DISPLAY}
                 </a>
               </li>
               <li className="flex items-center gap-2">

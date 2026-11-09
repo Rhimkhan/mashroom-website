@@ -134,7 +134,7 @@ export default function ContactClient() {
                 rel="noopener noreferrer"
                 className="block text-center py-2.5 rounded-md bg-[#25D366] text-white font-bold hover:bg-[#20ba59] transition-colors shadow-md text-sm"
               >
-                Chat on WhatsApp (+91 63864 23865)
+                Chat on WhatsApp ({PHONE_DISPLAY})
               </a>
             </div>
 

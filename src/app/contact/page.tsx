@@ -2,16 +2,17 @@ import React from "react";
 import { Metadata } from "next";
 import ContactClient from "@/components/ContactClient";
 import { BRAND } from "@/lib/brand";
+import { PHONE_DISPLAY } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Contact Us & Location in Jhansi | AKHIL FOODS",
   description:
-    "Get in touch with AKHIL FOODS in Village Nandsiya, Moth, Jhansi, Uttar Pradesh - 284303. Order inquiries, customer support, and direct WhatsApp ordering on 916386423865.",
+    `Get in touch with AKHIL FOODS in Village Nandsiya, Moth, Jhansi, Uttar Pradesh - 284303. Order inquiries, customer support, and direct WhatsApp ordering on ${PHONE_DISPLAY}.`,
   keywords: ["AKHIL FOODS", "Contact", "Jhansi"],
   openGraph: {
     title: "Contact Us & Location | AKHIL FOODS",
     description:
-      "Reach out to AKHIL FOODS in Village Nandsiya, Moth, Jhansi, Uttar Pradesh. Quick WhatsApp support on 916386423865.",
+      `Reach out to AKHIL FOODS in Village Nandsiya, Moth, Jhansi, Uttar Pradesh. Quick WhatsApp support on ${PHONE_DISPLAY}.`,
     url: `${process.env.NEXT_PUBLIC_APP_URL || "https://akhil-mushroom-pickle.vercel.app"}/contact`,
     siteName: "AKHIL FOODS",
     images: [

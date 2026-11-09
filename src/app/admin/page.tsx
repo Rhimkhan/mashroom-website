@@ -53,6 +53,7 @@ import {
 } from "@/lib/store";
 import { INITIAL_PRODUCTS } from "@/lib/data";
 import { BRAND } from "@/lib/brand";
+import { formatCustomerWhatsAppNumber } from "@/lib/config";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { fetchWithTimeout } from "@/lib/fetch-timeout";
 
@@ -1077,8 +1078,8 @@ If you have any questions, reply here.
                       </tr>
                     )}
                     {filteredOrders.map((order) => {
-                      const cleanPhone = order.phone?.replace(/\D/g, "") || "";
-                      const waUrl = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(
+                      const cleanPhone = formatCustomerWhatsAppNumber(order.phone);
+                      const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
                         getWhatsAppCustomerMessage(order)
                       )}`;
 
@@ -1831,7 +1832,7 @@ If you have any questions, reply here.
 
                         <td className="p-4">
                           <a
-                            href={`https://wa.me/91${(inq.phone || "").replace(/\D/g, "")}`}
+                            href={`https://wa.me/${formatCustomerWhatsAppNumber(inq.phone)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="font-mono text-[#A87B28] font-bold hover:underline flex items-center gap-1"
@@ -1969,10 +1970,7 @@ If you have any questions, reply here.
               {/* Pre-filled WhatsApp button */}
               <div className="pt-1">
                 <a
-                  href={`https://wa.me/91${selectedOrderForView.phone.replace(
-                    /\D/g,
-                    ""
-                  )}?text=${encodeURIComponent(
+                  href={`https://wa.me/${formatCustomerWhatsAppNumber(selectedOrderForView.phone)}?text=${encodeURIComponent(
                     getWhatsAppCustomerMessage(selectedOrderForView)
                   )}`}
                   target="_blank"

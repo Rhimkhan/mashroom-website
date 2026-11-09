@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Search, ChevronDown, MessageCircle, HelpCircle, Sparkles } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { FAQ_DATA } from "@/lib/faq-data";
+import { FSSAI_NUMBER } from "@/lib/config";
 
 export default function FAQClient() {
   const [search, setSearch] = useState("");
@@ -111,11 +112,37 @@ export default function FAQClient() {
                       }`}
                     />
                   </button>
-                  {isOpen && (
-                    <div className="p-5 pt-0 text-sm text-[#3D2C24]/85 leading-relaxed border-t border-[#E8DEC8] bg-[#FAF6EE]/50">
-                      {faq.answer}
-                    </div>
-                  )}
+                  <div
+                    className={`p-5 pt-0 text-sm text-[#3D2C24]/85 leading-relaxed border-t border-[#E8DEC8] bg-[#FAF6EE]/50 ${
+                      isOpen ? "block" : "hidden"
+                    }`}
+                  >
+                    {faq.answer.includes("link to /certificates") ? (
+                      <p>
+                        Licence number {FSSAI_NUMBER}, with a link to{" "}
+                        <Link
+                          href="/certificates"
+                          className="text-[#A87B28] underline hover:text-[#8B651B]"
+                        >
+                          /certificates
+                        </Link>
+                        .
+                      </p>
+                    ) : faq.answer.includes("link to /shipping-policy") ? (
+                      <p>
+                        We ship across India; delivery time depends on your location; link to{" "}
+                        <Link
+                          href="/shipping-policy"
+                          className="text-[#A87B28] underline hover:text-[#8B651B]"
+                        >
+                          /shipping-policy
+                        </Link>
+                        .
+                      </p>
+                    ) : (
+                      <p>{faq.answer}</p>
+                    )}
+                  </div>
                 </div>
               );
             })
@@ -133,7 +160,7 @@ export default function FAQClient() {
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <a
-              href={`https://wa.me/${BRAND.whatsappNumber}?text=Hi%20Akhil%20Foods,%20I%20have%20a%20question%20about%20your%20oyster%20mushroom%20pickles.`}
+              href={`https://wa.me/${BRAND.whatsappNumber}?text=${encodeURIComponent("Hi Akhil Foods, I have a question about your oyster mushroom pickles.")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-7 py-3 rounded-md bg-[#25D366] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md hover:bg-[#20ba59] transition-all"
