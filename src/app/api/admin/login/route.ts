@@ -60,6 +60,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!process.env.ADMIN_PASSWORD || process.env.ADMIN_PASSWORD.trim() === "") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Admin login is disabled because ADMIN_PASSWORD is not configured on the server.",
+        },
+        { status: 500 }
+      );
+    }
+
     // Verify ADMIN_PASSWORD only on the server
     if (!verifyAdminPassword(password)) {
       const failure = recordAdminFailedAttempt(ip);

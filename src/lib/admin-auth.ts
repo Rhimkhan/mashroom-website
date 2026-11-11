@@ -25,15 +25,26 @@ function getAdminSessionSecret(): string {
       "[SECURITY WARNING] ADMIN_SESSION_SECRET is not configured in production environment variables! Falling back to ADMIN_PASSWORD."
     );
   }
-  return process.env.ADMIN_PASSWORD || "akhil_foods_default_session_secret_key_jhansi";
+  const fallbackPass = process.env.ADMIN_PASSWORD;
+  if (fallbackPass && fallbackPass.trim() !== "") {
+    return fallbackPass.trim();
+  }
+  return crypto.randomBytes(32).toString("hex");
 }
 
 /**
  * Server-side constant-time admin password verification.
+ * Fails closed whenever ADMIN_PASSWORD is unset or empty.
  */
 export function verifyAdminPassword(password: string): boolean {
   if (!password || typeof password !== "string") return false;
-  const serverAdminPass = process.env.ADMIN_PASSWORD || "admin123";
+  const serverAdminPass = process.env.ADMIN_PASSWORD;
+  if (!serverAdminPass || serverAdminPass.trim() === "") {
+    if (process.env.NODE_ENV === "production") {
+      console.error("[SECURITY] ADMIN_PASSWORD is not configured in production. Admin login blocked.");
+    }
+    return false;
+  }
   const passBuf = Buffer.from(password.trim());
   const serverBuf = Buffer.from(serverAdminPass.trim());
   if (passBuf.length !== serverBuf.length) return false;

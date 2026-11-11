@@ -5,6 +5,10 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
 import { getLocalReviews, updateLocalReviewStatus, saveLocalReviews } from "@/lib/store";
 import { ProductReview } from "@/lib/types";
 
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+};
+
 /**
  * GET /api/admin/reviews
  * Admin-only: list all reviews (pending, approved, rejected)
@@ -14,11 +18,17 @@ export async function GET(request: NextRequest) {
     const ip = getClientIp(request);
     const rateLimit = checkRateLimit(`admin_reviews_get:${ip}`, 30, 60 * 1000);
     if (!rateLimit.allowed) {
-      return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429 });
+      return NextResponse.json(
+        { success: false, error: "Too many requests" },
+        { status: 429, headers: NO_STORE_HEADERS }
+      );
     }
 
     if (!verifyAdminSession(request)) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401, headers: NO_STORE_HEADERS }
+      );
     }
 
     if (isSupabaseConfigured && supabase) {
@@ -28,27 +38,53 @@ export async function GET(request: NextRequest) {
         .order("created_at", { ascending: false });
 
       if (!error && data) {
-        const reviews: ProductReview[] = data.map((r: any) => ({
-          id: r.id,
-          productId: r.product_id,
-          orderNumber: r.order_number,
-          customerName: r.customer_name,
-          phone: r.phone,
+        const reviews: ProductReview[] = data.map((r: Record<string, unknown>) => ({
+          id: String(r.id ?? ""),
+          productId: String(r.product_id ?? ""),
+          orderNumber: String(r.order_number ?? "-"),
+          customerName: String(r.customer_name ?? "Customer"),
+          phone: String(r.phone ?? "-"),
           rating: Number(r.rating) || 5,
-          comment: r.comment,
-          photoUrl: r.photo_url || undefined,
-          status: r.status,
-          createdAt: r.created_at,
+          comment: String(r.comment ?? ""),
+          photoUrl: r.photo_url ? String(r.photo_url) : undefined,
+          status: (r.status as "pending" | "approved" | "rejected") || "pending",
+          createdAt: String(r.created_at ?? new Date().toISOString()),
         }));
-        return NextResponse.json({ success: true, reviews });
+        return NextResponse.json(
+          { success: true, reviews },
+          { headers: NO_STORE_HEADERS }
+        );
+      }
+
+      if (error) {
+        const tableMissing =
+          error.code === "42P01" ||
+          /relation .* does not exist/i.test(error.message || "");
+        if (tableMissing) {
+          return NextResponse.json(
+            {
+              success: true,
+              reviews: [],
+              tableMissing: true,
+              warning: "Supabase table 'public.reviews' does not exist yet.",
+            },
+            { headers: NO_STORE_HEADERS }
+          );
+        }
       }
     }
 
     const local = getLocalReviews();
-    return NextResponse.json({ success: true, reviews: local });
+    return NextResponse.json(
+      { success: true, reviews: local },
+      { headers: NO_STORE_HEADERS }
+    );
   } catch (error) {
     console.error("Admin reviews GET error:", error);
-    return NextResponse.json({ success: false, error: "Failed to fetch reviews" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "Failed to fetch reviews" },
+      { status: 500, headers: NO_STORE_HEADERS }
+    );
   }
 }
 

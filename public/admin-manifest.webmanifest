@@ -1,0 +1,32 @@
+{
+  "name": "AKHIL FOODS Admin",
+  "short_name": "AF Admin",
+  "description": "AKHIL FOODS Store Management Portal for live orders, inventory, and operations.",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FAF6EE",
+  "theme_color": "#211612",
+  "icons": [
+    {
+      "src": "/admin-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/admin-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/admin-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
+
