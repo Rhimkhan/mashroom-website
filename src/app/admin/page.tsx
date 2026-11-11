@@ -24,6 +24,7 @@ import {
   Key,
   ExternalLink,
   Eye,
+  EyeOff,
   Download,
   Smartphone,
   Bell,
@@ -77,6 +78,7 @@ export default function AdminPage() {
   // Auth form
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
 
@@ -1028,7 +1030,7 @@ If you have any questions, reply here.
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4 text-left">
+          <form onSubmit={handleLogin} autoComplete="off" className="space-y-4 text-left">
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-[#211612] flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-[#A87B28]" />
@@ -1037,6 +1039,7 @@ If you have any questions, reply here.
               <input
                 type="email"
                 required
+                autoComplete="off"
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
                 placeholder="admin@yourdomain.com"
@@ -1047,16 +1050,27 @@ If you have any questions, reply here.
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-[#211612] flex items-center gap-1.5">
                 <Key className="w-3.5 h-3.5 text-[#A87B28]" />
-                <span>Password / Passkey</span>
+                <span>Admin Passkey (ADMIN_PASSWORD)</span>
               </label>
-              <input
-                type="password"
-                required
-                placeholder="Enter password or passkey"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                className="w-full min-h-[44px] px-4 py-3 rounded-lg border border-[#E8DEC8] bg-[#FAF6EE] text-sm text-[#211612] focus:outline-none focus:ring-1 focus:ring-[#211612]"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  autoComplete="new-password"
+                  placeholder="Enter server ADMIN_PASSWORD"
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  className="w-full min-h-[44px] pl-4 pr-12 py-3 rounded-lg border border-[#E8DEC8] bg-[#FAF6EE] text-sm text-[#211612] focus:outline-none focus:ring-1 focus:ring-[#211612]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? "Hide passkey" : "Show passkey"}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 min-w-[40px] min-h-[40px] flex items-center justify-center text-[#3D2C24]/70 hover:text-[#211612]"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <button
