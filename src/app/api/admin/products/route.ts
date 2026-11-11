@@ -384,7 +384,15 @@ export async function DELETE(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
+    let id = (searchParams.get("id") || "").trim();
+    if (!id) {
+      try {
+        const body = (await request.json()) as Record<string, unknown>;
+        if (typeof body?.id === "string") id = body.id.trim();
+      } catch {
+        // ignore
+      }
+    }
     if (!id) {
       return NextResponse.json(
         { success: false, error: "Product ID required" },
@@ -399,26 +407,50 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    let deletedInDb = false;
     if (isSupabaseConfigured && supabase) {
-      const { error: deleteError } = await supabase.from("products").delete().eq("id", id);
+      const { data, error: deleteError } = await supabase
+        .from("products")
+        .delete()
+        .eq("id", id)
+        .select("id");
+
       if (deleteError) {
         console.error("[CRITICAL] Admin products DELETE error:", deleteError.message);
+        return NextResponse.json(
+          { success: false, error: `Failed to delete product: ${deleteError.message}` },
+          { status: 500, headers: NO_STORE_HEADERS }
+        );
+      }
+
+      if (!data || data.length === 0) {
         if (process.env.NODE_ENV === "production") {
           return NextResponse.json(
-            { success: false, error: "Failed to delete product from database" },
-            { status: 500, headers: NO_STORE_HEADERS }
+            { success: false, error: "Product not found or already deleted." },
+            { status: 404, headers: NO_STORE_HEADERS }
           );
         }
+      } else {
+        deletedInDb = true;
       }
     }
 
     if (process.env.NODE_ENV !== "production") {
       const current = getLocalProducts();
-      saveLocalProducts(current.filter((p) => p.id !== id));
+      const existsLocally = current.some((p) => p.id === id);
+      if (!deletedInDb && !existsLocally) {
+        return NextResponse.json(
+          { success: false, error: "Product not found or already deleted." },
+          { status: 404, headers: NO_STORE_HEADERS }
+        );
+      }
+      if (existsLocally) {
+        saveLocalProducts(current.filter((p) => p.id !== id));
+      }
     }
 
     return NextResponse.json(
-      { success: true, message: "Product deleted" },
+      { success: true, deletedId: id, message: "Item deleted successfully" },
       { headers: NO_STORE_HEADERS }
     );
   } catch (error) {

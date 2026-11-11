@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CheckCircle2, MessageCircle, Truck, X, Trash2 } from "lucide-react";
+import { CheckCircle2, MessageCircle, Truck, X, Trash2, Archive, AlertTriangle } from "lucide-react";
 import { Order, OrderStatus } from "@/lib/types";
 import { formatCustomerWhatsAppNumber } from "@/lib/config";
 
@@ -17,6 +17,7 @@ interface OrderDetailModalProps {
   onStatusChange: (orderId: string, newStatus: OrderStatus) => void;
   onMarkAsPaid: (orderId: string) => void;
   onOpenTracking: (order: Order) => void;
+  onRequestDelete?: (order: Order) => void;
   getWhatsAppMessage: (order: Order) => string;
 }
 
@@ -26,6 +27,7 @@ export function OrderDetailModal({
   onStatusChange,
   onMarkAsPaid,
   onOpenTracking,
+  onRequestDelete,
   getWhatsAppMessage,
 }: OrderDetailModalProps) {
   const formattedCreatedAt =
@@ -215,6 +217,7 @@ export function OrderDetailModal({
               <option value="Packed">Status: Packed</option>
               <option value="Shipped">Status: Shipped</option>
               <option value="Delivered">Status: Delivered</option>
+              <option value="Archived">Status: Archived</option>
             </select>
 
             <button
@@ -247,6 +250,17 @@ export function OrderDetailModal({
             <MessageCircle className="w-4 h-4 fill-white" />
             <span>WhatsApp Customer</span>
           </a>
+
+          {onRequestDelete && (
+            <button
+              type="button"
+              onClick={() => onRequestDelete(order)}
+              className="w-full min-h-[44px] py-2.5 px-6 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-bold text-xs flex items-center justify-center gap-2 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Delete / Archive Order</span>
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -348,53 +362,106 @@ export function CourierTrackingModal({ order, onClose, onSave }: CourierTracking
 }
 
 interface ConfirmDeleteModalProps {
-  title: string;
-  message: string;
+  itemTitle: string;
+  itemDetails: string;
+  warningText?: string;
   onCancel: () => void;
   onConfirm: () => Promise<void> | void;
+  onArchive?: () => Promise<void> | void;
 }
 
 export function ConfirmDeleteModal({
-  title,
-  message,
+  itemTitle,
+  itemDetails,
+  warningText,
   onCancel,
   onConfirm,
+  onArchive,
 }: ConfirmDeleteModalProps) {
-  const [busy, setBusy] = useState(false);
+  const [busyAction, setBusyAction] = useState<"delete" | "archive" | null>(null);
 
   const handleConfirm = async () => {
-    setBusy(true);
+    setBusyAction("delete");
     try {
       await onConfirm();
     } finally {
-      setBusy(false);
+      setBusyAction(null);
+    }
+  };
+
+  const handleArchive = async () => {
+    if (!onArchive) return;
+    setBusyAction("archive");
+    try {
+      await onArchive();
+    } finally {
+      setBusyAction(null);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#1C130E]/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#FDFBF7] rounded-xl max-w-sm w-full p-5 sm:p-6 space-y-4 border border-[#E8DEC8] shadow-2xl">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-delete-heading"
+      className="fixed inset-0 z-50 bg-[#1C130E]/80 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div className="bg-[#FDFBF7] rounded-xl max-w-md w-full p-5 sm:p-6 space-y-4 border border-[#E8DEC8] shadow-2xl">
         <div className="flex items-center gap-2.5 text-red-700">
           <Trash2 className="w-5 h-5 shrink-0" />
-          <h3 className="font-serif text-lg font-bold">{title}</h3>
+          <h3 id="confirm-delete-heading" className="font-serif text-lg font-bold">
+            Are you sure you want to delete this item?
+          </h3>
         </div>
-        <p className="text-xs text-[#3D2C24] leading-relaxed">{message}</p>
-        <div className="flex gap-2.5 pt-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="flex-1 min-h-[44px] px-4 py-2.5 rounded-lg border border-[#E8DEC8] text-stone-700 text-xs font-bold"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={handleConfirm}
-            className="flex-1 min-h-[44px] px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold disabled:opacity-50"
-          >
-            {busy ? "Deleting..." : "Delete"}
-          </button>
+
+        <div className="bg-[#FAF6EE] p-3.5 rounded-lg border border-[#E8DEC8] space-y-1 text-xs">
+          <div className="font-bold text-[#211612] break-words">{itemTitle}</div>
+          <div className="text-[#3D2C24]/80 break-words">{itemDetails}</div>
+        </div>
+
+        {warningText && (
+          <div className="bg-amber-50 border border-amber-300 text-amber-900 p-3 rounded-lg text-[11px] leading-relaxed flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <span>{warningText}</span>
+          </div>
+        )}
+
+        <div className="space-y-2.5 pt-1">
+          {onArchive && (
+            <button
+              type="button"
+              disabled={busyAction !== null}
+              onClick={handleArchive}
+              className="w-full min-h-[44px] px-4 py-2.5 rounded-lg bg-[#EFE8DD] hover:bg-[#E8DEC8] text-[#211612] border border-[#C89B3C]/40 text-xs font-bold flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <Archive className="w-4 h-4 text-[#A87B28]" />
+              <span>
+                {busyAction === "archive"
+                  ? "Archiving..."
+                  : "Archive Order (Preserve Record)"}
+              </span>
+            </button>
+          )}
+
+          <div className="flex gap-2.5">
+            <button
+              type="button"
+              disabled={busyAction !== null}
+              onClick={onCancel}
+              className="flex-1 min-h-[44px] px-4 py-2.5 rounded-lg border border-[#E8DEC8] text-stone-700 text-xs font-bold hover:bg-[#FAF6EE] disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={busyAction !== null}
+              onClick={handleConfirm}
+              className="flex-1 min-h-[44px] px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-50"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>{busyAction === "delete" ? "Deleting..." : "Yes, Delete"}</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

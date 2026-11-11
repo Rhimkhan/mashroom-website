@@ -94,7 +94,7 @@ export default function AdminPage() {
 
   // Filters & Search
   const [searchOrder, setSearchOrder] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus>("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus | "Archived">("all");
   const [searchProduct, setSearchProduct] = useState("");
   const [searchCustomer, setSearchCustomer] = useState("");
   const [salesPeriod, setSalesPeriod] = useState<"today" | "7days" | "30days">("today");
@@ -111,13 +111,16 @@ export default function AdminPage() {
   const seenOrderIdsRef = useRef<Set<string>>(new Set());
   const hasLoadedInitialOrdersRef = useRef(false);
 
-  // Modals
+  // Modals & Delete Processing State
   const [selectedOrderForView, setSelectedOrderForView] = useState<Order | null>(null);
   const [trackingOrder, setTrackingOrder] = useState<Order | null>(null);
+  const [deletingKey, setDeletingKey] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{
-    type: "product" | "review";
+    type: "order" | "product" | "review" | "wholesale";
     id: string;
-    label: string;
+    title: string;
+    details: string;
+    warningText?: string;
   } | null>(null);
 
   // Quick stock draft per product id so mobile users have an explicit Save button
@@ -572,52 +575,89 @@ If you have any questions, reply here.
     }
   };
 
-  // Execute Delete (Product or Review via ConfirmDeleteModal)
+  // Archive Order (Preserve DB record safely instead of permanent delete)
+  const handleArchiveOrder = async (orderId: string) => {
+    setDeletingKey(`order:${orderId}`);
+    try {
+      const res = await fetch("/api/admin/orders", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, orderStatus: "Archived" }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data?.success) {
+        setApiError(data?.error || "Failed to archive order");
+        return;
+      }
+
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === orderId ? { ...o, orderStatus: "Archived" as OrderStatus } : o
+        )
+      );
+      if (selectedOrderForView?.id === orderId) {
+        setSelectedOrderForView(null);
+      }
+      setDeleteTarget(null);
+      setFeedbackMsg("Order archived safely (record preserved)");
+      setTimeout(() => setFeedbackMsg(null), 3500);
+    } catch {
+      setApiError("Network error while archiving order.");
+    } finally {
+      setDeletingKey(null);
+    }
+  };
+
+  // Execute Delete (Orders, Products, Reviews, Wholesale via ConfirmDeleteModal)
   const executeDelete = async () => {
     if (!deleteTarget) return;
     const { type, id } = deleteTarget;
+    const endpointMap: Record<typeof type, string> = {
+      order: `/api/admin/orders?id=${encodeURIComponent(id)}`,
+      product: `/api/admin/products?id=${encodeURIComponent(id)}`,
+      review: `/api/admin/reviews?id=${encodeURIComponent(id)}`,
+      wholesale: `/api/admin/wholesale?id=${encodeURIComponent(id)}`,
+    };
 
-    if (type === "product") {
-      try {
-        const res = await fetch(`/api/admin/products?id=${encodeURIComponent(id)}`, {
-          method: "DELETE",
-        });
-        const data = await res.json();
-        if (!res.ok || !data.success) {
-          setApiError(data?.error || "Failed to delete product");
-          setDeleteTarget(null);
-          return;
-        }
-      } catch {
-        setApiError("Failed to delete product");
+    setDeletingKey(`${type}:${id}`);
+    setApiError(null);
+
+    try {
+      const res = await fetch(endpointMap[type], { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok || !data?.success) {
+        setApiError(data?.error || `Failed to delete ${type}`);
         setDeleteTarget(null);
         return;
       }
 
-      const updated = products.filter((p) => p.id !== id);
-      setProducts(updated);
-      if (process.env.NODE_ENV !== "production") {
-        saveLocalProducts(updated);
-      }
-      setFeedbackMsg("Product removed from catalog");
-      setTimeout(() => setFeedbackMsg(null), 3000);
-    } else if (type === "review") {
-      try {
-        const res = await fetch(`/api/admin/reviews?id=${encodeURIComponent(id)}`, {
-          method: "DELETE",
-        });
-        const data = await res.json();
-        if (data?.success) {
-          setReviews((prev) => prev.filter((r) => r.id !== id));
-          setFeedbackMsg("Review deleted");
-          setTimeout(() => setFeedbackMsg(null), 3000);
+      if (type === "order") {
+        setOrders((prev) => prev.filter((o) => o.id !== id));
+        if (selectedOrderForView?.id === id) {
+          setSelectedOrderForView(null);
         }
-      } catch (err) {
-        console.error("Failed to delete review", err);
+        setNewOrderIds((prev) => prev.filter((nid) => nid !== id));
+      } else if (type === "product") {
+        const updated = products.filter((p) => p.id !== id);
+        setProducts(updated);
+        if (process.env.NODE_ENV !== "production") {
+          saveLocalProducts(updated);
+        }
+      } else if (type === "review") {
+        setReviews((prev) => prev.filter((r) => r.id !== id));
+      } else if (type === "wholesale") {
+        setWholesaleInquiries((prev) => prev.filter((w) => w.id !== id));
       }
-    }
 
-    setDeleteTarget(null);
+      setFeedbackMsg("Item deleted successfully");
+      setTimeout(() => setFeedbackMsg(null), 3500);
+    } catch (err) {
+      console.error(`Failed to delete ${type}:`, err);
+      setApiError(`Network error while deleting ${type}. Please try again.`);
+    } finally {
+      setDeletingKey(null);
+      setDeleteTarget(null);
+    }
   };
 
   // Add / Edit Product Save
@@ -1106,7 +1146,10 @@ If you have any questions, reply here.
   }
 
   const filteredOrders = orders.filter((o) => {
-    const matchesStatus = statusFilter === "all" || o.orderStatus === statusFilter;
+    const matchesStatus =
+      statusFilter === "all"
+        ? (o.orderStatus as string) !== "Archived"
+        : (o.orderStatus as string) === statusFilter;
     const q = searchOrder.trim().toLowerCase();
     const matchesQuery =
       !q ||
@@ -1368,15 +1411,18 @@ If you have any questions, reply here.
 
                 <select
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as "all" | OrderStatus)}
+                  onChange={(e) =>
+                    setStatusFilter(e.target.value as "all" | OrderStatus | "Archived")
+                  }
                   aria-label="Filter orders by status"
                   className="min-h-[44px] px-3.5 py-2 rounded-xl bg-[#FDFBF7] border border-[#E8DEC8] text-xs font-bold text-[#211612] focus:outline-none focus:ring-2 focus:ring-[#211612]"
                 >
-                  <option value="all">All Statuses</option>
+                  <option value="all">All Active Orders</option>
                   <option value="New">New</option>
                   <option value="Packed">Packed</option>
                   <option value="Shipped">Shipped</option>
                   <option value="Delivered">Delivered</option>
+                  <option value="Archived">Archived Orders</option>
                 </select>
               </div>
 
@@ -1507,6 +1553,7 @@ If you have any questions, reply here.
                           <option value="Packed">Packed</option>
                           <option value="Shipped">Shipped</option>
                           <option value="Delivered">Delivered</option>
+                          <option value="Archived">Archived</option>
                         </select>
 
                         <button
@@ -1553,6 +1600,27 @@ If you have any questions, reply here.
                           <span>Full Details</span>
                         </button>
                       </div>
+
+                      <button
+                        type="button"
+                        disabled={deletingKey === `order:${order.id}`}
+                        onClick={() =>
+                          setDeleteTarget({
+                            type: "order",
+                            id: order.id,
+                            title: `Order #${safeText(order.orderNumber)} — ${safeText(order.customerName)}`,
+                            details: `Total: ₹${Number(order.total) || 0} • ${safeText(order.paymentMethod)} (${safeText(order.paymentStatus)})`,
+                            warningText:
+                              "Warning: Permanently deleting an order removes this record from Supabase forever. Consider Archiving if you want to preserve order history.",
+                          })
+                        }
+                        className="w-full min-h-[44px] px-3 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span>
+                          {deletingKey === `order:${order.id}` ? "Deleting..." : "Delete"}
+                        </span>
+                      </button>
                     </div>
                   </div>
                 );
@@ -1572,12 +1640,13 @@ If you have any questions, reply here.
                       <th className="p-4">Payment</th>
                       <th className="p-4">Status Pipeline</th>
                       <th className="p-4 text-right">Customer WhatsApp & Action</th>
+                      <th className="p-4 text-center w-24">Delete</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E8DEC8]/50">
                     {filteredOrders.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="p-8 text-center text-xs text-stone-400">
+                        <td colSpan={8} className="p-8 text-center text-xs text-stone-400">
                           No customer orders found matching your search.
                         </td>
                       </tr>
@@ -1697,6 +1766,7 @@ If you have any questions, reply here.
                               <option value="Packed">Packed</option>
                               <option value="Shipped">Shipped</option>
                               <option value="Delivered">Delivered</option>
+                              <option value="Archived">Archived</option>
                             </select>
                           </td>
 
@@ -1726,12 +1796,34 @@ If you have any questions, reply here.
                               <button
                                 type="button"
                                 onClick={() => setTrackingOrder(order)}
-                                className="p-2 rounded bg-stone-100 text-stone-700 hover:bg-stone-200 transition-colors"
+                                className="p-2 rounded bg-stone-100 text-stone-700 hover:bg-stone-200 transition-colors shrink-0"
                                 title="Add/Edit Courier Tracking"
                               >
                                 <Truck className="w-4 h-4" />
                               </button>
+
                             </div>
+                          </td>
+                          <td className="p-4 text-center align-middle">
+                            <button
+                              type="button"
+                              disabled={deletingKey === `order:${order.id}`}
+                              onClick={() =>
+                                setDeleteTarget({
+                                  type: "order",
+                                  id: order.id,
+                                  title: `Order #${safeText(order.orderNumber)} — ${safeText(order.customerName)}`,
+                                  details: `Total: ₹${Number(order.total) || 0} • ${safeText(order.paymentMethod)} (${safeText(order.paymentStatus)})`,
+                                  warningText:
+                                    "Warning: Permanently deleting an order removes this record from Supabase forever. Consider Archiving if you want to preserve order history.",
+                                })
+                              }
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold shadow-sm transition-colors disabled:opacity-50"
+                              title="Delete or Archive Order"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>{deletingKey === `order:${order.id}` ? "Deleting..." : "Delete"}</span>
+                            </button>
                           </td>
                         </tr>
                       );
@@ -1900,17 +1992,21 @@ If you have any questions, reply here.
                       </button>
                       <button
                         type="button"
+                        disabled={deletingKey === `product:${p.id}`}
                         onClick={() =>
                           setDeleteTarget({
                             type: "product",
                             id: p.id,
-                            label: p.name,
+                            title: p.name,
+                            details: `Flavour: ${safeText(p.flavour)} • Stock: ${p.stockCount ?? 0} jars`,
                           })
                         }
-                        className="min-h-[44px] py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold flex items-center justify-center gap-1 border border-red-200"
+                        className="min-h-[44px] py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold flex items-center justify-center gap-1 border border-red-200 disabled:opacity-50"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
-                        <span>Delete</span>
+                        <span>
+                          {deletingKey === `product:${p.id}` ? "Deleting..." : "Delete"}
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -2298,16 +2394,21 @@ If you have any questions, reply here.
                     )}
                     <button
                       type="button"
+                      disabled={deletingKey === `review:${rev.id}`}
                       onClick={() =>
                         setDeleteTarget({
                           type: "review",
                           id: rev.id,
-                          label: rev.customerName,
+                          title: `Review by ${safeText(rev.customerName)}`,
+                          details: `Order #${safeText(rev.orderNumber)} • Rating: ${rev.rating}/5`,
                         })
                       }
-                      className="min-h-[44px] rounded-lg bg-red-50 text-red-700 border border-red-200 font-bold text-xs"
+                      className="min-h-[44px] rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-bold text-xs inline-flex items-center justify-center gap-1 disabled:opacity-50"
                     >
-                      Delete
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>
+                        {deletingKey === `review:${rev.id}` ? "Deleting..." : "Delete"}
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -2390,17 +2491,22 @@ If you have any questions, reply here.
                             )}
                             <button
                               type="button"
+                              disabled={deletingKey === `review:${rev.id}`}
                               onClick={() =>
                                 setDeleteTarget({
                                   type: "review",
                                   id: rev.id,
-                                  label: rev.customerName,
+                                  title: `Review by ${safeText(rev.customerName)}`,
+                                  details: `Order #${safeText(rev.orderNumber)} • Rating: ${rev.rating}/5`,
                                 })
                               }
-                              className="p-1.5 rounded text-red-600 hover:bg-red-50"
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-bold text-xs disabled:opacity-50"
                               title="Delete Review"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
+                              <span>
+                                {deletingKey === `review:${rev.id}` ? "Deleting..." : "Delete"}
+                              </span>
                             </button>
                           </div>
                         </td>
@@ -2463,15 +2569,35 @@ If you have any questions, reply here.
                     </span>
                   </div>
                   <p className="text-[#3D2C24]">{safeText(inq.message)}</p>
-                  <a
-                    href={`https://wa.me/${formatCustomerWhatsAppNumber(inq.phone || "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full min-h-[44px] rounded-lg bg-[#25D366] text-white font-bold text-xs flex items-center justify-center gap-1.5"
-                  >
-                    <MessageCircle className="w-4 h-4 fill-white" />
-                    <span>WhatsApp {safeText(inq.phone)}</span>
-                  </a>
+                  <div className="grid grid-cols-2 gap-2">
+                    <a
+                      href={`https://wa.me/${formatCustomerWhatsAppNumber(inq.phone || "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="min-h-[44px] rounded-lg bg-[#25D366] text-white font-bold text-xs flex items-center justify-center gap-1.5"
+                    >
+                      <MessageCircle className="w-4 h-4 fill-white" />
+                      <span>WhatsApp</span>
+                    </a>
+                    <button
+                      type="button"
+                      disabled={deletingKey === `wholesale:${inq.id}`}
+                      onClick={() =>
+                        setDeleteTarget({
+                          type: "wholesale",
+                          id: inq.id,
+                          title: `${safeText(inq.businessName)} — ${safeText(inq.contactPerson)}`,
+                          details: `${safeText(inq.city)} • Qty: ${safeText(inq.quantityNeeded)}`,
+                        })
+                      }
+                      className="min-h-[44px] rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-bold text-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>
+                        {deletingKey === `wholesale:${inq.id}` ? "Deleting..." : "Delete"}
+                      </span>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -2488,12 +2614,13 @@ If you have any questions, reply here.
                       <th className="p-4">Quantity Needed</th>
                       <th className="p-4">Message / Requirements</th>
                       <th className="p-4">Received Date</th>
+                      <th className="p-4 text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E8DEC8]/60">
                     {wholesaleInquiries.length === 0 && (
                       <tr>
-                        <td colSpan={6} className="p-8 text-center text-xs text-stone-400">
+                        <td colSpan={8} className="p-8 text-center text-xs text-stone-400">
                           No wholesale inquiries received yet.
                         </td>
                       </tr>
@@ -2537,6 +2664,26 @@ If you have any questions, reply here.
                               })
                             : "-"}
                         </td>
+                        <td className="p-4 text-right">
+                          <button
+                            type="button"
+                            disabled={deletingKey === `wholesale:${inq.id}`}
+                            onClick={() =>
+                              setDeleteTarget({
+                                type: "wholesale",
+                                id: inq.id,
+                                title: `${safeText(inq.businessName)} — ${safeText(inq.contactPerson)}`,
+                                details: `${safeText(inq.city)} • Qty: ${safeText(inq.quantityNeeded)}`,
+                              })
+                            }
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-bold text-xs disabled:opacity-50"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>
+                              {deletingKey === `wholesale:${inq.id}` ? "Deleting..." : "Delete"}
+                            </span>
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -2554,6 +2701,16 @@ If you have any questions, reply here.
             onStatusChange={handleStatusChange}
             onMarkAsPaid={handleMarkAsPaid}
             onOpenTracking={(ord) => setTrackingOrder(ord)}
+            onRequestDelete={(ord) =>
+              setDeleteTarget({
+                type: "order",
+                id: ord.id,
+                title: `Order #${safeText(ord.orderNumber)} — ${safeText(ord.customerName)}`,
+                details: `Total: ₹${Number(ord.total) || 0} • ${safeText(ord.paymentMethod)} (${safeText(ord.paymentStatus)})`,
+                warningText:
+                  "Warning: Permanently deleting an order removes this record from Supabase forever. Consider Archiving if you want to preserve order history.",
+              })
+            }
             getWhatsAppMessage={getWhatsAppCustomerMessage}
           />
         )}
@@ -2568,10 +2725,16 @@ If you have any questions, reply here.
 
         {deleteTarget && (
           <ConfirmDeleteModal
-            title={`Delete ${deleteTarget.type === "product" ? "Product" : "Review"}`}
-            message={`Are you sure you want to permanently delete "${deleteTarget.label}"?`}
+            itemTitle={deleteTarget.title}
+            itemDetails={deleteTarget.details}
+            warningText={deleteTarget.warningText}
             onCancel={() => setDeleteTarget(null)}
             onConfirm={executeDelete}
+            onArchive={
+              deleteTarget.type === "order"
+                ? () => handleArchiveOrder(deleteTarget.id)
+                : undefined
+            }
           />
         )}
 

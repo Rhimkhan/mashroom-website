@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Order, OrderStatus, PaymentStatus } from "@/lib/types";
-import { getLocalOrders, updateLocalOrderStatus } from "@/lib/store";
+import { getLocalOrders, saveLocalOrders, updateLocalOrderStatus } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase-server";
 import { sendOrderStatusEmail } from "@/lib/email";
 import { verifyAdminSession } from "@/lib/admin-auth";
@@ -304,6 +304,109 @@ export async function PATCH(request: NextRequest) {
     console.error("Admin orders PATCH error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update order" },
+      { status: 500, headers: NO_STORE_HEADERS }
+    );
+  }
+}
+
+/**
+ * DELETE /api/admin/orders
+ * Admin-only: permanently deletes an order record by id. Does not cascade to products or auth users.
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    const ip = getClientIp(request);
+    const rateLimit = checkRateLimit(`admin_orders_delete:${ip}`, 30, 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Too many delete requests. Please wait 1 minute." },
+        { status: 429, headers: NO_STORE_HEADERS }
+      );
+    }
+
+    if (!verifyAdminSession(request)) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized. Admin session required." },
+        { status: 401, headers: NO_STORE_HEADERS }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    let id = (searchParams.get("id") || searchParams.get("orderId") || "").trim();
+    if (!id) {
+      try {
+        const body = (await request.json()) as Record<string, unknown>;
+        if (typeof body?.id === "string") id = body.id.trim();
+        else if (typeof body?.orderId === "string") id = body.orderId.trim();
+      } catch {
+        // ignore missing JSON body
+      }
+    }
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Order ID is required." },
+        { status: 400, headers: NO_STORE_HEADERS }
+      );
+    }
+
+    if (process.env.NODE_ENV === "production" && (!isSupabaseConfigured || !supabase)) {
+      return NextResponse.json(
+        { success: false, error: "Database offline. Order cannot be deleted in production." },
+        { status: 500, headers: NO_STORE_HEADERS }
+      );
+    }
+
+    let deletedInDb = false;
+    if (isSupabaseConfigured && supabase) {
+      const { data, error: deleteError } = await supabase
+        .from("orders")
+        .delete()
+        .eq("id", id)
+        .select("id");
+
+      if (deleteError) {
+        console.error("[CRITICAL] Admin orders DELETE error:", deleteError.message);
+        return NextResponse.json(
+          { success: false, error: `Failed to delete order: ${deleteError.message}` },
+          { status: 500, headers: NO_STORE_HEADERS }
+        );
+      }
+
+      if (!data || data.length === 0) {
+        if (process.env.NODE_ENV === "production") {
+          return NextResponse.json(
+            { success: false, error: "Order not found or already deleted." },
+            { status: 404, headers: NO_STORE_HEADERS }
+          );
+        }
+      } else {
+        deletedInDb = true;
+      }
+    }
+
+    if (process.env.NODE_ENV !== "production") {
+      const current = getLocalOrders();
+      const existsLocally = current.some((o) => o.id === id);
+      if (!deletedInDb && !existsLocally) {
+        return NextResponse.json(
+          { success: false, error: "Order not found or already deleted." },
+          { status: 404, headers: NO_STORE_HEADERS }
+        );
+      }
+      if (existsLocally) {
+        saveLocalOrders(current.filter((o) => o.id !== id));
+      }
+    }
+
+    return NextResponse.json(
+      { success: true, deletedId: id, message: "Item deleted successfully" },
+      { headers: NO_STORE_HEADERS }
+    );
+  } catch (error) {
+    console.error("Admin orders DELETE error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to delete order" },
       { status: 500, headers: NO_STORE_HEADERS }
     );
   }

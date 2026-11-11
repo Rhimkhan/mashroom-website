@@ -147,27 +147,87 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (!verifyAdminSession(request)) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401, headers: NO_STORE_HEADERS }
+      );
     }
 
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
+    let id = (searchParams.get("id") || "").trim();
     if (!id) {
-      return NextResponse.json({ success: false, error: "Review ID required" }, { status: 400 });
+      try {
+        const body = (await request.json()) as Record<string, unknown>;
+        if (typeof body?.id === "string") id = body.id.trim();
+      } catch {
+        // ignore
+      }
+    }
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Review ID required" },
+        { status: 400, headers: NO_STORE_HEADERS }
+      );
     }
 
+    if (process.env.NODE_ENV === "production" && (!isSupabaseConfigured || !supabase)) {
+      return NextResponse.json(
+        { success: false, error: "Database offline. Review cannot be deleted in production." },
+        { status: 500, headers: NO_STORE_HEADERS }
+      );
+    }
+
+    let deletedInDb = false;
     if (isSupabaseConfigured && supabase) {
-      await supabase.from("reviews").delete().eq("id", id);
+      const { data, error: deleteError } = await supabase
+        .from("reviews")
+        .delete()
+        .eq("id", id)
+        .select("id");
+
+      if (deleteError) {
+        console.error("Admin reviews DELETE error:", deleteError.message);
+        return NextResponse.json(
+          { success: false, error: `Failed to delete review: ${deleteError.message}` },
+          { status: 500, headers: NO_STORE_HEADERS }
+        );
+      }
+
+      if (!data || data.length === 0) {
+        if (process.env.NODE_ENV === "production") {
+          return NextResponse.json(
+            { success: false, error: "Review not found or already deleted." },
+            { status: 404, headers: NO_STORE_HEADERS }
+          );
+        }
+      } else {
+        deletedInDb = true;
+      }
     }
 
     if (process.env.NODE_ENV !== "production") {
       const current = getLocalReviews();
-      saveLocalReviews(current.filter((r) => r.id !== id));
+      const existsLocally = current.some((r) => r.id === id);
+      if (!deletedInDb && !existsLocally) {
+        return NextResponse.json(
+          { success: false, error: "Review not found or already deleted." },
+          { status: 404, headers: NO_STORE_HEADERS }
+        );
+      }
+      if (existsLocally) {
+        saveLocalReviews(current.filter((r) => r.id !== id));
+      }
     }
 
-    return NextResponse.json({ success: true, message: "Review deleted" });
+    return NextResponse.json(
+      { success: true, deletedId: id, message: "Item deleted successfully" },
+      { headers: NO_STORE_HEADERS }
+    );
   } catch (error) {
     console.error("Admin reviews DELETE error:", error);
-    return NextResponse.json({ success: false, error: "Failed to delete review" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "Failed to delete review" },
+      { status: 500, headers: NO_STORE_HEADERS }
+    );
   }
 }
